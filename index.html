@@ -4,12 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
-    <!-- iOS PWA Settings -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="The Pathway">
     
-    <!-- Custom Home Screen Icon -->
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1024 1024' style='background-color: %232a1b1b;'%3E%3Cpath d='M512 928C282.2 928 96 741.8 96 512S282.2 96 512 96s416 186.2 416 416-186.2 416-416 416zm0-768c-194.4 0-352 157.6-352 352s157.6 352 352 352 352-157.6 352-352-157.6-352-352-352zm0 640c-159.1 0-288-128.9-288-288s128.9-288 288-288 288 128.9 288 288-128.9 288-288 288z' fill='none'/%3E%3Cpath d='M538.6 225.2c-8.4-1.8-17.1 3.6-18.9 12-14.6 68.4-14.6 139.2 0 207.6 1.8 8.4 10.3 13.7 18.7 11.9 8.4-1.8 13.7-10.3 11.9-18.7-12.5-58.6-12.5-119.4 0-178 1.8-8.4-3.6-17.1-11.7-14.8zM380.5 407c-6.6-5.4-16.3-4.4-21.7 2.2-44.2 53.8-44.2 131.8 0 185.6 5.4 6.6 15.1 7.6 21.7 2.2 6.6-5.4 7.6-15.1 2.2-21.7-36.3-44.2-36.3-108.4 0-152.6 5.4-6.6 4.4-16.3-2.2-15.7zM643.5 407c6.6-5.4 16.3-4.4 21.7 2.2 44.2 53.8 44.2 131.8 0 185.6-5.4 6.6-15.1 7.6-21.7 2.2-6.6-5.4-7.6-15.1-2.2-21.7 36.3-44.2 36.3-108.4 0-152.6-5.4-6.6-4.4-16.3 2.2-15.7z' fill='%23d4af37'/%3E%3Cpath d='M512 1024C229.2 1024 0 794.8 0 512S229.2 0 512 0s512 229.2 512 512-229.2 512-512 512zm0-928C282.2 96 96 282.2 96 512s186.2 416 416 416 416-186.2 416-416S741.8 96 512 96z' fill='%23d4af37' opacity='0.1'/%3E%3Cpath d='M512 512m-400 0a400 400 0 1 0 800 0 400 400 0 1 0-800 0Z' fill='none' stroke='%23d4af37' stroke-width='40' stroke-linecap='round' opacity='0.9' stroke-dasharray='1400' stroke-dashoffset='0' transform='rotate(-90 512 512)'/%3E%3Cpath d='M512 512m-250 0a250 250 0 1 0 500 0 250 250 0 1 0-500 0Z' fill='none' stroke='%23d4af37' stroke-width='35' stroke-linecap='round' opacity='0.8' stroke-dasharray='900' stroke-dashoffset='200' transform='rotate(180 512 512)'/%3E%3Cpath d='M512 512m-120 0a120 120 0 1 0 240 0 120 120 0 1 0-240 0Z' fill='none' stroke='%23d4af37' stroke-width='30' stroke-linecap='round' opacity='0.7' stroke-dasharray='400' stroke-dashoffset='100' transform='rotate(90 512 512)'/%3E%3C/svg%3E">
 
     <title>The Pathway</title>
@@ -68,16 +66,20 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Merriweather:ital,wght@0,300;0,400;1,300&display=swap');
         
-        /* LOCKED VIEWPORT */
+        /* FIXED PWA LAYOUT: Flex Column ensures header sits at top and main fills exactly to bottom */
         html, body {
-            width: 100%;
             height: 100%;
+            width: 100%;
             overflow: hidden;
-            position: fixed;
             background-color: #020617;
             color: #e2e8f0;
             -webkit-font-smoothing: antialiased;
             -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
         }
 
         ::-webkit-scrollbar { width: 4px; }
@@ -101,13 +103,11 @@
         .quote-mark.start { top: 0; left: 0; }
         .quote-mark.end { bottom: 0; right: 0; transform: rotate(180deg); }
         
-        /* MENU SPECIFIC */
+        /* MENU SPECIFIC - Updated: No Underline, just color */
         .side-menu-open #side-menu-backdrop { display: block; opacity: 1; }
         .side-menu-open #side-menu { transform: translateX(0); }
-        .menu-link { position: relative; overflow: hidden; }
-        .menu-link::after { content: ''; position: absolute; left: 0; bottom: 0; height: 1px; width: 0%; background: #d4af37; transition: width 0.3s ease; }
-        .menu-link.active::after { width: 100%; }
-        .menu-link.active { color: #d4af37; }
+        .menu-link { transition: color 0.3s ease; }
+        .menu-link.active { color: #d4af37; } /* Just color highlight */
 
         .swipe-item { transition: transform 0.2s ease-out; position: relative; z-index: 10; background: rgba(15, 23, 42, 0.9); }
         .delete-action { position: absolute; right: 0; top: 0; bottom: 0; width: 80px; display: flex; align-items: center; justify-content: center; z-index: 0; }
@@ -119,13 +119,10 @@
 </head>
 <body class="selection:bg-gold-500 selection:text-white">
 
-    <!-- SIDE MENU BACKDROP -->
     <div id="side-menu-backdrop" onclick="toggleMenu()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90] hidden opacity-0 transition-opacity duration-300"></div>
 
-    <!-- SIDE MENU -->
-    <aside id="side-menu" class="fixed top-0 bottom-0 right-0 w-3/4 max-w-xs bg-slate-900/95 backdrop-blur-xl border-l border-slate-800 z-[100] transform translate-x-full transition-transform duration-300 ease-out flex flex-col shadow-2xl pb-safe">
+    <aside id="side-menu" class="fixed top-0 bottom-0 right-0 w-3/4 max-w-xs bg-slate-900/95 backdrop-blur-xl border-l border-slate-800 z-[100] transform translate-x-full transition-transform duration-300 ease-out flex flex-col shadow-2xl pt-safe pb-safe">
         
-        <!-- Menu Header (Close & Auth) -->
         <div class="p-6 border-b border-slate-800 flex flex-col relative">
             <button onclick="toggleMenu()" class="absolute top-6 right-6 text-slate-400 hover:text-white transition"><i data-lucide="x" class="w-6 h-6"></i></button>
             
@@ -134,7 +131,6 @@
                 <p class="text-[10px] text-slate-500 uppercase tracking-[0.2em] mt-1">Mechanism of Surrender</p>
             </div>
 
-            <!-- Auth Container (Moved from old info modal) -->
             <div class="mt-6 pt-6 border-t border-slate-800/50" id="auth-container">
                 <div id="logged-out-view">
                     <button onclick="login()" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl transition font-medium flex items-center justify-center gap-3 shadow-lg border border-slate-700">
@@ -155,22 +151,20 @@
             </div>
         </div>
 
-        <!-- Nav Links -->
         <nav class="flex-1 overflow-y-auto p-6 space-y-2">
-            <button onclick="switchTab('guide')" id="menu-guide" class="menu-link w-full text-left py-3 px-2 text-lg font-light text-slate-300 hover:text-white transition flex items-center gap-4"><i data-lucide="book" class="w-5 h-5 opacity-70"></i> Guide</button>
+            <button onclick="switchTab('guide')" id="menu-guide" class="menu-link w-full text-left py-3 px-2 text-lg font-light text-slate-300 hover:text-white transition flex items-center gap-4 active"><i data-lucide="book" class="w-5 h-5 opacity-70"></i> Guide</button>
             <button onclick="switchTab('process')" id="menu-process" class="menu-link w-full text-left py-3 px-2 text-lg font-light text-slate-300 hover:text-white transition flex items-center gap-4"><i data-lucide="layers" class="w-5 h-5 opacity-70"></i> Work</button>
             <button onclick="switchTab('timer')" id="menu-timer" class="menu-link w-full text-left py-3 px-2 text-lg font-light text-slate-300 hover:text-white transition flex items-center gap-4"><i data-lucide="clock" class="w-5 h-5 opacity-70"></i> Timer</button>
             <button onclick="switchTab('charts')" id="menu-charts" class="menu-link w-full text-left py-3 px-2 text-lg font-light text-slate-300 hover:text-white transition flex items-center gap-4"><i data-lucide="bar-chart-2" class="w-5 h-5 opacity-70"></i> Charts</button>
-            <button onclick="switchTab('qa')" id="menu-qa" class="menu-link w-full text-left py-3 px-2 text-lg font-light text-slate-300 hover:text-white transition flex items-center gap-4"><i data-lucide="help-circle" class="w-5 h-5 opacity-70"></i> Q&A</button>
             <button onclick="switchTab('journal')" id="menu-journal" class="menu-link w-full text-left py-3 px-2 text-lg font-light text-slate-300 hover:text-white transition flex items-center gap-4"><i data-lucide="archive" class="w-5 h-5 opacity-70"></i> Log</button>
+            <button onclick="switchTab('qa')" id="menu-qa" class="menu-link w-full text-left py-3 px-2 text-lg font-light text-slate-300 hover:text-white transition flex items-center gap-4"><i data-lucide="help-circle" class="w-5 h-5 opacity-70"></i> Q&A</button>
         </nav>
 
         <div class="p-6 text-center border-t border-slate-800/50">
-            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 8.0</p>
+            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 8.1</p>
         </div>
     </aside>
 
-    <!-- INTRO -->
     <div id="intro-screen" onclick="dismissIntro()" class="fixed inset-0 z-[80] bg-slate-950 flex flex-col items-center justify-center p-8 text-center cursor-pointer transition-opacity duration-1000">
         <div class="animate-fade-in max-w-lg mx-auto flex flex-col h-full justify-center relative w-full">
             <div class="mb-8 text-gold-500/30 mx-auto"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
@@ -178,8 +172,6 @@
             <div class="flex justify-center">
                 <div class="quote-wrapper max-w-md">
                     <svg class="quote-mark start" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21L14.017 18C14.017 16.896 14.321 15.923 14.929 15.081C15.537 14.239 16.357 13.459 17.389 12.741L16.731 10.561C15.039 11.623 14.069 12.878 13.821 14.326C13.821 14.326 13.821 14.326 13.821 14.326C13.545 13.714 13.407 13.052 13.407 12.34C13.407 10.284 14.147 8.528 15.627 7.072C17.107 5.616 18.867 4.888 20.907 4.888C21.787 4.888 22.467 5.568 22.947 6.928C23.427 8.288 23.667 9.528 23.667 10.648C23.667 14.304 22.397 17.754 19.857 21L14.017 21ZM6.007 21L6.007 18C6.007 16.896 6.311 15.923 6.919 15.081C7.527 14.239 8.347 13.459 9.379 12.741L8.721 10.561C7.029 11.623 6.059 12.878 5.811 14.326C5.811 14.326 5.811 14.326 5.811 14.326C5.535 13.714 5.397 13.052 5.397 12.34C5.397 10.284 6.137 8.528 7.617 7.072C9.097 5.616 10.857 4.888 12.897 4.888C13.777 4.888 14.457 5.568 14.937 6.928C15.417 8.288 15.657 9.528 15.657 10.648C15.657 14.304 14.387 17.754 11.847 21L6.007 21Z" /></svg>
-                    <p id="intro-quote" class="text-xl md:text-2xl font-light text-slate-200 leading-relaxed font-serif italic text-center"></p>
-                    <svg class="quote-mark end" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21L14.017 18C14.017 16.896 14.321 15.923 14.929 15.081C15.537 14.239 16.357 13.459 17.389 12.741L16.731 10.561C15.039 11.623 14.069 12.878 13.821 14.326C13.821 14.326 13.821 14.326 13.821 14.326C13.545 13.714 13.407 13.052 13.407 12.34C13.407 10.284 14.147 8.528 15.627 7.072C17.107 5.616 18.867 4.888 20.907 4.888C21.787 4.888 22.467 5.568 22.947 6.928C23.427 8.288 23.667 9.528 23.667 10.648C23.667 14.304 22.397 17.754 19.857 21L14.017 21ZM6.007 21L6.007 18C6.007 16.896 6.311 15.923 6.919 15.081C7.527 14.239 8.347 13.459 9.379 12.741L8.721 10.561C7.029 11.623 6.059 12.878 5.811 14.326C5.811 14.326 5.811 14.326 5.811 14.326C5.535 13.714 5.397 13.052 5.397 12.34C5.397 10.284 6.137 8.528 7.617 7.072C9.097 5.616 10.857 4.888 12.897 4.888C13.777 4.888 14.457 5.568 14.937 6.928C15.417 8.288 15.657 9.528 15.657 10.648C15.657 14.304 14.387 17.754 11.847 21L6.007 21Z" /></svg>
                 </div>
             </div>
             <p class="text-xs text-gold-500 uppercase tracking-[0.25em] font-sans text-center opacity-80 mt-8">— David R. Hawkins</p>
@@ -187,18 +179,15 @@
         </div>
     </div>
 
-    <!-- HEADER: Fixed Top with Menu Button -->
-    <header class="fixed top-0 left-0 right-0 h-16 px-6 border-b border-slate-800/50 bg-slate-950/90 backdrop-blur z-50 flex justify-between items-center pt-safe">
+    <header class="flex-none w-full px-6 py-4 border-b border-slate-800/50 bg-slate-950/90 backdrop-blur z-50 flex justify-between items-center pt-safe relative">
         <div><h1 class="text-xl font-serif italic text-gold-500 tracking-wide">The Pathway</h1><p class="text-[10px] text-slate-500 uppercase tracking-[0.2em] mt-0.5">Mechanism of Surrender</p></div>
         <button onclick="toggleMenu()" class="text-slate-400 hover:text-white transition p-2"><i data-lucide="menu" class="w-6 h-6"></i></button>
     </header>
 
-    <!-- MAIN CONTENT -->
-    <main id="app-content" class="fixed top-16 bottom-0 left-0 right-0 overflow-y-auto overflow-x-hidden p-4 pb-8 no-scrollbar" style="overscroll-behavior-y: contain;">
+    <main id="app-content" class="flex-1 relative overflow-hidden w-full">
         
-        <!-- GUIDE -->
-        <section id="view-guide" class="view-section animate-fade-in space-y-6">
-            <div class="glass-panel p-6 rounded-2xl shadow-lg">
+        <section id="view-guide" class="view-section animate-fade-in h-full overflow-y-auto p-4 pb-safe">
+            <div class="glass-panel p-6 rounded-2xl shadow-lg mb-8">
                 <h2 class="text-2xl font-light mb-4 text-white">The Mechanism</h2>
                 <p class="text-slate-300 leading-relaxed mb-4">Letting go involves being aware of a feeling, letting it come up, staying with it, and letting it run its course without wanting to make it different or do anything about it.</p>
                 <div class="bg-slate-800/50 p-4 rounded-lg border-l-2 border-gold-500 my-6"><p class="italic text-slate-400 text-sm">"It means to simply let the feeling be there and to focus on letting out the energy behind it."</p><p class="text-right text-xs text-slate-500 mt-2">— David R. Hawkins</p></div>
@@ -211,9 +200,8 @@
             </div>
         </section>
 
-        <!-- PROCESS -->
-        <section id="view-process" class="view-section hidden animate-fade-in min-h-[85vh] flex flex-col">
-            <div class="glass-panel p-6 rounded-2xl shadow-lg flex-1 flex flex-col justify-center items-center text-center relative overflow-hidden min-h-[400px]">
+        <section id="view-process" class="view-section hidden animate-fade-in h-full overflow-hidden flex flex-col p-4 pb-safe">
+            <div class="glass-panel p-6 rounded-2xl shadow-lg flex-1 flex flex-col justify-center items-center text-center relative overflow-hidden">
                 <div id="process-step-0" class="process-step w-full">
                     <h2 class="text-3xl font-light mb-2 text-white">Identify Emotion</h2>
                     <p class="text-slate-400 mb-8 text-sm">Select the emotion on the scale.</p>
@@ -257,17 +245,14 @@
             </div>
         </section>
 
-        <!-- TIMER -->
-        <section id="view-timer" class="view-section hidden animate-fade-in min-h-[85vh] flex flex-col justify-center pt-16">
+        <section id="view-timer" class="view-section hidden animate-fade-in h-full overflow-hidden flex flex-col justify-center p-4 pb-safe">
             <div class="text-center w-full">
-                <!-- Dropdown Container -->
                 <div class="mb-8 max-w-[240px] mx-auto mt-8 relative z-30">
                     <button onclick="toggleModal('emotion-picker')" id="timer-emotion-btn" class="w-full flex items-center justify-between bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-2 text-slate-300 text-sm hover:border-gold-500 transition">
                         <span id="timer-emotion-display">Select Emotion...</span><i data-lucide="chevron-down" class="w-4 h-4 opacity-50"></i>
                     </button>
                 </div>
                 
-                <!-- Breath Circle -->
                 <div class="relative w-64 h-64 mx-auto mb-10 flex items-center justify-center z-10">
                     <div id="breath-circle" class="absolute inset-0 bg-slate-800 rounded-full opacity-50 scale-100 transition-transform duration-1000"></div>
                     <div id="breath-circle-inner" class="absolute w-40 h-40 bg-slate-700/50 rounded-full blur-2xl"></div>
@@ -292,37 +277,30 @@
             </div>
         </section>
 
-        <!-- CHARTS -->
-        <section id="view-charts" class="view-section hidden animate-fade-in min-h-[85vh] flex flex-col">
-            <div class="px-4 mb-4 flex justify-between items-end"><h2 class="text-2xl font-light text-white">Progress</h2></div>
-            <div class="px-4 mb-6">
+        <section id="view-charts" class="view-section hidden animate-fade-in h-full overflow-hidden flex flex-col p-4 pb-safe">
+            <div class="mb-4 flex justify-between items-end"><h2 class="text-2xl font-light text-white">Progress</h2></div>
+            <div class="mb-6">
                 <label class="text-xs text-slate-500 uppercase tracking-wider mb-2 block">Select Emotion</label>
                 <button onclick="toggleModal('emotion-picker')" id="chart-emotion-btn" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-white flex justify-between items-center hover:border-gold-500 transition">
                     <span id="chart-emotion-display">Select to view...</span><i data-lucide="chevron-down" class="w-4 h-4 text-slate-500"></i>
                 </button>
             </div>
-            <div class="flex-1 px-4 min-h-[300px] relative">
+            <div class="flex-1 min-h-[300px] relative">
                 <canvas id="progressChart"></canvas>
                 <div id="chart-placeholder" class="absolute inset-0 flex items-center justify-center text-slate-600 text-sm">Select an emotion to view progress</div>
             </div>
         </section>
 
-        <!-- Q&A -->
-        <section id="view-qa" class="view-section hidden animate-fade-in">
-            <h2 class="text-2xl font-light text-white mb-6 px-2">Q & A</h2>
-            <div id="qa-container" class="space-y-3"></div>
-            <div class="h-12"></div>
-        </section>
-
-        <!-- JOURNAL (LOG) -->
-        <section id="view-journal" class="view-section hidden animate-fade-in space-y-6">
-            <div class="flex justify-between items-end px-2"><h2 class="text-2xl font-light text-white">History</h2><button onclick="clearJournal()" class="text-xs text-red-400/60 hover:text-red-400 uppercase tracking-wider p-2">Clear All</button></div>
+        <section id="view-journal" class="view-section hidden animate-fade-in h-full overflow-y-auto p-4 pb-safe">
+            <div class="flex justify-between items-end mb-6"><h2 class="text-2xl font-light text-white">History</h2><button onclick="clearJournal()" class="text-xs text-red-400/60 hover:text-red-400 uppercase tracking-wider p-2">Clear All</button></div>
             <div id="journal-list" class="space-y-3 pb-8 overflow-x-hidden"></div>
         </section>
-    </main>
 
-    <!-- MODALS (Utilities) -->
-    <!-- Note: Info Modal Removed, merged into Side Menu -->
+        <section id="view-qa" class="view-section hidden animate-fade-in h-full overflow-y-auto p-4 pb-safe">
+            <h2 class="text-2xl font-light text-white mb-6">Q & A</h2>
+            <div id="qa-container" class="space-y-3 pb-8"></div>
+        </section>
+    </main>
 
     <div id="emotion-picker" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] hidden flex-col justify-end animate-fade-in">
         <div class="bg-slate-900 border-t border-slate-700 rounded-t-3xl w-full max-w-md mx-auto max-h-[70vh] flex flex-col shadow-2xl">
