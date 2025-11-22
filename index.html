@@ -16,6 +16,17 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, onSnapshot, deleteDoc, orderBy, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        // Expose Firebase globals to window so regular scripts can access them
+        window.firebaseModules = { initializeApp, getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, getFirestore, collection, doc, setDoc, onSnapshot, deleteDoc, orderBy, query };
+    </script>
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -139,6 +150,7 @@
                     <div class="flex gap-4 items-start"><div class="bg-slate-800 p-2 rounded-full text-gold-500 shrink-0"><i data-lucide="brain-circuit" class="w-5 h-5"></i></div><div><h3 class="font-medium text-white">2. Ignore Thoughts</h3><p class="text-sm text-slate-400 mt-1">Thoughts are rationalizations created by the mind. Ignore the "why." Focus only on the "what" (the sensation).</p></div></div>
                     <div class="flex gap-4 items-start"><div class="bg-slate-800 p-2 rounded-full text-gold-500 shrink-0"><i data-lucide="waves" class="w-5 h-5"></i></div><div><h3 class="font-medium text-white">3. No Resistance</h3><p class="text-sm text-slate-400 mt-1">Drop the resistance to the feeling. It is the resistance that keeps it going. Ask: "Can I welcome this feeling?"</p></div></div>
                 </div>
+                <button onclick="triggerSignIn()" id="auth-btn-guide" class="text-xs text-gold-500 hover:text-white underline uppercase tracking-wider mt-4 block w-full text-left">Sign In to Save Progress</button>
                 <button onclick="switchTab('process')" class="w-full mt-8 py-4 bg-gradient-to-r from-slate-800 to-slate-700 hover:from-slate-700 hover:to-slate-600 text-white rounded-xl transition shadow-lg flex items-center justify-center gap-2 font-medium">Start Practice <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
             </div>
         </section>
@@ -154,6 +166,7 @@
                     </button>
                     <button onclick="startProcess()" class="w-full py-4 bg-gold-600 hover:bg-gold-500 text-white font-medium rounded-xl transition shadow-lg shadow-gold-900/20 btn-primary text-lg">Begin Surrender</button>
                 </div>
+                <!-- Steps 1-5 -->
                 <div id="process-step-1" class="process-step hidden w-full">
                     <div class="mb-8 text-gold-500 bg-gold-500/10 p-4 rounded-full inline-block"><i data-lucide="map-pin" class="w-10 h-10"></i></div>
                     <h2 class="text-2xl font-light mb-4 text-white">Locate it</h2>
@@ -192,19 +205,16 @@
         <!-- TIMER -->
         <section id="view-timer" class="view-section hidden animate-fade-in h-full flex flex-col justify-center pt-16">
             <div class="text-center w-full">
-                <!-- Dropdown Container with High Z-Index -->
                 <div class="mb-8 max-w-[240px] mx-auto mt-8 relative z-30">
                     <button onclick="toggleModal('emotion-picker')" id="timer-emotion-btn" class="w-full flex items-center justify-between bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-2 text-slate-300 text-sm hover:border-gold-500 transition">
                         <span id="timer-emotion-display">Select Emotion...</span><i data-lucide="chevron-down" class="w-4 h-4 opacity-50"></i>
                     </button>
                 </div>
                 
-                <!-- Breath Circle Container with Lower Z-Index -->
                 <div class="relative w-64 h-64 mx-auto mb-10 flex items-center justify-center z-10">
                     <div id="breath-circle" class="absolute inset-0 bg-slate-800 rounded-full opacity-50 scale-100 transition-transform duration-1000"></div>
                     <div id="breath-circle-inner" class="absolute w-40 h-40 bg-slate-700/50 rounded-full blur-2xl"></div>
-                    <!-- Custom Microwave Input Logic -->
-                    <input type="text" inputmode="numeric" id="timer-display" class="relative z-10 text-6xl font-extralight text-white font-serif tabular-nums tracking-tight bg-transparent text-center w-full focus:outline-none border-none p-0 m-0" value="10:00" oninput="handleTimerInput(this)">
+                    <input type="text" inputmode="numeric" id="timer-display" class="relative z-10 text-6xl font-extralight text-white font-serif tabular-nums tracking-tight bg-transparent text-center w-full focus:outline-none border-none p-0 m-0" value="10:00" onfocus="this.select()" onchange="updateCustomTime(this.value)" onblur="formatInputTime(this)">
                 </div>
 
                 <div class="flex justify-center gap-8 mb-8">
@@ -270,7 +280,7 @@
     <div id="info-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60] hidden items-center justify-center p-6 animate-fade-in">
         <div class="bg-slate-900 border border-slate-700 p-8 rounded-3xl max-w-xs w-full shadow-2xl text-center">
             <h3 class="text-xl text-white mb-2 font-serif italic">The Pathway</h3>
-            <p class="text-slate-500 text-xs mb-6 uppercase tracking-widest">Version 5.2</p>
+            <p class="text-slate-500 text-xs mb-6 uppercase tracking-widest">Version 5.3 (Cloud Sync)</p>
             <div class="space-y-4 text-sm text-slate-400 mb-8 text-left"><p>Based on "Letting Go" by Dr. David R. Hawkins.</p><p>This app is constantly updated.</p></div>
             <button onclick="toggleSettings()" class="w-full py-3 bg-slate-800 text-white rounded-xl hover:bg-slate-700 transition font-medium">Close</button>
         </div>
@@ -329,6 +339,151 @@
     </div>
 
     <script>
+        // FIREBASE SETUP & CLOUD LOGIC
+        let db, auth, user, releasesCollection;
+        let useCloud = false;
+
+        function initFirebase() {
+            try {
+                const firebaseConfig = JSON.parse(window.__firebase_config);
+                const app = window.firebaseModules.initializeApp(firebaseConfig);
+                auth = window.firebaseModules.getAuth(app);
+                db = window.firebaseModules.getFirestore(app);
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+                // Auth Init
+                const initAuth = async () => {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await window.firebaseModules.signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await window.firebaseModules.signInAnonymously(auth);
+                    }
+                };
+                initAuth();
+
+                window.firebaseModules.onAuthStateChanged(auth, (u) => {
+                    if (u) {
+                        user = u;
+                        releasesCollection = window.firebaseModules.collection(db, 'artifacts', appId, 'users', user.uid, 'releases');
+                        
+                        // Check if we should sync
+                        const isSynced = localStorage.getItem('cloud_sync_active');
+                        if(isSynced === 'true') {
+                            useCloud = true;
+                            activateCloudUI();
+                            loadJournal(); // Reload from cloud
+                        }
+                    }
+                });
+            } catch (e) {
+                console.log("Firebase not available in this environment", e);
+            }
+        }
+
+        async function triggerSignIn() {
+            if(!user) return;
+            
+            // Visual Feedback
+            const btn = document.getElementById('auth-btn-guide');
+            btn.textContent = "Syncing...";
+            
+            // Migrate LocalStorage to Cloud
+            const localReleases = JSON.parse(localStorage.getItem('releases') || '[]');
+            if(localReleases.length > 0) {
+                // Upload each
+                for(const r of localReleases) {
+                    await window.firebaseModules.setDoc(window.firebaseModules.doc(releasesCollection), r);
+                }
+                // Clear local
+                localStorage.removeItem('releases');
+            }
+            
+            localStorage.setItem('cloud_sync_active', 'true');
+            useCloud = true;
+            activateCloudUI();
+            loadJournal();
+        }
+
+        function activateCloudUI() {
+            const btn = document.getElementById('auth-btn-guide');
+            if(btn) {
+                btn.innerHTML = "<span class='text-emerald-500'>✓ Cloud Sync Active</span>";
+                btn.onclick = null;
+                btn.classList.remove('hover:text-white', 'underline');
+                btn.classList.add('cursor-default');
+                
+                // Fade out after 2s
+                setTimeout(() => {
+                    btn.style.transition = "opacity 1s";
+                    btn.style.opacity = "0";
+                    setTimeout(() => btn.style.display = "none", 1000);
+                }, 2000);
+            }
+        }
+
+        // DATA SERVICE (Abstracts Local vs Cloud)
+        async function getReleases() {
+            if(useCloud && user) {
+                return new Promise(resolve => {
+                     const q = window.firebaseModules.query(releasesCollection, window.firebaseModules.orderBy('date', 'desc'), window.firebaseModules.orderBy('time', 'desc'));
+                     window.firebaseModules.onSnapshot(q, (snapshot) => {
+                        const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                        resolve(data);
+                     });
+                });
+            } else {
+                return JSON.parse(localStorage.getItem('releases') || '[]');
+            }
+        }
+
+        async function addRelease(entry) {
+            if(useCloud && user) {
+                await window.firebaseModules.setDoc(window.firebaseModules.doc(releasesCollection), entry);
+            } else {
+                const r = JSON.parse(localStorage.getItem('releases') || '[]');
+                r.unshift(entry);
+                localStorage.setItem('releases', JSON.stringify(r));
+            }
+            // For cloud, onSnapshot handles UI update. For local, manual refresh.
+            if(!useCloud) loadJournal();
+        }
+
+        async function deleteRelease(idOrIndex) {
+            if(useCloud && user) {
+                await window.firebaseModules.deleteDoc(window.firebaseModules.doc(releasesCollection, idOrIndex));
+            } else {
+                const r = JSON.parse(localStorage.getItem('releases') || '[]');
+                r.splice(idOrIndex, 1);
+                localStorage.setItem('releases', JSON.stringify(r));
+                loadJournal();
+            }
+        }
+        
+        async function renameRelease(idOrIndex, newName) {
+             if(useCloud && user) {
+                 // Simplified update
+                 const ref = window.firebaseModules.doc(releasesCollection, idOrIndex);
+                 await window.firebaseModules.setDoc(ref, { emotion: newName }, { merge: true });
+             } else {
+                const r = JSON.parse(localStorage.getItem('releases') || '[]');
+                r[idOrIndex].emotion = newName;
+                localStorage.setItem('releases', JSON.stringify(r));
+                loadJournal();
+             }
+        }
+
+        async function clearAllReleases() {
+            if(useCloud && user) {
+                // Cloud delete logic (batch delete not efficient here, assume user wont have thousands)
+                // For this demo, we might just alert not supported or delete one by one
+                alert("To clear cloud history, please delete entries individually.");
+            } else {
+                localStorage.removeItem('releases');
+                loadJournal();
+            }
+        }
+
+        // EXISTING LOGIC
         const INTRO_QUOTES = [
             "To be surrendered means to have no strong emotion about a thing: 'It's okay if it happens, and it's okay if it doesn't.'",
             "We change the world not by what we say or do, but as a consequence of what we have become.",
@@ -378,6 +533,7 @@
         let processInterval, processSeconds = 0, processStartTime = 0, currentSelectedEmotion = "", pickerCallback, progressChart;
 
         window.onload = function() {
+            initFirebase(); // New Cloud Init
             initIntro();
             lucide.createIcons();
             initQA();
@@ -496,10 +652,12 @@
                 noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createPinkNoise(); noiseNode.loop = true;
                 gain.gain.value = 0.15; noiseNode.connect(gain); gain.connect(audioContext.destination); noiseNode.start();
             } else if(type === 'river') {
+                const gain = audioContext.createGain();
                 noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createBrownNoise(); noiseNode.loop = true;
                 const f = audioContext.createBiquadFilter(); f.type='lowpass'; f.frequency.value=600; gain.gain.value=0.3;
                 noiseNode.connect(f); f.connect(gain); gain.connect(audioContext.destination); noiseNode.start();
             } else if(type === 'wind') {
+                const gain = audioContext.createGain();
                 noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createPinkNoise(); noiseNode.loop = true;
                 const f = audioContext.createBiquadFilter(); f.type='lowpass'; f.Q.value=1;
                 modOsc = audioContext.createOscillator(); modOsc.frequency.value=0.15;
@@ -508,6 +666,7 @@
                 noiseNode.connect(f); f.connect(gain); gain.connect(audioContext.destination); gain.gain.value=0.3;
                 noiseNode.start(); modOsc.start();
             } else if(type === 'birds') {
+                const gain = audioContext.createGain();
                 noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createPinkNoise(); noiseNode.loop = true;
                 const f = audioContext.createBiquadFilter(); f.type='highpass'; f.frequency.value=2000; gain.gain.value=0.02;
                 noiseNode.connect(f); f.connect(gain); gain.connect(audioContext.destination); noiseNode.start();
@@ -624,9 +783,8 @@
         function saveTimerSession() {
             const int = document.getElementById('timer-intensity-slider').value;
             const em = currentSelectedEmotion || "Meditation";
-            const rel = JSON.parse(localStorage.getItem('releases') || '[]');
-            rel.unshift({ emotion: em, date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}), time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), duration: currentTimerSessionLength, intensity: int });
-            localStorage.setItem('releases', JSON.stringify(rel));
+            const entry = { emotion: em, date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}), time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), duration: currentTimerSessionLength, intensity: int };
+            addRelease(entry);
             closeCompleteModal(); resetTimer(); switchTab('journal');
         }
         function closeCompleteModal() {
@@ -664,15 +822,18 @@
         }
         function saveAndClose() {
             const int = document.getElementById('process-intensity-slider').value;
-            const rel = JSON.parse(localStorage.getItem('releases') || '[]');
-            rel.unshift({ emotion: currentProcessEmotion, date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}), time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), duration: processSeconds, intensity: int });
-            localStorage.setItem('releases', JSON.stringify(rel));
+            const entry = { emotion: currentProcessEmotion, date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}), time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), duration: processSeconds, intensity: int };
+            addRelease(entry);
             resetProcess(); switchTab('journal');
         }
-        function loadChart(em) {
+        
+        // NEW: Using getReleases() async wrapper
+        async function loadChart(em) {
             const ctx = document.getElementById('progressChart'); if(!ctx) return;
             document.getElementById('chart-placeholder').classList.add('hidden');
-            const rel = JSON.parse(localStorage.getItem('releases') || '[]');
+            
+            const rel = await getReleases(); // ASYNC CALL
+            
             const d = rel.filter(r => r.emotion === em && r.intensity).reverse();
             if(d.length === 0) { if(progressChart) progressChart.destroy(); document.getElementById('chart-placeholder').classList.remove('hidden'); document.getElementById('chart-placeholder').textContent = `No data yet for "${em}"`; return; }
             const lbl = d.map(x => x.date), val = d.map(x => parseInt(x.intensity));
@@ -683,16 +844,27 @@
                 options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 10, grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } }, x: { grid: { display: false }, ticks: { color: '#94a3b8' } } }, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#0f172a', borderColor: '#334155', borderWidth: 1 } } }
             });
         }
-        function loadJournal() {
+        
+        // NEW: Using getReleases() async wrapper
+        async function loadJournal() {
             const list = document.getElementById('journal-list'); if(!list) return;
-            const rel = JSON.parse(localStorage.getItem('releases') || '[]');
+            
+            // Show loading state? Or just wait.
+            const rel = await getReleases(); // ASYNC CALL
+            
             if(rel.length === 0) { list.innerHTML = `<div class="text-center py-16 animate-fade-in"><div class="text-slate-800 mb-4"><i data-lucide="book-open" class="w-16 h-16 mx-auto"></i></div><p class="text-slate-600 text-sm">No releases recorded yet.</p></div>`; }
             else {
-                list.innerHTML = rel.map((e, i) => `
+                list.innerHTML = rel.map((e, i) => {
+                    // Handle Cloud ID vs Local Index
+                    const idAttr = useCloud ? `data-id="${e.id}"` : `data-index="${i}"`;
+                    const deleteFn = useCloud ? `deleteRelease('${e.id}')` : `deleteRelease(${i})`;
+                    const renameFn = useCloud ? `renameRelease('${e.id}', '${e.emotion}')` : `renameRelease(${i})`;
+                    
+                    return `
                     <div class="relative overflow-hidden rounded-xl mb-3 animate-fade-in" style="animation-delay: ${i*50}ms">
-                        <div class="delete-action bg-red-600 text-white" onclick="deleteEntry(${i})"><i data-lucide="trash-2" class="w-5 h-5"></i></div>
+                        <div class="delete-action bg-red-600 text-white" onclick="${deleteFn}"><i data-lucide="trash-2" class="w-5 h-5"></i></div>
                         <div class="glass-panel p-5 flex justify-between items-center swipe-item" ontouchstart="handleTouchStart(event, this)" ontouchmove="handleTouchMove(event, this)" ontouchend="handleTouchEnd(event, this)">
-                            <div class="flex-1 pr-4" onclick="renameEntry(${i})">
+                            <div class="flex-1 pr-4" onclick="${renameFn}">
                                 <h3 class="text-white font-medium capitalize text-lg truncate">${e.emotion} <i data-lucide="edit-2" class="inline-block w-3 h-3 text-slate-600 ml-1"></i></h3>
                                 <p class="text-xs text-slate-500 mt-1">${e.date} • ${e.time}</p>
                             </div>
@@ -702,17 +874,25 @@
                             </div>
                         </div>
                     </div>
-                `).join('');
+                `}).join('');
             }
             lucide.createIcons();
         }
+        
         let xDown = null, activeSwipeItem = null;
         function handleTouchStart(evt, el) { xDown = evt.touches[0].clientX; activeSwipeItem = el; }
         function handleTouchMove(evt, el) { if(!xDown || !activeSwipeItem) return; let xUp = evt.touches[0].clientX; let xDiff = xDown - xUp; if(xDiff > 0) { if(xDiff > 80) xDiff = 80; el.style.transform = `translateX(-${xDiff}px)`; } }
         function handleTouchEnd(evt, el) { if(!xDown || !activeSwipeItem) return; let xUp = evt.changedTouches[0].clientX; let xDiff = xDown - xUp; if(xDiff > 40) el.style.transform = `translateX(-80px)`; else el.style.transform = `translateX(0px)`; xDown = null; activeSwipeItem = null; }
-        function deleteEntry(i) { if(confirm("Delete this entry?")) { const rel = JSON.parse(localStorage.getItem('releases') || '[]'); rel.splice(i, 1); localStorage.setItem('releases', JSON.stringify(rel)); loadJournal(); } else loadJournal(); }
-        function renameEntry(i) { const rel = JSON.parse(localStorage.getItem('releases') || '[]'); const n = prompt("Rename entry:", rel[i].emotion); if(n && n.trim()!=="") { rel[i].emotion = n.trim(); localStorage.setItem('releases', JSON.stringify(rel)); loadJournal(); } }
-        function clearJournal() { if(confirm("Clear all entries?")) { localStorage.removeItem('releases'); loadJournal(); } }
+        
+        // Wrappers for rename/delete are already defined in the Firebase block at top
+        // Renaming local override for non-cloud
+        function renameReleaseLocal(i) {
+             const rel = JSON.parse(localStorage.getItem('releases') || '[]'); 
+             const n = prompt("Rename entry:", rel[i].emotion); 
+             if(n && n.trim()!=="") { rel[i].emotion = n.trim(); localStorage.setItem('releases', JSON.stringify(rel)); loadJournal(); }
+        }
+        // If cloud is NOT active, the inline onclick calls invoke the top-level functions which handle the split logic
+        
         function initQA() {
             const c = document.getElementById('qa-container'); if(!c) return;
             let html = "", cat = "";
