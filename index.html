@@ -29,8 +29,8 @@
                     },
                     animation: {
                         'breathe': 'breathe 8s infinite ease-in-out',
-                        'fade-in': 'fadeIn 0.8s ease-out forwards',
-                        'fade-out': 'fadeOut 0.8s ease-in forwards',
+                        'fade-in': 'fadeIn 0.6s ease-out forwards',
+                        'fade-out': 'fadeOut 0.3s ease-in forwards', // Faster fade out for smoothness
                         'slide-up': 'slideUp 0.3s ease-out forwards',
                         'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
                     },
@@ -40,12 +40,12 @@
                             '50%': { transform: 'scale(1.3)', opacity: '0.8' },
                         },
                         fadeIn: {
-                            '0%': { opacity: '0', transform: 'translateY(10px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
                         },
                         fadeOut: {
                             '0%': { opacity: '1' },
-                            '100%': { opacity: '0', visibility: 'hidden' },
+                            '100%': { opacity: '0' },
                         },
                         slideUp: {
                             '0%': { opacity: '0', transform: 'translateY(100%)' },
@@ -66,7 +66,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Merriweather:ital,wght@0,300;0,400;1,300&display=swap');
         
-        /* FIXED PWA LAYOUT: Flex Column ensures header sits at top and main fills exactly to bottom */
+        /* LOCKED VIEWPORT: Fixed layout to prevent bouncing */
         html, body {
             height: 100%;
             width: 100%;
@@ -91,9 +91,19 @@
         .btn-primary { transition: all 0.2s ease; }
         .btn-primary:active { transform: scale(0.96); }
         
-        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
-        .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+        /* SAFE AREA UTILS */
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
+        .pt-safe { padding-top: env(safe-area-inset-top, 20px); }
         
+        /* SMOOTH TRANSITIONS */
+        .view-section {
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+        .view-section.active-view {
+            opacity: 1;
+        }
+
         .faq-answer { display: none; }
         .faq-answer.active { display: block; animation: slideUp 0.3s ease-out forwards; }
         .faq-icon { transition: transform 0.3s ease; }
@@ -103,11 +113,11 @@
         .quote-mark.start { top: 0; left: 0; }
         .quote-mark.end { bottom: 0; right: 0; transform: rotate(180deg); }
         
-        /* MENU SPECIFIC - Updated: No Underline, just color */
+        /* MENU */
         .side-menu-open #side-menu-backdrop { display: block; opacity: 1; }
         .side-menu-open #side-menu { transform: translateX(0); }
         .menu-link { transition: color 0.3s ease; }
-        .menu-link.active { color: #d4af37; } /* Just color highlight */
+        .menu-link.active { color: #d4af37; } 
 
         .swipe-item { transition: transform 0.2s ease-out; position: relative; z-index: 10; background: rgba(15, 23, 42, 0.9); }
         .delete-action { position: absolute; right: 0; top: 0; bottom: 0; width: 80px; display: flex; align-items: center; justify-content: center; z-index: 0; }
@@ -161,7 +171,7 @@
         </nav>
 
         <div class="p-6 text-center border-t border-slate-800/50">
-            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 8.1</p>
+            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 8.2</p>
         </div>
     </aside>
 
@@ -179,14 +189,14 @@
         </div>
     </div>
 
-    <header class="flex-none w-full px-6 py-4 border-b border-slate-800/50 bg-slate-950/90 backdrop-blur z-50 flex justify-between items-center pt-safe relative">
+    <header class="flex-none w-full px-6 pb-4 border-b border-slate-800/50 bg-slate-950/90 backdrop-blur z-50 flex justify-between items-center pt-12 relative">
         <div><h1 class="text-xl font-serif italic text-gold-500 tracking-wide">The Pathway</h1><p class="text-[10px] text-slate-500 uppercase tracking-[0.2em] mt-0.5">Mechanism of Surrender</p></div>
         <button onclick="toggleMenu()" class="text-slate-400 hover:text-white transition p-2"><i data-lucide="menu" class="w-6 h-6"></i></button>
     </header>
 
-    <main id="app-content" class="flex-1 relative overflow-hidden w-full">
+    <main id="app-content" class="flex-1 relative w-full overflow-hidden">
         
-        <section id="view-guide" class="view-section animate-fade-in h-full overflow-y-auto p-4 pb-safe">
+        <section id="view-guide" class="view-section active-view h-full overflow-y-auto p-4 pb-safe">
             <div class="glass-panel p-6 rounded-2xl shadow-lg mb-8">
                 <h2 class="text-2xl font-light mb-4 text-white">The Mechanism</h2>
                 <p class="text-slate-300 leading-relaxed mb-4">Letting go involves being aware of a feeling, letting it come up, staying with it, and letting it run its course without wanting to make it different or do anything about it.</p>
@@ -200,7 +210,7 @@
             </div>
         </section>
 
-        <section id="view-process" class="view-section hidden animate-fade-in h-full overflow-hidden flex flex-col p-4 pb-safe">
+        <section id="view-process" class="view-section hidden h-full overflow-hidden flex flex-col p-4 pb-safe">
             <div class="glass-panel p-6 rounded-2xl shadow-lg flex-1 flex flex-col justify-center items-center text-center relative overflow-hidden">
                 <div id="process-step-0" class="process-step w-full">
                     <h2 class="text-3xl font-light mb-2 text-white">Identify Emotion</h2>
@@ -245,7 +255,7 @@
             </div>
         </section>
 
-        <section id="view-timer" class="view-section hidden animate-fade-in h-full overflow-hidden flex flex-col justify-center p-4 pb-safe">
+        <section id="view-timer" class="view-section hidden h-full overflow-hidden flex flex-col justify-center p-4 pb-safe">
             <div class="text-center w-full">
                 <div class="mb-8 max-w-[240px] mx-auto mt-8 relative z-30">
                     <button onclick="toggleModal('emotion-picker')" id="timer-emotion-btn" class="w-full flex items-center justify-between bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-2 text-slate-300 text-sm hover:border-gold-500 transition">
@@ -277,7 +287,7 @@
             </div>
         </section>
 
-        <section id="view-charts" class="view-section hidden animate-fade-in h-full overflow-hidden flex flex-col p-4 pb-safe">
+        <section id="view-charts" class="view-section hidden h-full overflow-hidden flex flex-col p-4 pb-safe">
             <div class="mb-4 flex justify-between items-end"><h2 class="text-2xl font-light text-white">Progress</h2></div>
             <div class="mb-6">
                 <label class="text-xs text-slate-500 uppercase tracking-wider mb-2 block">Select Emotion</label>
@@ -291,12 +301,12 @@
             </div>
         </section>
 
-        <section id="view-journal" class="view-section hidden animate-fade-in h-full overflow-y-auto p-4 pb-safe">
+        <section id="view-journal" class="view-section hidden h-full overflow-y-auto p-4 pb-safe">
             <div class="flex justify-between items-end mb-6"><h2 class="text-2xl font-light text-white">History</h2><button onclick="clearJournal()" class="text-xs text-red-400/60 hover:text-red-400 uppercase tracking-wider p-2">Clear All</button></div>
             <div id="journal-list" class="space-y-3 pb-8 overflow-x-hidden"></div>
         </section>
 
-        <section id="view-qa" class="view-section hidden animate-fade-in h-full overflow-y-auto p-4 pb-safe">
+        <section id="view-qa" class="view-section hidden h-full overflow-y-auto p-4 pb-safe">
             <h2 class="text-2xl font-light text-white mb-6">Q & A</h2>
             <div id="qa-container" class="space-y-3 pb-8"></div>
         </section>
@@ -471,25 +481,52 @@
         function selectEmotion(n) { currentSelectedEmotion=n; toggleModal('emotion-picker'); if(pickerCallback) { pickerCallback(n); pickerCallback=null; } else { const d1=document.getElementById('process-emotion-display'), d2=document.getElementById('timer-emotion-display'), d3=document.getElementById('chart-emotion-display'); if(d1) { d1.textContent=n; d1.classList.add('text-white'); } if(d2) { d2.textContent=n; d2.classList.add('text-gold-500'); } if(d3) { d3.textContent=n; loadChart(n); } } }
         function openPickerFor(ctx) { toggleModal('emotion-picker'); if(ctx==='process') pickerCallback=n=>{ const el=document.getElementById('process-emotion-display'); el.textContent=n; el.classList.remove('text-slate-400'); el.classList.add('text-white'); }; else if(ctx==='timer') pickerCallback=n=>{ const el=document.getElementById('timer-emotion-display'); el.textContent=n; el.classList.add('text-gold-500'); }; else if(ctx==='chart') pickerCallback=n=>{ document.getElementById('chart-emotion-display').textContent=n; loadChart(n); }; }
         
-        // Updated SwitchTab to close menu
-        function switchTab(id) { 
-            activeTab=id; 
-            document.querySelectorAll('.view-section').forEach(e=>e.classList.add('hidden')); 
-            const t=document.getElementById(`view-${id}`); 
-            if(t) { t.classList.remove('hidden'); t.classList.remove('animate-fade-in'); void t.offsetWidth; t.classList.add('animate-fade-in'); } 
+        // SMOOTH SWITCH: Fades current out, then fades new in
+        function switchTab(id) {
+            const current = document.querySelector('.view-section.active-view');
+            const next = document.getElementById(`view-${id}`);
             
-            // Update Sidebar Styling
+            if (current && current.id === `view-${id}`) {
+                // Close menu if already on tab
+                document.body.classList.remove('side-menu-open');
+                return;
+            }
+
+            // Update Menu State immediately
             document.querySelectorAll('.menu-link').forEach(b=>b.classList.remove('active')); 
             const btn = document.getElementById(`menu-${id}`);
             if(btn) btn.classList.add('active');
+            document.body.classList.remove('side-menu-open');
 
+            // Update Logic immediately
+            activeTab=id;
             if(id==='qa') initQA(); 
             if(id==='journal') loadJournal(); 
             if(id==='charts') document.getElementById('chart-emotion-btn').onclick=()=>openPickerFor('chart'); 
             if(id==='process') document.getElementById('process-emotion-btn').onclick=()=>openPickerFor('process');
-            
-            // Close Menu
-            document.body.classList.remove('side-menu-open');
+
+            // Transition
+            if (current) {
+                current.classList.remove('active-view');
+                setTimeout(() => {
+                    current.classList.add('hidden');
+                    if(next) {
+                        next.classList.remove('hidden');
+                        // Small delay to allow DOM render before opacity transition
+                        requestAnimationFrame(() => {
+                            requestAnimationFrame(() => {
+                                next.classList.add('active-view');
+                            });
+                        });
+                    }
+                }, 400); // Matches CSS transition duration
+            } else {
+                // Initial load fallback
+                if(next) {
+                    next.classList.remove('hidden');
+                    next.classList.add('active-view');
+                }
+            }
         }
 
         // BRIDGE FUNCTIONS (Overwritten by Module)
