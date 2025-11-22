@@ -77,7 +77,8 @@
             -webkit-font-smoothing: antialiased;
             -webkit-tap-highlight-color: transparent;
             overflow: hidden;
-            overscroll-behavior: none; /* Prevents bouncing on iOS/Android */
+            overscroll-behavior: none;
+            overscroll-behavior-y: none;
         }
 
         @supports (height: 100dvh) {
@@ -121,7 +122,6 @@
         .faq-icon { transition: transform 0.3s ease; }
         .faq-icon.active { transform: rotate(180deg); }
         
-        /* Updated Quote Wrapper for dynamic sizing */
         .quote-wrapper { position: relative; display: inline-block; padding: 2rem 3rem; max-width: 100%; }
         .quote-mark { position: absolute; width: 2.5rem; height: 2.5rem; color: rgba(212, 175, 55, 0.4); }
         .quote-mark.start { top: 0; left: 0; }
@@ -133,8 +133,11 @@
         .menu-link { transition: color 0.3s ease; }
         .menu-link.active { color: #d4af37; } 
 
-        .swipe-item { transition: transform 0.2s ease-out; position: relative; z-index: 10; background: rgba(15, 23, 42, 0.9); }
+        /* SWIPE TO DELETE STYLES */
+        .swipe-container { position: relative; overflow: hidden; border-radius: 0.75rem; margin-bottom: 0.75rem; }
+        .swipe-item { transition: transform 0.2s ease-out; position: relative; z-index: 10; background: rgba(15, 23, 42, 0.9); touch-action: pan-y; }
         .delete-action { position: absolute; right: 0; top: 0; bottom: 0; width: 80px; display: flex; align-items: center; justify-content: center; z-index: 0; }
+        
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%; background: #d4af37; cursor: pointer; margin-top: -8px; box-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #334155; border-radius: 2px; }
@@ -185,7 +188,7 @@
         </nav>
 
         <div class="px-6 pt-6 pb-4 text-center border-t border-slate-800/50 mt-auto">
-            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 8.9</p>
+            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 8.9.1</p>
         </div>
     </aside>
 
@@ -227,9 +230,9 @@
         </section>
 
         <section id="view-process" class="view-section hidden h-full overflow-hidden flex flex-col p-4">
-            <div class="glass-panel p-6 rounded-2xl shadow-lg flex-1 flex flex-col justify-center items-center text-center relative overflow-hidden">
+            <div class="glass-panel p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-lg flex-1 flex flex-col justify-center items-center text-center relative overflow-hidden max-w-md mx-auto w-full">
                 <div id="process-step-0" class="process-step w-full">
-                    <h2 class="text-3xl font-light mb-2 text-white">Identify Emotion</h2>
+                    <h2 class="text-2xl sm:text-3xl font-light mb-2 text-white">Identify Emotion</h2>
                     <p class="text-slate-400 mb-8 text-sm">Select the emotion on the scale.</p>
                     <button onclick="toggleModal('emotion-picker')" id="process-emotion-btn" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-6 py-4 text-lg text-white flex justify-between items-center hover:border-gold-500 transition mb-6">
                         <span id="process-emotion-display" class="text-slate-400">Select Emotion...</span><i data-lucide="chevron-down" class="w-5 h-5 text-slate-500"></i>
@@ -328,7 +331,7 @@
         </section>
     </main>
 
-    <div id="emotion-picker" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] hidden flex-col justify-end animate-fade-in">
+    <div id="emotion-picker" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] hidden flex-col justify-end animate-fade-in" onclick="if(event.target === this) toggleModal('emotion-picker')">
         <div class="bg-slate-900 border-t border-slate-700 rounded-t-3xl w-full max-w-md mx-auto max-h-[70vh] flex flex-col shadow-2xl">
             <div class="flex justify-between items-center p-6 border-b border-slate-800">
                 <h3 class="text-lg text-white font-medium">Select Emotion</h3>
@@ -355,7 +358,7 @@
         </div>
     </div>
 
-    <div id="bell-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60] hidden items-end sm:items-center justify-center p-4 animate-fade-in">
+    <div id="bell-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60] hidden items-end sm:items-center justify-center p-4 animate-fade-in" onclick="if(event.target === this) toggleModal('bell-modal')">
         <div class="bg-slate-900 border border-slate-700 p-6 rounded-2xl max-w-xs w-full shadow-2xl mb-safe sm:mb-0">
             <div class="flex justify-between items-center mb-4"><h3 class="text-lg text-white font-medium">Interval Bell</h3><button onclick="toggleModal('bell-modal')" class="text-slate-500"><i data-lucide="x" class="w-5 h-5"></i></button></div>
             <div class="space-y-2">
@@ -366,7 +369,7 @@
             </div>
         </div>
     </div>
-    <div id="ambience-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60] hidden items-end sm:items-center justify-center p-4 animate-fade-in">
+    <div id="ambience-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60] hidden items-end sm:items-center justify-center p-4 animate-fade-in" onclick="if(event.target === this) toggleModal('ambience-modal')">
         <div class="bg-slate-900 border border-slate-700 p-6 rounded-2xl max-w-xs w-full shadow-2xl mb-safe sm:mb-0">
             <div class="flex justify-between items-center mb-4"><h3 class="text-lg text-white font-medium">Ambient Sound</h3><button onclick="toggleModal('ambience-modal')" class="text-slate-500"><i data-lucide="x" class="w-5 h-5"></i></button></div>
             <div class="space-y-2 max-h-64 overflow-y-auto">
@@ -566,8 +569,10 @@
         // STATE
         let activeTab = 'guide';
         let timerInterval, timerDuration = 600, defaultDuration = 600, timerEndTime = 0, isTimerRunning = false;
-        let bellInterval = 0, currentAmbience = 'none', audioContext, mainGain, noiseNode, modOsc, modGain, birdInterval, chimeInterval;
+        let bellInterval = 0, currentAmbience = 'none', audioContext, noiseNode, modOsc, birdInterval, chimeInterval;
         let processInterval, processStartTime = 0, pickerCallback, progressChart;
+        let lastBellMinute = -1, halfwayBellPlayed = false;
+        let touchStartX = 0, currentSwipeItem = null;
 
         window.onload = function() {
             initIntro();
@@ -576,8 +581,6 @@
             initEmotionPicker();
             updateTimerDisplay();
             loadJournal();
-            
-            // Check if we should skip intro
             if (sessionStorage.getItem('intro_dismissed')) {
                 document.getElementById('intro-screen').style.display = 'none';
             }
@@ -592,27 +595,60 @@
         }
         
         function dismissIntro() { 
+            checkAudioContext();
             document.getElementById('intro-screen').style.opacity='0'; 
             sessionStorage.setItem('intro_dismissed', 'true');
             setTimeout(()=>{ document.getElementById('intro-screen').style.display='none'; },1000); 
-            initAudio(); 
         }
         
-        // Menu Logic
-        function toggleMenu() {
-            const body = document.body;
-            body.classList.toggle('side-menu-open');
-        }
-
+        function toggleMenu() { document.body.classList.toggle('side-menu-open'); }
         function toggleSettings() { toggleMenu(); } 
 
-        // AUDIO ENGINE - FIXED & ROBUST
-        function initAudio() {
+        // TOUCH SWIPE LOGIC
+        window.handleTouchStart = (e, el) => {
+            touchStartX = e.touches[0].clientX;
+            currentSwipeItem = el;
+            // Close other swipes
+            document.querySelectorAll('.swipe-item').forEach(item => {
+                if(item !== el) item.style.transform = 'translateX(0)';
+            });
+            el.style.transition = 'none'; // Disable transition during drag
+        };
+
+        window.handleTouchMove = (e, el) => {
+            if (!currentSwipeItem) return;
+            const touchX = e.touches[0].clientX;
+            const diff = touchX - touchStartX;
+            
+            // Only allow left swipe
+            if (diff < 0) {
+                const translate = Math.max(diff, -80); // Limit to button width
+                el.style.transform = `translateX(${translate}px)`;
+            }
+        };
+
+        window.handleTouchEnd = (e, el) => {
+            if (!currentSwipeItem) return;
+            el.style.transition = 'transform 0.2s ease-out'; // Re-enable transition
+            
+            const currentTransform = getComputedStyle(el).transform;
+            const matrix = new WebKitCSSMatrix(currentTransform);
+            const translateX = matrix.m41;
+            
+            // If swiped more than half way (40px), snap open
+            if (translateX < -40) {
+                el.style.transform = 'translateX(-80px)';
+            } else {
+                el.style.transform = 'translateX(0)';
+            }
+            currentSwipeItem = null;
+        };
+
+        // ROBUST AUDIO ENGINE
+        function checkAudioContext() {
             if(!audioContext) {
                 const AC = window.AudioContext || window.webkitAudioContext;
                 audioContext = new AC();
-                mainGain = audioContext.createGain();
-                mainGain.connect(audioContext.destination);
             }
             if(audioContext.state === 'suspended') {
                 audioContext.resume();
@@ -620,6 +656,7 @@
         }
 
         function createBuffer(type) {
+            if (!audioContext) return null;
             const bs = audioContext.sampleRate * 2;
             const buffer = audioContext.createBuffer(1, bs, audioContext.sampleRate);
             const data = buffer.getChannelData(0);
@@ -655,56 +692,34 @@
             if(!audioContext) return; 
             const osc = audioContext.createOscillator(), osc2 = audioContext.createOscillator(), gain = audioContext.createGain(), modGain = audioContext.createGain(); 
             const freq = [523.25, 587.33, 659.25, 783.99, 880.00][Math.floor(Math.random()*5)]; 
-            osc.frequency.value = freq; 
-            osc2.frequency.value = freq * 2.5; 
-            modGain.gain.value = 500; 
-            osc2.connect(modGain); 
-            modGain.connect(osc.frequency); 
-            osc.connect(gain); 
-            gain.connect(audioContext.destination); 
+            osc.frequency.value = freq; osc2.frequency.value = freq * 2.5; modGain.gain.value = 500; 
+            osc2.connect(modGain); modGain.connect(osc.frequency); osc.connect(gain); gain.connect(audioContext.destination); 
             const now = audioContext.currentTime; 
-            gain.gain.setValueAtTime(0, now); 
-            gain.gain.linearRampToValueAtTime(0.1, now+0.02); 
-            gain.gain.exponentialRampToValueAtTime(0.001, now+4); 
-            osc.start(now); 
-            osc2.start(now); 
-            osc.stop(now+4.5); 
-            osc2.stop(now+4.5); 
+            gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.1, now+0.05); gain.gain.exponentialRampToValueAtTime(0.001, now+4); 
+            osc.start(now); osc2.start(now); osc.stop(now+4.5); osc2.stop(now+4.5); 
         }
         
         function playSingleBird() { 
             if(!audioContext) return; 
             const osc = audioContext.createOscillator(), gain = audioContext.createGain(); 
-            osc.connect(gain); 
-            gain.connect(audioContext.destination); 
+            osc.connect(gain); gain.connect(audioContext.destination); 
             const now = audioContext.currentTime, freq = 2000 + Math.random()*1500; 
-            osc.frequency.setValueAtTime(freq, now); 
-            osc.frequency.linearRampToValueAtTime(freq+500, now+0.1); 
-            osc.frequency.linearRampToValueAtTime(freq-200, now+0.2); 
-            gain.gain.setValueAtTime(0, now); 
-            gain.gain.linearRampToValueAtTime(0.05, now+0.02); 
-            gain.gain.linearRampToValueAtTime(0, now+0.25); 
-            osc.start(now); 
-            osc.stop(now+0.3); 
+            osc.frequency.setValueAtTime(freq, now); osc.frequency.linearRampToValueAtTime(freq+500, now+0.1); osc.frequency.linearRampToValueAtTime(freq-200, now+0.2); 
+            gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.05, now+0.05); gain.gain.linearRampToValueAtTime(0, now+0.3); 
+            osc.start(now); osc.stop(now+0.4); 
         }
         
         function playBell() { 
-            if(!audioContext) initAudio();
-            if(audioContext.state === 'suspended') audioContext.resume();
-            
+            checkAudioContext();
             const osc = audioContext.createOscillator();
             const gain = audioContext.createGain(); 
-            
-            osc.connect(gain); 
-            gain.connect(audioContext.destination); 
-            
-            osc.frequency.setValueAtTime(440, audioContext.currentTime); 
-            gain.gain.setValueAtTime(0, audioContext.currentTime); 
-            gain.gain.linearRampToValueAtTime(0.5, audioContext.currentTime+0.05); 
-            gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime+3); 
-            
-            osc.start(audioContext.currentTime); 
-            osc.stop(audioContext.currentTime+3.5); 
+            osc.connect(gain); gain.connect(audioContext.destination); 
+            const now = audioContext.currentTime;
+            osc.frequency.setValueAtTime(440, now); 
+            gain.gain.setValueAtTime(0, now); 
+            gain.gain.linearRampToValueAtTime(0.5, now+0.1); 
+            gain.gain.exponentialRampToValueAtTime(0.001, now+3); 
+            osc.start(now); osc.stop(now+3.5); 
         }
         
         function stopAmbience() { 
@@ -716,67 +731,37 @@
         
         function playAmbience(type) {
             stopAmbience(); 
-            initAudio();
-            if(audioContext.state === 'suspended') audioContext.resume();
-
+            checkAudioContext();
             const gain = audioContext.createGain();
+            const now = audioContext.currentTime;
             
             if(type === 'rain') { 
-                noiseNode = audioContext.createBufferSource(); 
-                noiseNode.buffer = createBuffer('pink'); 
-                noiseNode.loop = true; 
-                gain.gain.value = 0.2; 
-                noiseNode.connect(gain); 
-                gain.connect(audioContext.destination); 
-                noiseNode.start(); 
+                noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createBuffer('pink'); noiseNode.loop = true; 
+                gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.2, now+0.5);
+                noiseNode.connect(gain); gain.connect(audioContext.destination); noiseNode.start(now); 
             }
             else if(type === 'river') { 
-                noiseNode = audioContext.createBufferSource(); 
-                noiseNode.buffer = createBuffer('brown'); 
-                noiseNode.loop = true; 
-                const f = audioContext.createBiquadFilter(); 
-                f.type='lowpass'; 
-                f.frequency.value=600; 
-                gain.gain.value=0.4; 
-                noiseNode.connect(f); 
-                f.connect(gain); 
-                gain.connect(audioContext.destination); 
-                noiseNode.start(); 
+                noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createBuffer('brown'); noiseNode.loop = true; 
+                const f = audioContext.createBiquadFilter(); f.type='lowpass'; f.frequency.value=600; 
+                gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.4, now+0.5);
+                noiseNode.connect(f); f.connect(gain); gain.connect(audioContext.destination); noiseNode.start(now); 
             }
             else if(type === 'wind') { 
-                noiseNode = audioContext.createBufferSource(); 
-                noiseNode.buffer = createBuffer('pink'); 
-                noiseNode.loop = true; 
-                const f = audioContext.createBiquadFilter(); 
-                f.type='lowpass'; 
-                f.Q.value=1; 
-                modOsc = audioContext.createOscillator(); 
-                modOsc.frequency.value=0.15; 
-                const mg = audioContext.createGain(); 
-                mg.gain.value=400; 
-                modOsc.connect(mg); 
-                mg.connect(f.frequency); 
-                f.frequency.value=500; 
-                noiseNode.connect(f); 
-                f.connect(gain); 
-                gain.connect(audioContext.destination); 
-                gain.gain.value=0.3; 
-                noiseNode.start(); 
-                modOsc.start(); 
+                noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createBuffer('pink'); noiseNode.loop = true; 
+                const f = audioContext.createBiquadFilter(); f.type='lowpass'; f.Q.value=1; 
+                modOsc = audioContext.createOscillator(); modOsc.frequency.value=0.15; 
+                const mg = audioContext.createGain(); mg.gain.value=400; 
+                modOsc.connect(mg); mg.connect(f.frequency); f.frequency.value=500; 
+                noiseNode.connect(f); f.connect(gain); gain.connect(audioContext.destination); 
+                gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.3, now+0.5);
+                noiseNode.start(now); modOsc.start(now); 
             }
             else if(type === 'birds') { 
                 const gain = audioContext.createGain(); 
-                noiseNode = audioContext.createBufferSource(); 
-                noiseNode.buffer = createBuffer('pink'); 
-                noiseNode.loop = true; 
-                const f = audioContext.createBiquadFilter(); 
-                f.type='highpass'; 
-                f.frequency.value=2000; 
-                gain.gain.value=0.02; 
-                noiseNode.connect(f); 
-                f.connect(gain); 
-                gain.connect(audioContext.destination); 
-                noiseNode.start(); 
+                noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createBuffer('pink'); noiseNode.loop = true; 
+                const f = audioContext.createBiquadFilter(); f.type='highpass'; f.frequency.value=2000; 
+                gain.gain.value=0.02; noiseNode.connect(f); f.connect(gain); gain.connect(audioContext.destination); 
+                noiseNode.start(now); 
                 birdInterval = setInterval(() => { if(Math.random()>0.6) playSingleBird(); }, 1500); 
             }
             else if(type === 'chimes') { 
@@ -787,7 +772,7 @@
 
         // TIMER Logic
         function toggleTimer() {
-            initAudio();
+            checkAudioContext();
             const btn = document.getElementById('timer-toggle'), emotionBtn = document.getElementById('timer-emotion-btn');
             if (!currentSelectedEmotion && !isTimerRunning) { emotionBtn.classList.add('shake-error'); setTimeout(() => { emotionBtn.classList.remove('shake-error'); }, 500); return; }
             const bc = document.getElementById('breath-circle'), d = document.getElementById('timer-display');
@@ -797,11 +782,32 @@
             } else {
                 if (timerDuration <= 0) timerDuration = defaultDuration;
                 currentTimerSessionLength = timerDuration; isTimerRunning = true; timerEndTime = Date.now() + (timerDuration*1000);
-                initAudio(); if(currentAmbience !== 'none') playAmbience(currentAmbience);
+                lastBellMinute = -1; halfwayBellPlayed = false; // Reset bell state
+                
+                if(currentAmbience !== 'none') playAmbience(currentAmbience);
                 btn.innerHTML = '<i data-lucide="pause" class="w-8 h-8 fill-current"></i>'; bc.classList.add('animate-breathe'); d.disabled = true; updateTimerDisplay();
+                
                 timerInterval = setInterval(() => {
                     const now = Date.now(), rem = Math.ceil((timerEndTime - now)/1000);
-                    if (bellInterval !== 0 && rem > 0) { const el = currentTimerSessionLength - rem; if (bellInterval === 'half') { if (el === Math.floor(currentTimerSessionLength/2)) playBell(); } else if (typeof bellInterval === 'number' && el > 0 && el % (bellInterval*60) === 0) playBell(); }
+                    
+                    // Improved Interval Logic
+                    if (bellInterval !== 0 && rem > 0) {
+                        const elapsed = currentTimerSessionLength - rem;
+                        
+                        if (bellInterval === 'half') {
+                            const halfWay = Math.floor(currentTimerSessionLength / 2);
+                            if (Math.abs(elapsed - halfWay) < 2 && !halfwayBellPlayed) {
+                                playBell(); halfwayBellPlayed = true;
+                            }
+                        } else {
+                            const currentMinute = Math.floor(elapsed / 60);
+                            if (currentMinute > lastBellMinute && currentMinute > 0) {
+                                lastBellMinute = currentMinute;
+                                if (currentMinute % bellInterval === 0) playBell();
+                            }
+                        }
+                    }
+                    
                     if (rem <= 0) { timerDuration = 0; isTimerRunning = false; clearInterval(timerInterval); stopAmbience(); playBell(); btn.innerHTML = '<i data-lucide="play" class="w-8 h-8 fill-current ml-1"></i>'; bc.classList.remove('animate-breathe'); bc.style.transform='scale(1)'; d.value="00:00"; d.disabled=false; document.getElementById('complete-modal').classList.remove('hidden'); document.getElementById('complete-modal').classList.add('flex'); } else updateTimerDisplay();
                 }, 1000);
             }
@@ -810,7 +816,6 @@
         function formatTime(sec) { if (sec < 0) sec = 0; const m = Math.floor(sec/60).toString().padStart(2,'0'), s = (sec%60).toString().padStart(2,'0'); return `${m}:${s}`; }
         function updateTimerDisplay() { let sec = timerDuration; if(isTimerRunning) { const now = Date.now(), rem = Math.ceil((timerEndTime - now)/1000); sec = rem > 0 ? rem : 0; } document.getElementById('timer-display').value = formatTime(sec); }
         
-        // UPDATED: Ensures manual input updates the default reset point
         function handleTimerInput(input) { 
             let val = input.value.replace(/\D/g, ''); 
             if (val.length > 4) val = val.slice(-4); 
@@ -818,48 +823,44 @@
             const m = parseInt(val.slice(0, 2), 10); 
             const s = parseInt(val.slice(2, 4), 10); 
             timerDuration = (m * 60) + s; 
-            defaultDuration = timerDuration; // Capture this as the new reset point
+            defaultDuration = timerDuration; 
             input.value = `${val.slice(0,2)}:${val.slice(2,4)}`; 
         }
         
-        function formatInputTime(input) { updateTimerDisplay(); }
-        function adjustTimer(amt) { initAudio(); if(isTimerRunning) return; if(timerDuration+amt > 0) { timerDuration+=amt; defaultDuration=timerDuration; updateTimerDisplay(); } }
+        function adjustTimer(amt) { 
+            checkAudioContext(); 
+            if(isTimerRunning) return; 
+            if(timerDuration+amt > 0) { 
+                timerDuration+=amt; 
+                defaultDuration=timerDuration; 
+                updateTimerDisplay(); 
+            } 
+        }
         
-        // UPDATED: Resets to the last set defaultDuration
         function resetTimer() { 
-            initAudio(); 
-            isTimerRunning = false; 
-            clearInterval(timerInterval); 
-            stopAmbience(); 
-            
-            // Reset logic: Go back to whatever the user last set (defaultDuration)
+            checkAudioContext();
+            isTimerRunning = false; clearInterval(timerInterval); stopAmbience(); 
             timerDuration = defaultDuration; 
-            
             const btn = document.getElementById('timer-toggle'), bc = document.getElementById('breath-circle'), d = document.getElementById('timer-display'); 
             if(btn) btn.innerHTML = '<i data-lucide="play" class="w-8 h-8 fill-current ml-1"></i>'; 
             if(bc) { bc.classList.remove('animate-breathe'); bc.style.transform='scale(1)'; } 
             if(d) d.disabled = false; 
-            lucide.createIcons(); 
-            updateTimerDisplay(); 
+            lucide.createIcons(); updateTimerDisplay(); 
         }
 
         // UI HELPERS
         function toggleModal(id) { 
             if(id === 'emotion-picker' && !document.getElementById(id).classList.contains('hidden')) pickerCallback = null; 
-            const el = document.getElementById(id); 
-            el.classList.toggle('hidden'); 
-            el.classList.toggle('flex'); 
+            const el = document.getElementById(id); el.classList.toggle('hidden'); el.classList.toggle('flex'); 
         }
         function setBellInterval(val) { 
-            initAudio(); 
-            bellInterval=val; 
+            checkAudioContext(); bellInterval=val; 
             ['0','1','5','half'].forEach(v => document.getElementById(`bell-check-${v}`).classList.add('hidden')); 
             document.getElementById(`bell-check-${val}`).classList.remove('hidden'); 
             toggleModal('bell-modal'); 
         }
         function setAmbience(val) { 
-            initAudio(); 
-            currentAmbience=val; 
+            checkAudioContext(); currentAmbience=val; 
             ['none','rain','wind','river','birds','chimes'].forEach(v => document.getElementById(`amb-check-${v}`).classList.add('hidden')); 
             document.getElementById(`amb-check-${val}`).classList.remove('hidden'); 
             document.getElementById('ambience-status').classList.toggle('hidden', val==='none'); 
@@ -872,49 +873,25 @@
         function selectEmotion(n) { currentSelectedEmotion=n; toggleModal('emotion-picker'); if(pickerCallback) { pickerCallback(n); pickerCallback=null; } else { const d1=document.getElementById('process-emotion-display'), d2=document.getElementById('timer-emotion-display'), d3=document.getElementById('chart-emotion-display'); if(d1) { d1.textContent=n; d1.classList.add('text-white'); } if(d2) { d2.textContent=n; d2.classList.add('text-gold-500'); } if(d3) { d3.textContent=n; loadChart(n); } } }
         function openPickerFor(ctx) { toggleModal('emotion-picker'); if(ctx==='process') pickerCallback=n=>{ const el=document.getElementById('process-emotion-display'); el.textContent=n; el.classList.remove('text-slate-400'); el.classList.add('text-white'); }; else if(ctx==='timer') pickerCallback=n=>{ const el=document.getElementById('timer-emotion-display'); el.textContent=n; el.classList.add('text-gold-500'); }; else if(ctx==='chart') pickerCallback=n=>{ document.getElementById('chart-emotion-display').textContent=n; loadChart(n); }; }
         
-        // SMOOTH SWITCH: Fades current out, then fades new in
+        // SMOOTH SWITCH
         function switchTab(id) {
             const current = document.querySelector('.view-section.active-view');
             const next = document.getElementById(`view-${id}`);
-            
-            if (current && current.id === `view-${id}`) {
-                document.body.classList.remove('side-menu-open');
-                return;
-            }
-
+            if (current && current.id === `view-${id}`) { document.body.classList.remove('side-menu-open'); return; }
             document.querySelectorAll('.menu-link').forEach(b=>b.classList.remove('active')); 
-            const btn = document.getElementById(`menu-${id}`);
-            if(btn) btn.classList.add('active');
+            const btn = document.getElementById(`menu-${id}`); if(btn) btn.classList.add('active');
             document.body.classList.remove('side-menu-open');
-
             activeTab=id;
-            if(id==='qa') initQA(); 
-            if(id==='journal') loadJournal(); 
+            if(id==='qa') initQA(); if(id==='journal') loadJournal(); 
             if(id==='charts') document.getElementById('chart-emotion-btn').onclick=()=>openPickerFor('chart'); 
             if(id==='process') document.getElementById('process-emotion-btn').onclick=()=>openPickerFor('process');
-
             if (current) {
                 current.classList.remove('active-view');
-                setTimeout(() => {
-                    current.classList.add('hidden');
-                    if(next) {
-                        next.classList.remove('hidden');
-                        requestAnimationFrame(() => {
-                            requestAnimationFrame(() => {
-                                next.classList.add('active-view');
-                            });
-                        });
-                    }
-                }, 200);
-            } else {
-                if(next) {
-                    next.classList.remove('hidden');
-                    next.classList.add('active-view');
-                }
-            }
+                setTimeout(() => { current.classList.add('hidden'); if(next) { next.classList.remove('hidden'); requestAnimationFrame(() => { requestAnimationFrame(() => { next.classList.add('active-view'); }); }); } }, 200);
+            } else { if(next) { next.classList.remove('hidden'); next.classList.add('active-view'); } }
         }
 
-        // BRIDGE FUNCTIONS (Overwritten by Module)
+        // BRIDGE FUNCTIONS
         window.saveTimerSession = () => {}; window.saveAndClose = () => {}; window.deleteEntry = () => {}; window.renameEntry = () => {}; window.clearJournal = () => {}; window.loadJournal = () => {};
         window.startProcess = () => { if(!currentSelectedEmotion) { alert("Please select an emotion first."); return; } currentProcessEmotion = currentSelectedEmotion; document.querySelectorAll('.current-emotion').forEach(el=>el.textContent=currentProcessEmotion); processSeconds=0; nextStep(1); document.getElementById('process-reset-btn').classList.remove('hidden'); };
         window.nextStep = (s) => { document.querySelectorAll('.process-step').forEach(e=>e.classList.add('hidden')); const t=document.getElementById(`process-step-${s}`); t.classList.remove('hidden'); t.classList.add('animate-fade-in'); if(s===4) startProcessTimer(); else stopProcessTimer(); if(s===5) document.getElementById('process-reset-btn').classList.add('hidden'); };
@@ -922,7 +899,7 @@
         window.stopProcessTimer = () => { if(processInterval) clearInterval(processInterval); };
         window.finishProcess = () => { stopProcessTimer(); nextStep(5); };
         window.resetProcess = () => { stopProcessTimer(); document.querySelectorAll('.process-step').forEach(e=>e.classList.add('hidden')); document.getElementById('process-step-0').classList.remove('hidden'); document.getElementById('process-reset-btn').classList.add('hidden'); };
-        window.saveAndClose = () => { const int = document.getElementById('process-intensity-slider').value; const rel = JSON.parse(localStorage.getItem('releases') || '[]'); rel.unshift({ emotion: currentProcessEmotion, date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}), time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), duration: processSeconds, intensity: int }); localStorage.setItem('releases', JSON.stringify(rel)); resetProcess(); switchTab('journal'); }
+        window.saveAndClose = () => { const int = document.getElementById('process-intensity-slider').value; const rel = JSON.parse(localStorage.getItem('releases') || '[]'); rel.unshift({ emotion: currentProcessEmotion, date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}), time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), duration: window.processSeconds, intensity: int }); localStorage.setItem('releases', JSON.stringify(rel)); resetProcess(); switchTab('journal'); }
         window.loadChart = (em) => { const ctx = document.getElementById('progressChart'); if(!ctx) return; document.getElementById('chart-placeholder').classList.add('hidden'); let data = globalLogData.filter(r => r.emotion === em && r.intensity).reverse(); if(data.length===0) { if(progressChart) progressChart.destroy(); document.getElementById('chart-placeholder').classList.remove('hidden'); document.getElementById('chart-placeholder').textContent = `No data yet for "${em}"`; return; } const lbl = data.map(x => x.date), val = data.map(x => parseInt(x.intensity)); if(progressChart) progressChart.destroy(); progressChart = new Chart(ctx, { type: 'line', data: { labels: lbl, datasets: [{ label: 'Intensity', data: val, borderColor: '#d4af37', backgroundColor: 'rgba(212, 175, 55, 0.1)', tension: 0.4, fill: true, pointBackgroundColor: '#d4af37' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 10, grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } }, x: { grid: { display: false }, ticks: { color: '#94a3b8' } } }, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#0f172a', borderColor: '#334155', borderWidth: 1 } } } }); };
         window.closeCompleteModal = () => { document.getElementById('complete-modal').classList.add('hidden'); document.getElementById('complete-modal').classList.remove('flex'); resetTimer(); };
     </script>
@@ -930,7 +907,7 @@
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
-        import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot, query, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+        import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot, query, orderBy, serverTimestamp, writeBatch, getDocs } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyBc1FA6RTM0sTktO3hhMxWxhYp50CsKJ0I",
@@ -996,7 +973,7 @@
             else {
                 list.innerHTML = logs.map((e, i) => {
                     const idParam = e.id ? `'${e.id}'` : i; 
-                    return `<div class="relative overflow-hidden rounded-xl mb-3 animate-fade-in" style="animation-delay: ${i*50}ms"><div class="delete-action bg-red-600 text-white" onclick="deleteEntry(${idParam})"><i data-lucide="trash-2" class="w-5 h-5"></i></div><div class="glass-panel p-5 flex justify-between items-center swipe-item" ontouchstart="handleTouchStart(event, this)" ontouchmove="handleTouchMove(event, this)" ontouchend="handleTouchEnd(event, this)"><div class="flex-1 pr-4" onclick="renameEntry(${idParam}, '${e.emotion}')"><h3 class="text-white font-medium capitalize text-lg truncate">${e.emotion} <i data-lucide="edit-2" class="inline-block w-3 h-3 text-slate-600 ml-1"></i></h3><p class="text-xs text-slate-500 mt-1">${e.date} • ${e.time}</p></div><div class="text-right shrink-0"><div class="text-xs font-mono text-gold-500">${e.duration > 60 ? Math.floor(e.duration/60) + 'm' : e.duration + 's'}</div>${e.intensity ? `<div class="text-[10px] text-slate-500 mt-1">Int: ${e.intensity}</div>` : ''}</div></div></div>`;
+                    return `<div class="relative overflow-hidden rounded-xl mb-3 animate-fade-in swipe-container" style="animation-delay: ${i*50}ms"><div class="delete-action bg-red-600 text-white" onclick="deleteEntry(${idParam})"><i data-lucide="trash-2" class="w-5 h-5"></i></div><div class="glass-panel p-5 flex justify-between items-center swipe-item" ontouchstart="handleTouchStart(event, this)" ontouchmove="handleTouchMove(event, this)" ontouchend="handleTouchEnd(event, this)"><div class="flex-1 pr-4" onclick="renameEntry(${idParam}, '${e.emotion}')"><h3 class="text-white font-medium capitalize text-lg truncate">${e.emotion} <i data-lucide="edit-2" class="inline-block w-3 h-3 text-slate-600 ml-1"></i></h3><p class="text-xs text-slate-500 mt-1">${e.date} • ${e.time}</p></div><div class="text-right shrink-0"><div class="text-xs font-mono text-gold-500">${e.duration > 60 ? Math.floor(e.duration/60) + 'm' : e.duration + 's'}</div>${e.intensity ? `<div class="text-[10px] text-slate-500 mt-1">Int: ${e.intensity}</div>` : ''}</div></div></div>`;
                 }).join('');
             }
             if(window.lucide) window.lucide.createIcons();
@@ -1049,8 +1026,25 @@
 
         window.clearJournal = async () => {
             if (!confirm("Clear all journal entries? This cannot be undone.")) return;
-            if (isLoggedIn) { alert("To protect your data, bulk clear is disabled for cloud logs. Please delete entries individually."); } 
-            else { localStorage.removeItem('releases'); window.renderJournal(); }
+            
+            if (isLoggedIn && currentUser) {
+                try {
+                    const q = query(collection(db, 'users', currentUser.uid, 'logs'));
+                    const snapshot = await getDocs(q);
+                    const batch = writeBatch(db);
+                    snapshot.docs.forEach((doc) => {
+                        batch.delete(doc.ref);
+                    });
+                    await batch.commit();
+                    alert("Cloud logs cleared successfully.");
+                } catch (e) {
+                    console.error("Error clearing logs:", e);
+                    alert("Failed to clear logs: " + e.message);
+                }
+            } else { 
+                localStorage.removeItem('releases'); 
+                window.renderJournal(); 
+            }
         };
     </script>
 </body>
