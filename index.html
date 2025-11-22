@@ -29,8 +29,8 @@
                     },
                     animation: {
                         'breathe': 'breathe 8s infinite ease-in-out',
-                        'fade-in': 'fadeIn 0.6s ease-out forwards',
-                        'fade-out': 'fadeOut 0.2s ease-in forwards', // Faster fade out
+                        'fade-in': 'fadeIn 0.7s ease-out forwards', /* Matched to transition speed */
+                        'fade-out': 'fadeOut 0.7s ease-in forwards', 
                         'slide-up': 'slideUp 0.3s ease-out forwards',
                         'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
                     },
@@ -95,10 +95,10 @@
         .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
         .pt-safe { padding-top: env(safe-area-inset-top, 20px); }
         
-        /* SMOOTH TRANSITIONS */
+        /* SMOOTH TRANSITIONS - Updated to 0.7s to match menu */
         .view-section {
             opacity: 0;
-            transition: opacity 0.2s ease-in-out; /* FASTER transition */
+            transition: opacity 0.7s ease-in-out; 
         }
         .view-section.active-view {
             opacity: 1;
@@ -133,10 +133,10 @@
 
     <aside id="side-menu" class="fixed top-0 bottom-0 right-0 w-3/4 max-w-xs bg-slate-900/95 backdrop-blur-xl border-l border-slate-800 z-[100] transform translate-x-full transition-transform duration-[700ms] ease-out flex flex-col shadow-2xl pt-safe pb-safe">
         
-        <div class="p-6 border-b border-slate-800 flex flex-col relative">
-            <button onclick="toggleMenu()" class="absolute top-6 right-6 text-slate-400 hover:text-white transition"><i data-lucide="x" class="w-6 h-6"></i></button>
+        <div class="p-6 border-b border-slate-800 flex flex-col relative" style="padding-top: calc(env(safe-area-inset-top) + 2rem);">
+            <button onclick="toggleMenu()" class="absolute top-0 right-6 mt-8 text-slate-400 hover:text-white transition" style="margin-top: calc(env(safe-area-inset-top) + 1.5rem);"><i data-lucide="x" class="w-6 h-6"></i></button>
             
-            <div class="mt-8 mb-2">
+            <div class="mt-4 mb-2">
                 <h2 class="text-xl font-serif italic text-gold-500 tracking-wide">The Pathway</h2>
                 <p class="text-[10px] text-slate-500 uppercase tracking-[0.2em] mt-1">Mechanism of Surrender</p>
             </div>
@@ -161,7 +161,7 @@
             </div>
         </div>
 
-        <nav class="flex-1 overflow-y-auto p-6 space-y-2">
+        <nav class="flex-1 overflow-y-auto p-6 space-y-2 pb-32">
             <button onclick="switchTab('guide')" id="menu-guide" class="menu-link w-full text-left py-3 px-2 text-lg font-light text-slate-300 hover:text-white transition flex items-center gap-4 active"><i data-lucide="book" class="w-5 h-5 opacity-70"></i> Guide</button>
             <button onclick="switchTab('process')" id="menu-process" class="menu-link w-full text-left py-3 px-2 text-lg font-light text-slate-300 hover:text-white transition flex items-center gap-4"><i data-lucide="layers" class="w-5 h-5 opacity-70"></i> Work</button>
             <button onclick="switchTab('timer')" id="menu-timer" class="menu-link w-full text-left py-3 px-2 text-lg font-light text-slate-300 hover:text-white transition flex items-center gap-4"><i data-lucide="clock" class="w-5 h-5 opacity-70"></i> Timer</button>
@@ -170,8 +170,8 @@
             <button onclick="switchTab('qa')" id="menu-qa" class="menu-link w-full text-left py-3 px-2 text-lg font-light text-slate-300 hover:text-white transition flex items-center gap-4"><i data-lucide="help-circle" class="w-5 h-5 opacity-70"></i> Q&A</button>
         </nav>
 
-        <div class="p-6 text-center border-t border-slate-800/50">
-            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 8.3</p>
+        <div class="p-6 text-center border-t border-slate-800/50 pb-safe">
+            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 8.4</p>
         </div>
     </aside>
 
@@ -189,14 +189,14 @@
         </div>
     </div>
 
-    <header class="flex-none w-full px-6 pb-4 border-b border-slate-800/50 bg-slate-950/90 backdrop-blur z-50 flex justify-between items-center pt-6 pt-safe relative">
+    <header class="flex-none w-full px-6 pb-4 border-b border-slate-800/50 bg-slate-950/90 backdrop-blur z-50 flex justify-between items-center relative" style="padding-top: calc(env(safe-area-inset-top) + 2rem);">
         <div><h1 class="text-xl font-serif italic text-gold-500 tracking-wide">The Pathway</h1><p class="text-[10px] text-slate-500 uppercase tracking-[0.2em] mt-0.5">Mechanism of Surrender</p></div>
         <button onclick="toggleMenu()" class="text-slate-400 hover:text-white transition p-2"><i data-lucide="menu" class="w-6 h-6"></i></button>
     </header>
 
     <main id="app-content" class="flex-1 relative w-full overflow-hidden">
         
-        <section id="view-guide" class="view-section active-view h-full overflow-y-auto p-4 pb-safe">
+        <section id="view-guide" class="view-section active-view h-full overflow-y-auto p-4 pb-32">
             <div class="glass-panel p-6 rounded-2xl shadow-lg mb-8">
                 <h2 class="text-2xl font-light mb-4 text-white">The Mechanism</h2>
                 <p class="text-slate-300 leading-relaxed mb-4">Letting go involves being aware of a feeling, letting it come up, staying with it, and letting it run its course without wanting to make it different or do anything about it.</p>
@@ -210,7 +210,7 @@
             </div>
         </section>
 
-        <section id="view-process" class="view-section hidden h-full overflow-hidden flex flex-col p-4 pb-safe">
+        <section id="view-process" class="view-section hidden h-full overflow-hidden flex flex-col p-4 pb-32">
             <div class="glass-panel p-6 rounded-2xl shadow-lg flex-1 flex flex-col justify-center items-center text-center relative overflow-hidden">
                 <div id="process-step-0" class="process-step w-full">
                     <h2 class="text-3xl font-light mb-2 text-white">Identify Emotion</h2>
@@ -255,7 +255,7 @@
             </div>
         </section>
 
-        <section id="view-timer" class="view-section hidden h-full overflow-hidden flex flex-col justify-center p-4 pb-safe">
+        <section id="view-timer" class="view-section hidden h-full overflow-hidden flex flex-col justify-center p-4 pb-32">
             <div class="text-center w-full">
                 <div class="mb-8 max-w-[240px] mx-auto mt-8 relative z-30">
                     <button onclick="toggleModal('emotion-picker')" id="timer-emotion-btn" class="w-full flex items-center justify-between bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-2 text-slate-300 text-sm hover:border-gold-500 transition">
@@ -287,7 +287,7 @@
             </div>
         </section>
 
-        <section id="view-charts" class="view-section hidden h-full overflow-hidden flex flex-col p-4 pb-safe">
+        <section id="view-charts" class="view-section hidden h-full overflow-hidden flex flex-col p-4 pb-32">
             <div class="mb-4 flex justify-between items-end"><h2 class="text-2xl font-light text-white">Progress</h2></div>
             <div class="mb-6">
                 <label class="text-xs text-slate-500 uppercase tracking-wider mb-2 block">Select Emotion</label>
@@ -301,12 +301,12 @@
             </div>
         </section>
 
-        <section id="view-journal" class="view-section hidden h-full overflow-y-auto p-4 pb-safe">
+        <section id="view-journal" class="view-section hidden h-full overflow-y-auto p-4 pb-32">
             <div class="flex justify-between items-end mb-6"><h2 class="text-2xl font-light text-white">History</h2><button onclick="clearJournal()" class="text-xs text-red-400/60 hover:text-red-400 uppercase tracking-wider p-2">Clear All</button></div>
             <div id="journal-list" class="space-y-3 pb-8 overflow-x-hidden"></div>
         </section>
 
-        <section id="view-qa" class="view-section hidden h-full overflow-y-auto p-4 pb-safe">
+        <section id="view-qa" class="view-section hidden h-full overflow-y-auto p-4 pb-32">
             <h2 class="text-2xl font-light text-white mb-6">Q & A</h2>
             <div id="qa-container" class="space-y-3 pb-8"></div>
         </section>
