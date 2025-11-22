@@ -9,9 +9,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="The Pathway">
     
-    <!-- Custom Home Screen Icon -->
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1024 1024' style='background-color: %232a1b1b;'%3E%3Cpath d='M512 928C282.2 928 96 741.8 96 512S282.2 96 512 96s416 186.2 416 416-186.2 416-416 416zm0-768c-194.4 0-352 157.6-352 352s157.6 352 352 352 352-157.6 352-352-157.6-352-352-352zm0 640c-159.1 0-288-128.9-288-288s128.9-288 288-288 288 128.9 288 288-128.9 288-288 288z' fill='none'/%3E%3Cpath d='M538.6 225.2c-8.4-1.8-17.1 3.6-18.9 12-14.6 68.4-14.6 139.2 0 207.6 1.8 8.4 10.3 13.7 18.7 11.9 8.4-1.8 13.7-10.3 11.9-18.7-12.5-58.6-12.5-119.4 0-178 1.8-8.4-3.6-17.1-11.7-14.8zM380.5 407c-6.6-5.4-16.3-4.4-21.7 2.2-44.2 53.8-44.2 131.8 0 185.6 5.4 6.6 15.1 7.6 21.7 2.2 6.6-5.4 7.6-15.1 2.2-21.7-36.3-44.2-36.3-108.4 0-152.6 5.4-6.6 4.4-16.3-2.2-15.7zM643.5 407c6.6-5.4 16.3-4.4 21.7 2.2 44.2 53.8 44.2 131.8 0 185.6-5.4 6.6-15.1 7.6-21.7 2.2-6.6-5.4-7.6-15.1-2.2-21.7 36.3-44.2 36.3-108.4 0-152.6-5.4-6.6-4.4-16.3 2.2-15.7z' fill='%23d4af37'/%3E%3Cpath d='M512 1024C229.2 1024 0 794.8 0 512S229.2 0 512 0s512 229.2 512 512-229.2 512-512 512zm0-928C282.2 96 96 282.2 96 512s186.2 416 416 416 416-186.2 416-416S741.8 96 512 96z' fill='%23d4af37' opacity='0.1'/%3E%3Cpath d='M512 512m-400 0a400 400 0 1 0 800 0 400 400 0 1 0-800 0Z' fill='none' stroke='%23d4af37' stroke-width='40' stroke-linecap='round' opacity='0.9' stroke-dasharray='1400' stroke-dashoffset='0' transform='rotate(-90 512 512)'/%3E%3Cpath d='M512 512m-250 0a250 250 0 1 0 500 0 250 250 0 1 0-500 0Z' fill='none' stroke='%23d4af37' stroke-width='35' stroke-linecap='round' opacity='0.8' stroke-dasharray='900' stroke-dashoffset='200' transform='rotate(180 512 512)'/%3E%3Cpath d='M512 512m-120 0a120 120 0 1 0 240 0 120 120 0 1 0-240 0Z' fill='none' stroke='%23d4af37' stroke-width='30' stroke-linecap='round' opacity='0.7' stroke-dasharray='400' stroke-dashoffset='100' transform='rotate(90 512 512)'/%3E%3C/svg%3E">
-
     <title>The Pathway</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -32,7 +29,6 @@
                     animation: {
                         'breathe': 'breathe 8s infinite ease-in-out',
                         'fade-in': 'fadeIn 0.8s ease-out forwards',
-                        'fade-out': 'fadeOut 0.8s ease-in forwards',
                         'slide-up': 'slideUp 0.3s ease-out forwards',
                         'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
                     },
@@ -45,10 +41,6 @@
                             '0%': { opacity: '0', transform: 'translateY(10px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
                         },
-                        fadeOut: {
-                            '0%': { opacity: '1' },
-                            '100%': { opacity: '0', visibility: 'hidden' },
-                        },
                         slideUp: {
                             '0%': { opacity: '0', transform: 'translateY(100%)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
@@ -59,8 +51,7 @@
                             '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
                             '40%, 60%': { transform: 'translate3d(4px, 0, 0)' }
                         }
-                    },
-                    padding: { 'safe': 'env(safe-area-inset-bottom)' }
+                    }
                 }
             }
         }
@@ -68,36 +59,50 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Merriweather:ital,wght@0,300;0,400;1,300&display=swap');
         
+        /* CORE LAYOUT FIXES */
         html, body { 
             height: 100%; 
-            height: 100dvh; 
             width: 100%;
-            overflow: hidden; 
-            position: fixed; 
-            overscroll-behavior: none;
+            overflow: hidden; /* Prevent elastic scroll on body */
+            position: fixed; /* Lock body for PWA feel */
             background-color: #020617; 
             color: #e2e8f0; 
             -webkit-font-smoothing: antialiased; 
             -webkit-tap-highlight-color: transparent; 
         }
 
+        /* Main Scrollable Area */
+        #app-content {
+            height: 100%;
+            overflow-y: auto;
+            overscroll-behavior-y: contain;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: calc(80px + env(safe-area-inset-bottom)); /* Ensure content clears nav */
+        }
+
+        /* NAV BAR FIXES */
+        #bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            z-index: 50;
+            padding-bottom: env(safe-area-inset-bottom); /* Native iOS Safe Area Support */
+            background: rgba(2, 6, 23, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(30, 41, 59, 0.5);
+        }
+
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
         
-        #app-content {
-            overscroll-behavior-y: contain;
-            -webkit-overflow-scrolling: touch;
-        }
-
         .glass-panel { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .intro-overlay { background: #020617; }
         .btn-primary { transition: all 0.2s ease; }
         .btn-primary:active { transform: scale(0.96); }
-        
-        /* Safe Area Handling */
-        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
-        .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+        .pt-safe { padding-top: env(safe-area-inset-top, 20px); }
         
         .faq-answer { display: none; }
         .faq-answer.active { display: block; animation: slideUp 0.3s ease-out forwards; }
@@ -118,7 +123,7 @@
         .shake-error { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; border-color: #ef4444 !important; color: #ef4444 !important; }
     </style>
 </head>
-<body class="flex flex-col selection:bg-gold-500 selection:text-white pt-safe relative">
+<body class="flex flex-col pt-safe relative">
 
     <!-- INTRO -->
     <div id="intro-screen" onclick="dismissIntro()" class="fixed inset-0 z-[100] bg-slate-950 flex flex-col items-center justify-center p-8 text-center cursor-pointer transition-opacity duration-1000">
@@ -138,17 +143,16 @@
     </div>
 
     <!-- Header -->
-    <header class="flex-none px-6 py-4 border-b border-slate-800/50 bg-slate-950/90 backdrop-blur relative z-50 flex justify-between items-center">
+    <header class="flex-none px-6 py-4 border-b border-slate-800/50 bg-slate-950/90 backdrop-blur relative z-40 flex justify-between items-center">
         <div><h1 class="text-xl font-serif italic text-gold-500 tracking-wide">The Pathway</h1><p class="text-[10px] text-slate-500 uppercase tracking-[0.2em] mt-0.5">Mechanism of Surrender</p></div>
         <button onclick="toggleSettings()" class="text-slate-400 hover:text-white transition p-2"><i data-lucide="info" class="w-5 h-5"></i></button>
     </header>
 
     <!-- Main Content -->
-    <!-- Added pb-32 to ensure content doesn't get hidden behind the fixed footer -->
-    <main id="app-content" class="flex-1 overflow-y-auto relative p-4 pb-32 max-w-md mx-auto w-full no-scrollbar" style="touch-action: pan-y;">
+    <main id="app-content" class="flex-1 max-w-md mx-auto w-full no-scrollbar relative">
         
         <!-- GUIDE -->
-        <section id="view-guide" class="view-section animate-fade-in space-y-6">
+        <section id="view-guide" class="view-section animate-fade-in space-y-6 p-4">
             <div class="glass-panel p-6 rounded-2xl shadow-lg">
                 <h2 class="text-2xl font-light mb-4 text-white">The Mechanism</h2>
                 <p class="text-slate-300 leading-relaxed mb-4">Letting go involves being aware of a feeling, letting it come up, staying with it, and letting it run its course without wanting to make it different or do anything about it.</p>
@@ -163,7 +167,7 @@
         </section>
 
         <!-- PROCESS -->
-        <section id="view-process" class="view-section hidden animate-fade-in h-full flex flex-col">
+        <section id="view-process" class="view-section hidden animate-fade-in h-full flex flex-col p-4">
             <div class="glass-panel p-6 rounded-2xl shadow-lg flex-1 flex flex-col justify-center items-center text-center relative overflow-hidden min-h-[400px]">
                 <div id="process-step-0" class="process-step w-full">
                     <h2 class="text-3xl font-light mb-2 text-white">Identify Emotion</h2>
@@ -209,7 +213,7 @@
         </section>
 
         <!-- TIMER -->
-        <section id="view-timer" class="view-section hidden animate-fade-in h-full flex flex-col justify-center pt-16">
+        <section id="view-timer" class="view-section hidden animate-fade-in h-full flex flex-col justify-center pt-16 p-4">
             <div class="text-center w-full">
                 <!-- Dropdown Container with High Z-Index -->
                 <div class="mb-8 max-w-[240px] mx-auto mt-8 relative z-30">
@@ -244,38 +248,36 @@
         </section>
 
         <!-- CHARTS -->
-        <section id="view-charts" class="view-section hidden animate-fade-in h-full flex flex-col">
-            <div class="px-4 mb-4 flex justify-between items-end"><h2 class="text-2xl font-light text-white">Progress</h2></div>
-            <div class="px-4 mb-6">
+        <section id="view-charts" class="view-section hidden animate-fade-in h-full flex flex-col p-4">
+            <div class="mb-4 flex justify-between items-end"><h2 class="text-2xl font-light text-white">Progress</h2></div>
+            <div class="mb-6">
                 <label class="text-xs text-slate-500 uppercase tracking-wider mb-2 block">Select Emotion</label>
                 <button onclick="toggleModal('emotion-picker')" id="chart-emotion-btn" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-white flex justify-between items-center hover:border-gold-500 transition">
                     <span id="chart-emotion-display">Select to view...</span><i data-lucide="chevron-down" class="w-4 h-4 text-slate-500"></i>
                 </button>
             </div>
-            <div class="flex-1 px-4 min-h-[300px] relative">
+            <div class="flex-1 min-h-[300px] relative">
                 <canvas id="progressChart"></canvas>
                 <div id="chart-placeholder" class="absolute inset-0 flex items-center justify-center text-slate-600 text-sm">Select an emotion to view progress</div>
             </div>
         </section>
 
         <!-- Q&A -->
-        <section id="view-qa" class="view-section hidden animate-fade-in">
+        <section id="view-qa" class="view-section hidden animate-fade-in p-4">
             <h2 class="text-2xl font-light text-white mb-6 px-2">Q & A</h2>
             <div id="qa-container" class="space-y-3"></div>
-            <div class="h-12"></div>
         </section>
 
         <!-- JOURNAL -->
-        <section id="view-journal" class="view-section hidden animate-fade-in space-y-6">
+        <section id="view-journal" class="view-section hidden animate-fade-in space-y-6 p-4">
             <div class="flex justify-between items-end px-2"><h2 class="text-2xl font-light text-white">History</h2><button onclick="clearJournal()" class="text-xs text-red-400/60 hover:text-red-400 uppercase tracking-wider p-2">Clear All</button></div>
-            <div id="journal-list" class="space-y-3 pb-8 overflow-x-hidden"></div>
+            <div id="journal-list" class="space-y-3 overflow-x-hidden"></div>
         </section>
     </main>
 
-    <!-- NAV -->
-    <!-- Fixed bottom positioning to ensure it stays at the bottom -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-slate-950/95 backdrop-blur-xl border-t border-slate-800 pt-2 pb-safe z-30">
-        <div class="flex justify-around items-center max-w-md mx-auto px-1">
+    <!-- NAV (Strict Bottom Pinning) -->
+    <nav id="bottom-nav">
+        <div class="flex justify-around items-center max-w-md mx-auto px-1 pt-2 pb-2">
             <button id="nav-guide" onclick="switchTab('guide')" class="nav-btn active p-2 flex flex-col items-center gap-1 text-slate-500 transition active:scale-95"><i data-lucide="book" class="w-5 h-5"></i><span class="text-[9px] uppercase tracking-widest font-medium">Guide</span></button>
             <button id="nav-process" onclick="switchTab('process')" class="nav-btn p-2 flex flex-col items-center gap-1 text-slate-500 transition active:scale-95"><i data-lucide="layers" class="w-5 h-5"></i><span class="text-[9px] uppercase tracking-widest font-medium">Work</span></button>
             <button id="nav-timer" onclick="switchTab('timer')" class="nav-btn p-2 flex flex-col items-center gap-1 text-slate-500 transition active:scale-95"><i data-lucide="clock" class="w-5 h-5"></i><span class="text-[9px] uppercase tracking-widest font-medium">Timer</span></button>
@@ -289,7 +291,7 @@
     <div id="info-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60] hidden items-center justify-center p-6 animate-fade-in">
         <div class="bg-slate-900 border border-slate-700 p-8 rounded-3xl max-w-xs w-full shadow-2xl text-center">
             <h3 class="text-xl text-white mb-2 font-serif italic">The Pathway</h3>
-            <p class="text-slate-500 text-xs mb-6 uppercase tracking-widest">Version 7.1 (Fix)</p>
+            <p class="text-slate-500 text-xs mb-6 uppercase tracking-widest">Version 7.2 (DB & UI Fix)</p>
             <div class="space-y-4 text-sm text-slate-400 mb-8 text-left"><p>Based on "Letting Go" by Dr. David R. Hawkins.</p><p>This app is constantly updated.</p></div>
             <div class="mt-4 pt-4 border-t border-slate-800" id="auth-container">
                 <div id="logged-out-view">
@@ -517,6 +519,9 @@
             measurementId: "G-K5CDP81Y0T"
         };
 
+        // 1. MANDATORY: USE __app_id
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
         let auth, provider, db, isLoggedIn=false, currentUser=null, unsubscribeJournal=null;
 
         try {
@@ -580,8 +585,11 @@
             if (chartEmotion !== 'Select to view...') window.loadChart(chartEmotion);
         };
 
+        // 2. CRITICAL FIX: USE ARTIFACTS PATH STRUCTURE FOR LISTENER
         function startJournalListener(uid) {
-            const q = query(collection(db, 'users', uid, 'logs'), orderBy('timestamp', 'desc'));
+            // WAS: query(collection(db, 'users', uid, 'logs')...) -> FAILED PERMISSIONS
+            // NOW: query(collection(db, 'artifacts', appId, 'users', uid, 'logs')...) -> SUCCESS
+            const q = query(collection(db, 'artifacts', appId, 'users', uid, 'logs'), orderBy('timestamp', 'desc'));
             unsubscribeJournal = onSnapshot(q, (snapshot) => {
                 const logs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 window.renderJournal(logs);
@@ -597,7 +605,12 @@
             const emotion = window.currentSelectedEmotion || "Meditation"; 
             const entry = { emotion: emotion, date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}), time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), duration: window.currentTimerSessionLength, intensity: intensity, timestamp: serverTimestamp() };
             
-            if (isLoggedIn && currentUser) { try { await addDoc(collection(db, 'users', currentUser.uid, 'logs'), entry); } catch (e) { alert("Error saving: " + e.message); } }
+            if (isLoggedIn && currentUser) { 
+                try { 
+                    // 3. CRITICAL FIX: USE ARTIFACTS PATH STRUCTURE FOR SAVE
+                    await addDoc(collection(db, 'artifacts', appId, 'users', currentUser.uid, 'logs'), entry); 
+                } catch (e) { alert("Error saving: " + e.message); } 
+            }
             else { const rel = JSON.parse(localStorage.getItem('releases') || '[]'); entry.timestamp = Date.now(); rel.unshift(entry); localStorage.setItem('releases', JSON.stringify(rel)); }
             window.closeCompleteModal(); window.resetTimer(); window.switchTab('journal');
         };
@@ -605,21 +618,30 @@
         window.saveAndClose = async () => {
             const intensity = document.getElementById('process-intensity-slider').value;
             const entry = { emotion: window.currentProcessEmotion, date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}), time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), duration: window.processSeconds, intensity: intensity, timestamp: serverTimestamp() };
-            if (isLoggedIn && currentUser) { await addDoc(collection(db, 'users', currentUser.uid, 'logs'), entry); }
+            if (isLoggedIn && currentUser) { 
+                // 3. CRITICAL FIX: USE ARTIFACTS PATH STRUCTURE FOR SAVE
+                await addDoc(collection(db, 'artifacts', appId, 'users', currentUser.uid, 'logs'), entry); 
+            }
             else { const rel = JSON.parse(localStorage.getItem('releases') || '[]'); entry.timestamp = Date.now(); rel.unshift(entry); localStorage.setItem('releases', JSON.stringify(rel)); }
             window.resetProcess(); window.switchTab('journal');
         };
 
         window.deleteEntry = async (id) => {
             if (!confirm("Delete this entry?")) return;
-            if (isLoggedIn && typeof id === 'string') { await deleteDoc(doc(db, 'users', currentUser.uid, 'logs', id)); }
+            if (isLoggedIn && typeof id === 'string') { 
+                // 4. CRITICAL FIX: USE ARTIFACTS PATH STRUCTURE FOR DELETE
+                await deleteDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'logs', id)); 
+            }
             else { const rel = JSON.parse(localStorage.getItem('releases') || '[]'); rel.splice(id, 1); localStorage.setItem('releases', JSON.stringify(rel)); window.renderJournal(); }
         };
 
         window.renameEntry = async (id, currentName) => {
             const newName = prompt("Rename entry:", currentName);
             if (!newName || newName.trim() === "") return;
-            if (isLoggedIn && typeof id === 'string') { await updateDoc(doc(db, 'users', currentUser.uid, 'logs', id), { emotion: newName.trim() }); }
+            if (isLoggedIn && typeof id === 'string') { 
+                // 5. CRITICAL FIX: USE ARTIFACTS PATH STRUCTURE FOR UPDATE
+                await updateDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'logs', id), { emotion: newName.trim() }); 
+            }
             else { const rel = JSON.parse(localStorage.getItem('releases') || '[]'); rel[id].emotion = newName.trim(); localStorage.setItem('releases', JSON.stringify(rel)); window.renderJournal(); }
         };
 
@@ -631,3 +653,5 @@
     </script>
 </body>
 </html>
+
+
