@@ -67,7 +67,7 @@
     </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Merriweather:ital,wght@0,300;0,400;1,300&display=swap');
-        body { background-color: #020617; color: #e2e8f0; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
+        body { background-color: #020617; color: #e2e8f0; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; position: fixed; width: 100%; height: 100%; overflow: hidden; }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
@@ -203,7 +203,8 @@
                 <div class="relative w-64 h-64 mx-auto mb-10 flex items-center justify-center z-10">
                     <div id="breath-circle" class="absolute inset-0 bg-slate-800 rounded-full opacity-50 scale-100 transition-transform duration-1000"></div>
                     <div id="breath-circle-inner" class="absolute w-40 h-40 bg-slate-700/50 rounded-full blur-2xl"></div>
-                    <input type="text" inputmode="numeric" id="timer-display" class="relative z-10 text-6xl font-extralight text-white font-serif tabular-nums tracking-tight bg-transparent text-center w-full focus:outline-none border-none p-0 m-0" value="10:00" onfocus="this.select()" onchange="updateCustomTime(this.value)" onblur="formatInputTime(this)">
+                    <!-- Custom Microwave Input Logic -->
+                    <input type="text" inputmode="numeric" id="timer-display" class="relative z-10 text-6xl font-extralight text-white font-serif tabular-nums tracking-tight bg-transparent text-center w-full focus:outline-none border-none p-0 m-0" value="10:00" oninput="handleTimerInput(this)">
                 </div>
 
                 <div class="flex justify-center gap-8 mb-8">
@@ -269,7 +270,7 @@
     <div id="info-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60] hidden items-center justify-center p-6 animate-fade-in">
         <div class="bg-slate-900 border border-slate-700 p-8 rounded-3xl max-w-xs w-full shadow-2xl text-center">
             <h3 class="text-xl text-white mb-2 font-serif italic">The Pathway</h3>
-            <p class="text-slate-500 text-xs mb-6 uppercase tracking-widest">Version 5.1 (Hard Reset)</p>
+            <p class="text-slate-500 text-xs mb-6 uppercase tracking-widest">Version 5.2</p>
             <div class="space-y-4 text-sm text-slate-400 mb-8 text-left"><p>Based on "Letting Go" by Dr. David R. Hawkins.</p><p>This app is constantly updated.</p></div>
             <button onclick="toggleSettings()" class="w-full py-3 bg-slate-800 text-white rounded-xl hover:bg-slate-700 transition font-medium">Close</button>
         </div>
@@ -495,12 +496,10 @@
                 noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createPinkNoise(); noiseNode.loop = true;
                 gain.gain.value = 0.15; noiseNode.connect(gain); gain.connect(audioContext.destination); noiseNode.start();
             } else if(type === 'river') {
-                const gain = audioContext.createGain();
                 noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createBrownNoise(); noiseNode.loop = true;
                 const f = audioContext.createBiquadFilter(); f.type='lowpass'; f.frequency.value=600; gain.gain.value=0.3;
                 noiseNode.connect(f); f.connect(gain); gain.connect(audioContext.destination); noiseNode.start();
             } else if(type === 'wind') {
-                const gain = audioContext.createGain();
                 noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createPinkNoise(); noiseNode.loop = true;
                 const f = audioContext.createBiquadFilter(); f.type='lowpass'; f.Q.value=1;
                 modOsc = audioContext.createOscillator(); modOsc.frequency.value=0.15;
@@ -509,7 +508,6 @@
                 noiseNode.connect(f); f.connect(gain); gain.connect(audioContext.destination); gain.gain.value=0.3;
                 noiseNode.start(); modOsc.start();
             } else if(type === 'birds') {
-                const gain = audioContext.createGain();
                 noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createPinkNoise(); noiseNode.loop = true;
                 const f = audioContext.createBiquadFilter(); f.type='highpass'; f.frequency.value=2000; gain.gain.value=0.02;
                 noiseNode.connect(f); f.connect(gain); gain.connect(audioContext.destination); noiseNode.start();
@@ -591,14 +589,10 @@
         function adjustTimer(amt) { if(isTimerRunning) return; if(timerDuration+amt > 0) { timerDuration+=amt; defaultDuration=timerDuration; updateTimerDisplay(); } }
         function resetTimer() { 
             if(isTimerRunning) toggleTimer(); 
-            timerDuration = 600; // Force hard reset to 10:00
+            timerDuration = 600; 
             defaultDuration = 600; 
             stopAmbience(); 
-            
-            // Update UI explicitly
-            const display = document.getElementById('timer-display');
-            if(display) display.value = "10:00";
-            
+            document.getElementById('timer-display').value = "10:00";
             updateTimerDisplay(); 
         }
         function toggleSettings() {
