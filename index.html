@@ -41,67 +41,49 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Merriweather:ital,wght@0,300;0,400;1,300&display=swap');
         
-        /* --- NATIVE APP LOCK (Fixes Bounce & Spacing) --- */
+        /* --- STRICT GRID LAYOUT ENGINE (Fixes Floating Nav) --- */
         html {
             height: 100%;
-            width: 100%;
             background-color: #020617;
-            overflow: hidden; /* No root scroll */
-            overscroll-behavior: none; /* Kills bounce on html */
         }
         
         body { 
-            position: fixed; /* Locks body in place, preventing bounce */
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            height: 100dvh; /* Exact viewport height */
+            /* Grid layout forces elements to fill exactly 100% of screen height */
+            display: grid;
+            grid-template-rows: auto 1fr auto; /* Header | Content | Nav */
+            height: 100%;
+            height: 100dvh; /* Dynamic Viewport Height for iOS */
             width: 100%;
-            overflow: hidden; /* No body scroll */
-            overscroll-behavior: none; /* Kills bounce on body */
+            overflow: hidden; /* Prevent body scrolling */
             background-color: #020617; 
             color: #e2e8f0; 
             -webkit-font-smoothing: antialiased; 
             -webkit-tap-highlight-color: transparent; 
-            
-            /* Flex layout for internal structure */
-            display: flex;
-            flex-direction: column;
         }
 
-        /* Header: Extra padding for Status Bar */
+        /* Header: Takes minimal space */
         header { 
-            flex: none;
             z-index: 40; 
-            /* Safe area + 16px buffer to clear the time/notch */
-            padding-top: calc(env(safe-area-inset-top) + 16px);
-            background: rgba(2, 6, 23, 0.98); /* Slightly more opaque */
-            border-bottom: 1px solid rgba(30, 41, 59, 0.5);
+            padding-top: env(safe-area-inset-top); /* iOS Safe Area Top */
         }
 
-        /* Content: The ONLY thing that scrolls */
+        /* Content: Takes all remaining space and scrolls internally */
         #app-content {
-            flex: 1;
             overflow-y: auto;
-            overscroll-behavior-y: contain; /* Allows bounce INSIDE content only, not whole page */
+            overscroll-behavior-y: contain;
             -webkit-overflow-scrolling: touch;
             position: relative;
-            width: 100%;
-            padding-bottom: 20px; /* Slight buffer at bottom of content */
+            /* No bottom padding needed, grid handles it */
         }
 
-        /* Nav: Pinned bottom, accounting for Home Bar */
+        /* Nav: Fixed at bottom by grid definition */
         #bottom-nav {
-            flex: none;
             z-index: 50;
-            background: rgba(2, 6, 23, 0.98);
+            background: rgba(2, 6, 23, 0.95);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-top: 1px solid rgba(30, 41, 59, 0.5);
-            /* Safe area + padding ensures it sits right */
-            padding-bottom: calc(env(safe-area-inset-bottom) + 8px);
-            padding-top: 12px;
+            padding-bottom: 0; /* killed safe-area padding */
         }
 
         /* Scrollbar styling */
@@ -141,13 +123,13 @@
         </div>
     </div>
 
-    <!-- HEADER -->
-    <header class="px-6 pb-4 flex justify-between items-center shadow-lg shadow-slate-900/20">
+    <!-- HEADER (Grid Row 1) -->
+    <header class="px-6 py-4 border-b border-slate-800/50 bg-slate-950/90 flex justify-between items-center">
         <div><h1 class="text-xl font-serif italic text-gold-500 tracking-wide">The Pathway</h1><p class="text-[10px] text-slate-500 uppercase tracking-[0.2em] mt-0.5">Mechanism of Surrender</p></div>
         <button onclick="toggleSettings()" class="text-slate-400 hover:text-white transition p-2"><i data-lucide="info" class="w-5 h-5"></i></button>
     </header>
 
-    <!-- MAIN CONTENT (Scrolls independently) -->
+    <!-- MAIN CONTENT (Grid Row 2 - Scrolls) -->
     <main id="app-content">
         
         <!-- GUIDE -->
@@ -156,34 +138,9 @@
                 <h2 class="text-2xl font-light mb-4 text-white">The Mechanism</h2>
                 <p class="text-slate-300 leading-relaxed mb-6">Letting go involves being aware of a feeling, letting it come up, staying with it, and letting it run its course without wanting to make it different or do anything about it.</p>
                 <div class="space-y-6">
-                    <!-- Icons aligned with text baseline -->
-                    <div class="flex gap-4 items-start">
-                        <div class="bg-slate-800 p-2 rounded-full text-gold-500 shrink-0 mt-1">
-                            <i data-lucide="eye" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-medium text-white">1. Acknowledge</h3>
-                            <p class="text-sm text-slate-400 mt-1">Notice the feeling. Allow it to surface. Do not push it down.</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-4 items-start">
-                        <div class="bg-slate-800 p-2 rounded-full text-gold-500 shrink-0 mt-1">
-                            <i data-lucide="brain-circuit" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-medium text-white">2. Ignore Thoughts</h3>
-                            <p class="text-sm text-slate-400 mt-1">Thoughts are rationalizations created by the mind. Ignore the "why." Focus only on the "what" (the sensation).</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-4 items-start">
-                        <div class="bg-slate-800 p-2 rounded-full text-gold-500 shrink-0 mt-1">
-                            <i data-lucide="waves" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-medium text-white">3. No Resistance</h3>
-                            <p class="text-sm text-slate-400 mt-1">Drop the resistance to the feeling. It is the resistance that keeps it going. Ask: "Can I welcome this feeling?"</p>
-                        </div>
-                    </div>
+                    <div class="flex gap-4 items-start"><div class="bg-slate-800 p-2 rounded-full text-gold-500 shrink-0"><i data-lucide="eye" class="w-5 h-5"></i></div><div><h3 class="font-medium text-white">1. Acknowledge</h3><p class="text-sm text-slate-400 mt-1">Notice the feeling. Allow it to surface. Do not push it down.</p></div></div>
+                    <div class="flex gap-4 items-start"><div class="bg-slate-800 p-2 rounded-full text-gold-500 shrink-0"><i data-lucide="brain-circuit" class="w-5 h-5"></i></div><div><h3 class="font-medium text-white">2. Ignore Thoughts</h3><p class="text-sm text-slate-400 mt-1">Thoughts are rationalizations created by the mind. Ignore the "why." Focus only on the "what" (the sensation).</p></div></div>
+                    <div class="flex gap-4 items-start"><div class="bg-slate-800 p-2 rounded-full text-gold-500 shrink-0"><i data-lucide="waves" class="w-5 h-5"></i></div><div><h3 class="font-medium text-white">3. No Resistance</h3><p class="text-sm text-slate-400 mt-1">Drop the resistance to the feeling. It is the resistance that keeps it going. Ask: "Can I welcome this feeling?"</p></div></div>
                 </div>
                 <button onclick="switchTab('process')" class="w-full mt-8 py-4 bg-slate-800 hover:bg-slate-700 text-white rounded-xl transition shadow-lg flex items-center justify-center gap-2 font-medium">Start Practice <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
             </div>
@@ -297,9 +254,9 @@
         </section>
     </main>
 
-    <!-- NAV -->
+    <!-- NAV (Grid Row 3 - Locked to Bottom) -->
     <nav id="bottom-nav">
-        <div class="flex justify-around items-center max-w-md mx-auto px-1">
+        <div class="flex justify-around items-center max-w-md mx-auto px-1 pt-3 pb-2">
             <button id="nav-guide" onclick="switchTab('guide')" class="nav-btn active p-2 flex flex-col items-center gap-1 text-slate-500 transition active:scale-95"><i data-lucide="book" class="w-5 h-5"></i><span class="text-[9px] uppercase tracking-widest font-medium">Guide</span></button>
             <button id="nav-process" onclick="switchTab('process')" class="nav-btn p-2 flex flex-col items-center gap-1 text-slate-500 transition active:scale-95"><i data-lucide="layers" class="w-5 h-5"></i><span class="text-[9px] uppercase tracking-widest font-medium">Work</span></button>
             <button id="nav-timer" onclick="switchTab('timer')" class="nav-btn p-2 flex flex-col items-center gap-1 text-slate-500 transition active:scale-95"><i data-lucide="clock" class="w-5 h-5"></i><span class="text-[9px] uppercase tracking-widest font-medium">Timer</span></button>
@@ -313,7 +270,7 @@
     <div id="info-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60] hidden items-center justify-center p-6 animate-fade-in">
         <div class="bg-slate-900 border border-slate-700 p-8 rounded-3xl max-w-xs w-full shadow-2xl text-center">
             <h3 class="text-xl text-white mb-2 font-serif italic">The Pathway</h3>
-            <p class="text-slate-500 text-xs mb-6 uppercase tracking-widest">Version 8.0 (Native Lock)</p>
+            <p class="text-slate-500 text-xs mb-6 uppercase tracking-widest">Version 7.5 (Grid Layout + Fallback)</p>
             <div class="space-y-4 text-sm text-slate-400 mb-8 text-left"><p>Based on "Letting Go" by Dr. David R. Hawkins.</p><p>This app is constantly updated.</p></div>
             <div class="mt-4 pt-4 border-t border-slate-800" id="auth-container">
                 <div id="logged-out-view">
@@ -640,5 +597,3 @@
     </script>
 </body>
 </html>
-
-
