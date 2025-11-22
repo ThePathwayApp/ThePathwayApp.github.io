@@ -296,11 +296,11 @@
         </section>
 
         <!-- View: Timer -->
-        <section id="view-timer" class="view-section hidden animate-fade-in h-full flex flex-col justify-center">
+        <section id="view-timer" class="view-section hidden animate-fade-in h-full flex flex-col justify-center pt-8">
             <div class="text-center w-full">
                 
                 <!-- Emotion Picker Trigger -->
-                <div class="mb-8 max-w-[240px] mx-auto">
+                <div class="mb-8 max-w-[240px] mx-auto mt-8">
                     <button onclick="toggleModal('emotion-picker')" class="w-full flex items-center justify-between bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-2 text-slate-300 text-sm hover:border-gold-500 transition">
                         <span id="timer-emotion-display">Select Emotion...</span>
                         <i data-lucide="chevron-down" class="w-4 h-4 opacity-50"></i>
@@ -398,7 +398,7 @@
     <div id="info-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60] hidden items-center justify-center p-6 animate-fade-in">
         <div class="bg-slate-900 border border-slate-700 p-8 rounded-3xl max-w-xs w-full shadow-2xl text-center">
             <h3 class="text-xl text-white mb-2 font-serif italic">The Pathway</h3>
-            <p class="text-slate-500 text-xs mb-6 uppercase tracking-widest">Version 4.1 (Expanded Q&A)</p>
+            <p class="text-slate-500 text-xs mb-6 uppercase tracking-widest">Version 4.2 (Q&A + Swipe)</p>
             <div class="space-y-4 text-sm text-slate-400 mb-8 text-left"><p>Based on "Letting Go" by Dr. David R. Hawkins.</p><p>This app functions offline.</p></div>
             <button onclick="toggleSettings()" class="w-full py-3 bg-slate-800 text-white rounded-xl hover:bg-slate-700 transition font-medium">Close</button>
         </div>
@@ -515,22 +515,25 @@
             { category: "Beginner / Skeptic", q: "What if the feeling is too strong?", a: "If overwhelmed, surrender to the fear of the feeling first. Acknowledge you are afraid. Let go of resistance to the fear." },
             { category: "Beginner / Skeptic", q: "Is there scientific proof for this?", a: "Dr. Hawkins' work correlates vibrational states with muscle testing (kinesiology). While the subjective experience is internal, the physiological benefits of stress reduction are well-documented." },
             { category: "Beginner / Skeptic", q: "How is this different from relaxation?", a: "Relaxation often targets the body directly. Letting go targets the emotional energy *causing* the tension. It is a permanent release rather than a temporary respite." },
+            { category: "Beginner / Skeptic", q: "Can I surrender to physical pain?", a: "Yes. Much pain is held in place by resistance. If you stop resisting the sensation and just experience it as pure energy, it often shifts or diminishes." },
             
+            { category: "Novice", q: "Nothing seems to be changing in my life?", a: "Letting Go can be subtle or dramatic, both inwardly and outwardly. Often it is others in our life who notice our change before we do. Like shoveling coal from a pile, we're unaware of the amount we've handled because our focus is on what is at hand." },
             { category: "Novice", q: "I feel stuck. Nothing is happening.", a: "You may be 'wanting' it to change. Wanting is resistance. Can you let go of the desire to change it? Can you allow it to just be?" },
             { category: "Novice", q: "Can I do this in public?", a: "Yes. It's internal. Notice the tension, drop resistance, and let it pass through while walking or in a meeting." },
             { category: "Novice", q: "How do I know if I've let go?", a: "You feel lighter, relieved, or clear. Thoughts stop returning, or lack emotional charge." },
             { category: "Novice", q: "Why do I feel worse sometimes?", a: "This is the 'healing crisis.' As you open the doors, suppressed energy rushes up to be released. It feels intense, but it is actually leaving. Stay with it." },
-            { category: "Novice", q: "Can I let go of physical pain?", a: "Yes. Much pain is held in place by resistance. If you stop resisting the sensation and just experience it as pure energy, it often shifts or diminishes." },
             { category: "Novice", q: "Is crying okay?", a: "Absolutely. Crying is a natural mechanism of release, especially for Grief. Do not suppress the tears; let them flow until they stop on their own." },
 
             { category: "Adept", q: "Spiritual Pride", a: "Watch out for the ego claiming credit for your progress. 'Look how spiritual I am' is just another feeling (Pride) to be surrendered." },
             { category: "Adept", q: "Running out of things to surrender?", a: "You may reach periods of peace, but deeper layers often emerge later. Remain vigilant for subtle attachments to comfort or even to the practice itself." },
             { category: "Adept", q: "Handling major crises", a: "In a crisis, the volume of emotion is high. This is actually a golden opportunity. A massive amount of karma can be discharged quickly if you can stay present with the raw energy without resisting." },
             { category: "Adept", q: "Attachment to outcomes", a: "Surrender doesn't mean you don't act; it means you surrender your attachment to the result. You do your best and let go of the rest." },
+            { category: "Adept", q: "The dark night of the soul?", a: "This often occurs before a major transition. It feels like abandonment or total despair. It is the ego facing its own demise. Surrender to the despair itself." },
 
             { category: "Pro", q: "Who is the one letting go?", a: "Eventually, you realize the 'I' trying to let go is also a thought. Surrendering the 'doer' leads to realization that everything happens spontaneously." },
             { category: "Pro", q: "Surrender vs. Apathy", a: "Apathy is 'I can't do anything'. Surrender is 'I don't need to control anything'. Apathy feels heavy and dark. Surrender feels light and expansive. If you feel drained, it is apathy. If you feel lighter, it is surrender." },
-            { category: "Pro", q: "The Final Door", a: "The ultimate surrender is to God/Truth itself. It is the letting go of the illusion of a separate self." }
+            { category: "Pro", q: "The Final Door", a: "The ultimate surrender is to God/Truth itself. It is the letting go of the illusion of a separate self." },
+            { category: "Pro", q: "Surrendering the desire for enlightenment?", a: "Even the desire for God or Truth can be an obstruction if it is filled with 'wanting'. Surrender the wanting, and what you seek is revealed to have been there all along." }
         ];
 
         // --- STATE ---
@@ -572,6 +575,7 @@
             initEmotionPicker();
             updateTimerDisplay();
             loadJournal();
+            initSwipe();
         };
 
         // --- INTRO ---
@@ -587,6 +591,42 @@
             screen.style.opacity = '0';
             setTimeout(() => { screen.style.display = 'none'; }, 1000);
             if(!audioContext) initAudio();
+        }
+
+        // --- SWIPE NAVIGATION ---
+        function initSwipe() {
+            const content = document.getElementById('app-content');
+            let touchStartX = 0;
+            let touchStartY = 0;
+            
+            content.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+                touchStartY = e.changedTouches[0].screenY;
+            });
+
+            content.addEventListener('touchend', e => {
+                const touchEndX = e.changedTouches[0].screenX;
+                const touchEndY = e.changedTouches[0].screenY;
+                
+                const xDiff = touchEndX - touchStartX;
+                const yDiff = touchEndY - touchStartY;
+                
+                // Require mostly horizontal swipe (ignore vertical scrolls)
+                if (Math.abs(xDiff) > 60 && Math.abs(yDiff) < 50) {
+                    const tabs = ['guide', 'process', 'timer', 'charts', 'qa', 'journal'];
+                    const currentIndex = tabs.indexOf(activeTab);
+                    
+                    if (xDiff < 0) { 
+                        // Swipe Left -> Next Tab
+                        const nextIndex = (currentIndex + 1) % tabs.length;
+                        switchTab(tabs[nextIndex]);
+                    } else { 
+                        // Swipe Right -> Prev Tab
+                        const prevIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+                        switchTab(tabs[prevIndex]);
+                    }
+                }
+            });
         }
 
         // --- EMOTION PICKER ---
