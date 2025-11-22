@@ -66,21 +66,27 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Merriweather:ital,wght@0,300;0,400;1,300&display=swap');
         
-        /* LOCKED VIEWPORT - Strict Fix for PWA Ghost Bar */
+        /* LOCKED VIEWPORT - Nuclear Fix for iOS PWA Height */
         html {
             height: 100%;
+            height: -webkit-fill-available; /* Forces WebKit to use actual available space */
             background-color: #020617;
         }
         
         body {
-            height: 100%;
-            width: 100%;
+            /* Fallback */
+            min-height: 100vh;
+            /* iOS PWA Fix: This fills the 'real' window height minus system bars */
+            min-height: -webkit-fill-available;
+            height: 100%; 
+            
+            width: 100vw;
             overflow: hidden;
             background-color: #020617; 
             color: #e2e8f0;
             -webkit-font-smoothing: antialiased;
             -webkit-tap-highlight-color: transparent;
-            /* Use Fixed Inset to force full coverage without scroll bounce */
+            
             position: fixed;
             inset: 0;
             display: flex;
@@ -96,17 +102,22 @@
         .btn-primary { transition: all 0.2s ease; }
         .btn-primary:active { transform: scale(0.96); }
         
-        /* SAFE AREA UTILS - Updated per request */
-        .pb-safe { padding-bottom: 0 !important; } /* No-op as requested */
+        /* SAFE AREA UTILS */
+        .pb-safe { padding-bottom: 0 !important; }
         .mb-safe { margin-bottom: env(safe-area-inset-bottom); }
         .pt-safe { padding-top: env(safe-area-inset-top, 20px); }
         
-        /* SMOOTH TRANSITIONS - Speed up to 0.15s */
+        /* SMOOTH TRANSITIONS */
         .view-section {
             opacity: 0;
             transition: opacity 0.15s ease-in-out; 
-            /* Strict Safe Area Padding - Removes extra 'ghost' space */
-            padding-bottom: env(safe-area-inset-bottom); 
+            /* CRITICAL PWA FIX: 
+               We add substantial extra padding (2rem) + the environment safe area 
+               to the BOTTOM of the scroll container. This ensures that even if 
+               the phone thinks the viewport is shorter, the content can scroll 
+               UP above the ghost bar/home indicator.
+            */
+            padding-bottom: calc(env(safe-area-inset-bottom) + 2rem); 
         }
         .view-section.active-view {
             opacity: 1;
@@ -121,7 +132,7 @@
         .quote-mark.start { top: 0; left: 0; }
         .quote-mark.end { bottom: 0; right: 0; transform: rotate(180deg); }
         
-        /* MENU - Slowed to 1s */
+        /* MENU */
         .side-menu-open #side-menu-backdrop { display: block; opacity: 1; }
         .side-menu-open #side-menu { transform: translateX(0); }
         .menu-link { transition: color 0.3s ease; }
