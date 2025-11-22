@@ -7,14 +7,15 @@
     <!-- iOS PWA Settings -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Letting Go">
+    <meta name="apple-mobile-web-app-title" content="The Pathway">
     
     <!-- Custom Home Screen Icon -->
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1024' height='1024' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' style='background-color: %230f172a;'%3E%3Cpath d='M10 2v2.5'/%3E%3Cpath d='M14 2v2.5'/%3E%3Cpath d='M12 2v4'/%3E%3Cpath d='M8.5 2.5a12 12 0 0 1 7 7c0 2.76-1.12 5.26-2.93 7.07l-4.14-4.14'/%3E%3Cpath d='M12.5 12.5l-4.14 4.14A7 7 0 0 1 5 12c0-4.97 4.03-9 9-9v0z'/%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1024 1024' style='background-color: %232a1b1b;'%3E%3Cpath d='M512 928C282.2 928 96 741.8 96 512S282.2 96 512 96s416 186.2 416 416-186.2 416-416 416zm0-768c-194.4 0-352 157.6-352 352s157.6 352 352 352 352-157.6 352-352-157.6-352-352-352zm0 640c-159.1 0-288-128.9-288-288s128.9-288 288-288 288 128.9 288 288-128.9 288-288 288z' fill='none'/%3E%3Cpath d='M538.6 225.2c-8.4-1.8-17.1 3.6-18.9 12-14.6 68.4-14.6 139.2 0 207.6 1.8 8.4 10.3 13.7 18.7 11.9 8.4-1.8 13.7-10.3 11.9-18.7-12.5-58.6-12.5-119.4 0-178 1.8-8.4-3.6-17.1-11.7-14.8zM380.5 407c-6.6-5.4-16.3-4.4-21.7 2.2-44.2 53.8-44.2 131.8 0 185.6 5.4 6.6 15.1 7.6 21.7 2.2 6.6-5.4 7.6-15.1 2.2-21.7-36.3-44.2-36.3-108.4 0-152.6 5.4-6.6 4.4-16.3-2.2-15.7zM643.5 407c6.6-5.4 16.3-4.4 21.7 2.2 44.2 53.8 44.2 131.8 0 185.6-5.4 6.6-15.1 7.6-21.7 2.2-6.6-5.4-7.6-15.1-2.2-21.7 36.3-44.2 36.3-108.4 0-152.6-5.4-6.6-4.4-16.3 2.2-15.7z' fill='%23d4af37'/%3E%3Cpath d='M512 1024C229.2 1024 0 794.8 0 512S229.2 0 512 0s512 229.2 512 512-229.2 512-512 512zm0-928C282.2 96 96 282.2 96 512s186.2 416 416 416 416-186.2 416-416S741.8 96 512 96z' fill='%23d4af37' opacity='0.1'/%3E%3Cpath d='M512 512m-400 0a400 400 0 1 0 800 0 400 400 0 1 0-800 0Z' fill='none' stroke='%23d4af37' stroke-width='40' stroke-linecap='round' opacity='0.9' stroke-dasharray='1400' stroke-dashoffset='0' transform='rotate(-90 512 512)'/%3E%3Cpath d='M512 512m-250 0a250 250 0 1 0 500 0 250 250 0 1 0-500 0Z' fill='none' stroke='%23d4af37' stroke-width='35' stroke-linecap='round' opacity='0.8' stroke-dasharray='900' stroke-dashoffset='200' transform='rotate(180 512 512)'/%3E%3Cpath d='M512 512m-120 0a120 120 0 1 0 240 0 120 120 0 1 0-240 0Z' fill='none' stroke='%23d4af37' stroke-width='30' stroke-linecap='round' opacity='0.7' stroke-dasharray='400' stroke-dashoffset='100' transform='rotate(90 512 512)'/%3E%3C/svg%3E">
 
-    <title>The Pathway | Letting Go</title>
+    <title>The Pathway</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -48,7 +49,7 @@
                             '100%': { opacity: '0', visibility: 'hidden' },
                         },
                         slideUp: {
-                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '0%': { opacity: '0', transform: 'translateY(100%)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
                         }
                     },
@@ -79,6 +80,7 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
+        .intro-overlay { background: #020617; }
         .btn-primary { transition: all 0.2s ease; }
         .btn-primary:active { transform: scale(0.96); }
         .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
@@ -122,6 +124,30 @@
             align-items: center;
             justify-content: center;
             z-index: 0;
+        }
+
+        /* Range Slider */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #d4af37;
+            cursor: pointer;
+            margin-top: -8px;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #334155;
+            border-radius: 2px;
         }
     </style>
 </head>
@@ -210,13 +236,22 @@
         <!-- View: Process -->
         <section id="view-process" class="view-section hidden animate-fade-in h-full flex flex-col">
             <div class="glass-panel p-6 rounded-2xl shadow-lg flex-1 flex flex-col justify-center items-center text-center relative overflow-hidden min-h-[400px]">
+                
                 <div id="process-step-0" class="process-step w-full">
-                    <h2 class="text-3xl font-light mb-2 text-white">Current Feeling?</h2>
-                    <p class="text-slate-400 mb-8 text-sm">Name the emotion to release.</p>
-                    <input type="text" id="emotion-input" placeholder="e.g., Anxiety, Anger, Grief" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-6 py-4 text-lg text-white focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition mb-6 text-center placeholder-slate-600">
-                    <button onclick="startProcess()" class="w-full py-4 bg-gold-600 hover:bg-gold-500 text-white font-medium rounded-xl transition shadow-lg shadow-gold-900/20 btn-primary text-lg">Begin Surrender</button>
+                    <h2 class="text-3xl font-light mb-2 text-white">Identify Emotion</h2>
+                    <p class="text-slate-400 mb-8 text-sm">Select the emotion on the scale.</p>
+                    
+                    <button onclick="toggleModal('emotion-picker')" id="process-emotion-btn" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-6 py-4 text-lg text-white flex justify-between items-center hover:border-gold-500 transition mb-6">
+                        <span id="process-emotion-display" class="text-slate-400">Select Emotion...</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500"></i>
+                    </button>
+
+                    <button onclick="startProcess()" class="w-full py-4 bg-gold-600 hover:bg-gold-500 text-white font-medium rounded-xl transition shadow-lg shadow-gold-900/20 btn-primary text-lg">
+                        Begin Surrender
+                    </button>
                 </div>
-                <!-- Steps 1-5 -->
+
+                <!-- Steps 1-4 same as before -->
                 <div id="process-step-1" class="process-step hidden w-full">
                     <div class="mb-8 text-gold-500 bg-gold-500/10 p-4 rounded-full inline-block"><i data-lucide="map-pin" class="w-10 h-10"></i></div>
                     <h2 class="text-2xl font-light mb-4 text-white">Locate it</h2>
@@ -241,11 +276,20 @@
                     <div class="text-6xl font-extralight text-white mb-10 font-serif tabular-nums tracking-tight" id="process-timer">00:00</div>
                     <button onclick="finishProcess()" class="w-full py-4 bg-emerald-900/40 hover:bg-emerald-900/60 text-emerald-100 border border-emerald-800/50 rounded-xl transition backdrop-blur-sm btn-primary">Feeling has Shifted</button>
                 </div>
+
+                <!-- Step 5: Rate Intensity & Save -->
                 <div id="process-step-5" class="process-step hidden w-full">
                     <div class="mb-6 text-gold-500 animate-fade-in"><i data-lucide="check-circle-2" class="w-20 h-20 mx-auto"></i></div>
-                    <h2 class="text-3xl font-light mb-4 text-white">Released</h2>
+                    <h2 class="text-3xl font-light mb-2 text-white">Released</h2>
                     <p class="text-slate-300 mb-8 font-light">You have surrendered a layer of "<span class="current-emotion font-normal text-white"></span>".</p>
-                    <button onclick="saveAndClose()" class="w-full py-4 bg-slate-100 hover:bg-white text-slate-900 font-medium rounded-xl transition btn-primary shadow-lg shadow-white/5">Save to Journal</button>
+                    
+                    <div class="mb-8">
+                        <p class="text-sm text-slate-400 mb-3">Intensity Released (1-10)</p>
+                        <input type="range" min="1" max="10" value="5" class="w-full" id="process-intensity-slider" oninput="document.getElementById('process-intensity-val').textContent = this.value">
+                        <div class="text-center text-gold-500 font-mono mt-2 text-xl" id="process-intensity-val">5</div>
+                    </div>
+
+                    <button onclick="saveAndClose()" class="w-full py-4 bg-slate-100 hover:bg-white text-slate-900 font-medium rounded-xl transition btn-primary shadow-lg shadow-white/5">Save to Log</button>
                 </div>
                 <button onclick="resetProcess()" class="absolute top-0 right-0 p-4 text-slate-600 hover:text-slate-400 hidden" id="process-reset-btn"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
@@ -255,9 +299,12 @@
         <section id="view-timer" class="view-section hidden animate-fade-in h-full flex flex-col justify-center">
             <div class="text-center w-full">
                 
-                <!-- Intention Input -->
-                <div class="mb-8 max-w-[200px] mx-auto">
-                    <input type="text" id="timer-intention" placeholder="Set Intention (Optional)..." class="w-full bg-transparent border-b border-slate-700 text-center text-slate-300 text-sm pb-2 focus:outline-none focus:border-gold-500 transition placeholder-slate-700">
+                <!-- Emotion Picker Trigger -->
+                <div class="mb-8 max-w-[240px] mx-auto">
+                    <button onclick="toggleModal('emotion-picker')" class="w-full flex items-center justify-between bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-2 text-slate-300 text-sm hover:border-gold-500 transition">
+                        <span id="timer-emotion-display">Select Emotion...</span>
+                        <i data-lucide="chevron-down" class="w-4 h-4 opacity-50"></i>
+                    </button>
                 </div>
 
                 <div class="relative w-64 h-64 mx-auto mb-10 flex items-center justify-center">
@@ -276,23 +323,40 @@
                     <button id="timer-toggle" onclick="toggleTimer()" class="w-20 h-20 rounded-full bg-gold-600 hover:bg-gold-500 text-white flex items-center justify-center shadow-xl shadow-gold-900/30 transition btn-primary"><i data-lucide="play" class="w-8 h-8 fill-current ml-1"></i></button>
                 </div>
 
-                <!-- Controls -->
                 <div class="flex justify-center gap-4">
-                    <div class="relative">
-                        <button onclick="toggleModal('bell-modal')" class="flex items-center gap-2 px-4 py-2 bg-slate-900/80 border border-slate-800 rounded-full text-xs text-slate-400 hover:text-gold-500 transition">
-                            <i data-lucide="bell" class="w-4 h-4"></i> <span>Interval</span>
-                        </button>
-                        <div id="bell-status" class="absolute top-0 right-0 w-2 h-2 bg-gold-500 rounded-full hidden"></div>
-                    </div>
-                    <div class="relative">
-                        <button onclick="toggleModal('ambience-modal')" class="flex items-center gap-2 px-4 py-2 bg-slate-900/80 border border-slate-800 rounded-full text-xs text-slate-400 hover:text-emerald-500 transition">
-                            <i data-lucide="waves" class="w-4 h-4"></i> <span>Sound</span>
-                        </button>
-                        <div id="ambience-status" class="absolute top-0 right-0 w-2 h-2 bg-emerald-500 rounded-full hidden"></div>
-                    </div>
+                    <button onclick="toggleModal('bell-modal')" class="flex items-center gap-2 px-4 py-2 bg-slate-900/80 border border-slate-800 rounded-full text-xs text-slate-400 hover:text-gold-500 transition">
+                        <i data-lucide="bell" class="w-4 h-4"></i> <span>Interval</span>
+                        <div id="bell-status" class="w-1.5 h-1.5 bg-gold-500 rounded-full hidden ml-1"></div>
+                    </button>
+                    <button onclick="toggleModal('ambience-modal')" class="flex items-center gap-2 px-4 py-2 bg-slate-900/80 border border-slate-800 rounded-full text-xs text-slate-400 hover:text-emerald-500 transition">
+                        <i data-lucide="waves" class="w-4 h-4"></i> <span>Sound</span>
+                        <div id="ambience-status" class="w-1.5 h-1.5 bg-emerald-500 rounded-full hidden ml-1"></div>
+                    </button>
                 </div>
                 
                 <p class="mt-8 text-slate-600 text-xs max-w-[200px] mx-auto leading-relaxed">Let the energy behind the thoughts run out.</p>
+            </div>
+        </section>
+
+        <!-- View: Charts (New) -->
+        <section id="view-charts" class="view-section hidden animate-fade-in pb-20 h-full flex flex-col">
+            <div class="px-4 mb-4 flex justify-between items-end">
+                <h2 class="text-2xl font-light text-white">Progress</h2>
+            </div>
+            
+            <div class="px-4 mb-6">
+                <label class="text-xs text-slate-500 uppercase tracking-wider mb-2 block">Select Emotion</label>
+                <button onclick="toggleModal('emotion-picker')" id="chart-emotion-btn" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-white flex justify-between items-center hover:border-gold-500 transition">
+                    <span id="chart-emotion-display">Select to view...</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4 text-slate-500"></i>
+                </button>
+            </div>
+
+            <div class="flex-1 px-4 min-h-[300px] relative">
+                <canvas id="progressChart"></canvas>
+                <div id="chart-placeholder" class="absolute inset-0 flex items-center justify-center text-slate-600 text-sm">
+                    Select an emotion to view progress
+                </div>
             </div>
         </section>
 
@@ -305,7 +369,7 @@
             <div class="h-12"></div>
         </section>
 
-        <!-- View: Journal (Updated with Swipe) -->
+        <!-- View: Journal -->
         <section id="view-journal" class="view-section hidden animate-fade-in space-y-6 pb-20">
             <div class="flex justify-between items-end px-2">
                 <h2 class="text-2xl font-light text-white">History</h2>
@@ -322,6 +386,7 @@
             <button onclick="switchTab('guide')" class="nav-btn active p-2 py-3 flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 w-full transition active:scale-95"><i data-lucide="book" class="w-5 h-5"></i><span class="text-[9px] uppercase tracking-widest font-medium">Guide</span></button>
             <button onclick="switchTab('process')" class="nav-btn p-2 py-3 flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 w-full transition active:scale-95"><i data-lucide="layers" class="w-5 h-5"></i><span class="text-[9px] uppercase tracking-widest font-medium">Work</span></button>
             <button onclick="switchTab('timer')" class="nav-btn p-2 py-3 flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 w-full transition active:scale-95"><i data-lucide="clock" class="w-5 h-5"></i><span class="text-[9px] uppercase tracking-widest font-medium">Timer</span></button>
+            <button onclick="switchTab('charts')" class="nav-btn p-2 py-3 flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 w-full transition active:scale-95"><i data-lucide="bar-chart-2" class="w-5 h-5"></i><span class="text-[9px] uppercase tracking-widest font-medium">Charts</span></button>
             <button onclick="switchTab('qa')" class="nav-btn p-2 py-3 flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 w-full transition active:scale-95"><i data-lucide="help-circle" class="w-5 h-5"></i><span class="text-[9px] uppercase tracking-widest font-medium">Q&A</span></button>
             <button onclick="switchTab('journal')" class="nav-btn p-2 py-3 flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 w-full transition active:scale-95"><i data-lucide="archive" class="w-5 h-5"></i><span class="text-[9px] uppercase tracking-widest font-medium">Log</span></button>
         </div>
@@ -329,22 +394,53 @@
 
     <!-- MODALS -->
     
+    <!-- Info Modal -->
     <div id="info-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60] hidden items-center justify-center p-6 animate-fade-in">
         <div class="bg-slate-900 border border-slate-700 p-8 rounded-3xl max-w-xs w-full shadow-2xl text-center">
             <h3 class="text-xl text-white mb-2 font-serif italic">The Pathway</h3>
-            <p class="text-slate-500 text-xs mb-6 uppercase tracking-widest">Version 3.3 (Generative Audio)</p>
+            <p class="text-slate-500 text-xs mb-6 uppercase tracking-widest">Version 4.1 (Expanded Q&A)</p>
             <div class="space-y-4 text-sm text-slate-400 mb-8 text-left"><p>Based on "Letting Go" by Dr. David R. Hawkins.</p><p>This app functions offline.</p></div>
             <button onclick="toggleSettings()" class="w-full py-3 bg-slate-800 text-white rounded-xl hover:bg-slate-700 transition font-medium">Close</button>
         </div>
     </div>
 
-    <!-- Interval Bell Modal -->
+    <!-- Emotion Picker Modal -->
+    <div id="emotion-picker" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[70] hidden flex-col justify-end animate-fade-in">
+        <div class="bg-slate-900 border-t border-slate-700 rounded-t-3xl w-full max-w-md mx-auto max-h-[70vh] flex flex-col shadow-2xl">
+            <div class="flex justify-between items-center p-6 border-b border-slate-800">
+                <h3 class="text-lg text-white font-medium">Select Emotion</h3>
+                <button onclick="toggleModal('emotion-picker')" class="text-slate-500"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="overflow-y-auto p-2" id="emotion-list-container">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Session Complete Modal (Timer) -->
+    <div id="complete-modal" class="fixed inset-0 bg-black/95 z-[70] hidden items-center justify-center p-6 animate-fade-in">
+        <div class="bg-slate-900 border border-slate-700 p-8 rounded-3xl max-w-sm w-full shadow-2xl text-center">
+            <div class="mb-4 text-gold-500 mx-auto bg-gold-500/10 p-3 rounded-full inline-block"><i data-lucide="check" class="w-6 h-6"></i></div>
+            <h3 class="text-xl text-white mb-2">Session Complete</h3>
+            <p class="text-slate-400 text-xs mb-6">Rate the intensity of the feeling released.</p>
+            
+            <div class="mb-8 text-left">
+                <div class="flex justify-between text-xs text-slate-500 mb-2"><span>Low</span><span>High</span></div>
+                <input type="range" min="1" max="10" value="5" class="w-full" id="timer-intensity-slider" oninput="document.getElementById('timer-intensity-val').textContent = this.value">
+                <div class="text-center text-gold-500 font-mono mt-2 text-xl" id="timer-intensity-val">5</div>
+            </div>
+
+            <div class="space-y-3">
+                <button onclick="saveTimerSession()" class="w-full py-3 bg-gold-600 hover:bg-gold-500 text-white rounded-xl transition font-medium">Add to Log</button>
+                <button onclick="closeCompleteModal()" class="w-full py-3 border border-slate-700 text-slate-400 hover:text-white rounded-xl transition">Discard</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bell/Ambience Modals (Same as before) -->
     <div id="bell-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60] hidden items-end sm:items-center justify-center p-4 animate-fade-in">
         <div class="bg-slate-900 border border-slate-700 p-6 rounded-2xl max-w-xs w-full shadow-2xl mb-safe sm:mb-0">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg text-white font-medium">Interval Bell</h3>
-                <button onclick="toggleModal('bell-modal')" class="text-slate-500"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
+            <div class="flex justify-between items-center mb-4"><h3 class="text-lg text-white font-medium">Interval Bell</h3><button onclick="toggleModal('bell-modal')" class="text-slate-500"><i data-lucide="x" class="w-5 h-5"></i></button></div>
             <div class="space-y-2">
                 <button onclick="setBellInterval(0)" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 text-slate-300 flex justify-between">None <span id="bell-check-0" class="text-gold-500 hidden"><i data-lucide="check" class="w-4 h-4"></i></span></button>
                 <button onclick="setBellInterval(1)" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 text-slate-300 flex justify-between">Every 1 Minute <span id="bell-check-1" class="text-gold-500 hidden"><i data-lucide="check" class="w-4 h-4"></i></span></button>
@@ -353,14 +449,9 @@
             </div>
         </div>
     </div>
-
-    <!-- Ambience Modal -->
     <div id="ambience-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60] hidden items-end sm:items-center justify-center p-4 animate-fade-in">
         <div class="bg-slate-900 border border-slate-700 p-6 rounded-2xl max-w-xs w-full shadow-2xl mb-safe sm:mb-0">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg text-white font-medium">Ambient Sound</h3>
-                <button onclick="toggleModal('ambience-modal')" class="text-slate-500"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
+            <div class="flex justify-between items-center mb-4"><h3 class="text-lg text-white font-medium">Ambient Sound</h3><button onclick="toggleModal('ambience-modal')" class="text-slate-500"><i data-lucide="x" class="w-5 h-5"></i></button></div>
             <div class="space-y-2 max-h-64 overflow-y-auto">
                 <button onclick="setAmbience('none')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 text-slate-300 flex justify-between">None <span id="amb-check-none" class="text-gold-500 hidden"><i data-lucide="check" class="w-4 h-4"></i></span></button>
                 <button onclick="setAmbience('rain')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 text-slate-300 flex justify-between">Rain (Synth) <span id="amb-check-rain" class="text-gold-500 hidden"><i data-lucide="check" class="w-4 h-4"></i></span></button>
@@ -368,21 +459,6 @@
                 <button onclick="setAmbience('river')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 text-slate-300 flex justify-between">River (Synth) <span id="amb-check-river" class="text-gold-500 hidden"><i data-lucide="check" class="w-4 h-4"></i></span></button>
                 <button onclick="setAmbience('birds')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 text-slate-300 flex justify-between">Birds (Synth) <span id="amb-check-birds" class="text-gold-500 hidden"><i data-lucide="check" class="w-4 h-4"></i></span></button>
                 <button onclick="setAmbience('chimes')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 text-slate-300 flex justify-between">Chimes (Synth) <span id="amb-check-chimes" class="text-gold-500 hidden"><i data-lucide="check" class="w-4 h-4"></i></span></button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Session Complete Modal -->
-    <div id="complete-modal" class="fixed inset-0 bg-black/95 z-[70] hidden items-center justify-center p-6 animate-fade-in">
-        <div class="bg-slate-900 border border-slate-700 p-8 rounded-3xl max-w-sm w-full shadow-2xl text-center">
-            <div class="mb-6 text-gold-500 mx-auto bg-gold-500/10 p-4 rounded-full inline-block">
-                <i data-lucide="check" class="w-8 h-8"></i>
-            </div>
-            <h3 class="text-2xl text-white mb-2 font-light">Session Complete</h3>
-            <p class="text-slate-400 text-sm mb-8">You have completed your sitting. Would you like to add this to your log?</p>
-            <div class="space-y-3">
-                <button onclick="saveTimerSession()" class="w-full py-3.5 bg-gold-600 hover:bg-gold-500 text-white rounded-xl transition font-medium">Add to Log</button>
-                <button onclick="closeCompleteModal()" class="w-full py-3.5 border border-slate-700 text-slate-400 hover:text-white rounded-xl transition">Discard</button>
             </div>
         </div>
     </div>
@@ -399,24 +475,68 @@
             "Love is misunderstood to be an emotion; actually, it is a state of awareness.",
             "The letting go technique is a system of eliminating the ego.",
             "When you give up the resistance to the feeling, the energy behind it runs out.",
-            "You are the context in which the content of your life is unfolding."
+            "You are the context in which the content of your life is unfolding.",
+            "The goal of letting go is the elimination of the ego.",
+            "All we have to do is hand it over to God.",
+            "You are not the feeling; you are the witness of the feeling.",
+            "What you resist, persists.",
+            "The energy of the suppressed feeling is the cause of the thought.",
+            "We are all doing the best we can with what we have at the moment.",
+            "There is no 'out there'. It is all 'in here'.",
+            "Love promotes healing. When we hold it for others, we are healing ourselves.",
+            "The only thing that stands between you and God is a thought.",
+            "Desire is the energy of 'I want'. Surrender is the energy of 'I have'.",
+            "Humility is the doorway to the truth."
+        ];
+
+        const HAWKINS_SCALE = [
+            { name: "Shame", val: 20 },
+            { name: "Guilt", val: 30 },
+            { name: "Apathy", val: 50 },
+            { name: "Grief", val: 75 },
+            { name: "Fear", val: 100 },
+            { name: "Desire", val: 125 },
+            { name: "Anger", val: 150 },
+            { name: "Pride", val: 175 },
+            { name: "Courage", val: 200 },
+            { name: "Neutrality", val: 250 },
+            { name: "Willingness", val: 310 },
+            { name: "Acceptance", val: 350 },
+            { name: "Reason", val: 400 },
+            { name: "Love", val: 500 },
+            { name: "Joy", val: 540 },
+            { name: "Peace", val: 600 }
         ];
 
         const QA_DATA = [
-            { category: "Beginner / Skeptic", q: "Is this just suppressing feelings?", a: "No. Suppression is pushing a feeling down to avoid it. Letting go is the opposite: it is allowing the feeling to come up, acknowledging it, and letting the energy escape. You are opening the release valve rather than tightening it." },
-            { category: "Beginner / Skeptic", q: "Why should I ignore my thoughts?", a: "Thoughts are rationalizations created by the mind to explain the presence of a feeling. They are often repetitive and self-reinforcing. By focusing on the physical sensation of the emotion instead of the 'story', you cut the fuel supply to the thoughts, and they eventually vanish." },
-            { category: "Beginner / Skeptic", q: "What if the feeling is too strong?", a: "If a feeling is overwhelming, surrender to the fear of the feeling first. Acknowledge that you are afraid of it. Let go of the resistance to the fear. Once the fear subsides, you can handle the underlying emotion." },
-            { category: "Novice", q: "I feel stuck. Nothing is happening.", a: "You may be 'wanting' it to change. Wanting to get rid of a feeling is a form of resistance. Can you let go of the desire to change it? Can you just allow it to be there for now?" },
-            { category: "Novice", q: "Can I do this in public?", a: "Yes. Letting go is an internal mechanism. You can be in a meeting or walking down the street. Simply notice the tension in your solar plexus or chest, drop the resistance, and let it pass through you." },
-            { category: "Novice", q: "How do I know if I've let go?", a: "You will feel a sensation of lightness, relief, or sudden clarity. The thoughts associated with the feeling will stop coming back, or if they do, they will lack emotional charge." },
-            { category: "Adept", q: "The 'Void' or emptiness", a: "As you release major blocks, you may encounter a sense of emptiness. This is not a bad thing; it is the space where the ego used to be. Do not resist the emptiness. Rest in it. It is the precursor to peace." },
-            { category: "Adept", q: "Letting go of 'positive' things", a: "We also hold onto attachments to positive outcomes, desire, and excitement. Surrendering these attachments does not mean you become apathetic; it means you become peaceful and happy regardless of whether you get the object of desire or not." },
-            { category: "Pro", q: "Who is the one letting go?", a: "Eventually, you realize that the 'I' that is trying to let go is also just a thought. You can surrender the sense of a separate 'doer'. This leads to the realization that everything is happening spontaneously." },
-            { category: "Pro", q: "Surrender vs. Apathy", a: "Apathy is 'I can't do anything'. Surrender is 'I don't need to control anything'. Apathy feels heavy and dark. Surrender feels light and expansive. If you feel drained, it is apathy. If you feel lighter, it is surrender." }
+            { category: "Beginner / Skeptic", q: "Why aren't I sensing my feelings inside my body?", a: "This numbness is due to ingrained, conditioned resistance. Because the feeling was unpleasant, the mind automatically pushed it out of awareness. It has been repressed for so long that you have lost touch with the physical sensation. Be patient; simply intending to look is the first step." },
+            { category: "Beginner / Skeptic", q: "Is this just suppressing feelings?", a: "No. Suppression is pushing a feeling down to avoid it. Letting go is the opposite: it is allowing the feeling to come up, acknowledging it, and letting the energy escape." },
+            { category: "Beginner / Skeptic", q: "Why should I ignore my thoughts?", a: "Thoughts are rationalizations created by the mind to explain the presence of a feeling. They are often repetitive. Focusing on the physical sensation cuts the fuel supply to thoughts." },
+            { category: "Beginner / Skeptic", q: "What if the feeling is too strong?", a: "If overwhelmed, surrender to the fear of the feeling first. Acknowledge you are afraid. Let go of resistance to the fear." },
+            { category: "Beginner / Skeptic", q: "Is there scientific proof for this?", a: "Dr. Hawkins' work correlates vibrational states with muscle testing (kinesiology). While the subjective experience is internal, the physiological benefits of stress reduction are well-documented." },
+            { category: "Beginner / Skeptic", q: "How is this different from relaxation?", a: "Relaxation often targets the body directly. Letting go targets the emotional energy *causing* the tension. It is a permanent release rather than a temporary respite." },
+            
+            { category: "Novice", q: "I feel stuck. Nothing is happening.", a: "You may be 'wanting' it to change. Wanting is resistance. Can you let go of the desire to change it? Can you allow it to just be?" },
+            { category: "Novice", q: "Can I do this in public?", a: "Yes. It's internal. Notice the tension, drop resistance, and let it pass through while walking or in a meeting." },
+            { category: "Novice", q: "How do I know if I've let go?", a: "You feel lighter, relieved, or clear. Thoughts stop returning, or lack emotional charge." },
+            { category: "Novice", q: "Why do I feel worse sometimes?", a: "This is the 'healing crisis.' As you open the doors, suppressed energy rushes up to be released. It feels intense, but it is actually leaving. Stay with it." },
+            { category: "Novice", q: "Can I let go of physical pain?", a: "Yes. Much pain is held in place by resistance. If you stop resisting the sensation and just experience it as pure energy, it often shifts or diminishes." },
+            { category: "Novice", q: "Is crying okay?", a: "Absolutely. Crying is a natural mechanism of release, especially for Grief. Do not suppress the tears; let them flow until they stop on their own." },
+
+            { category: "Adept", q: "Spiritual Pride", a: "Watch out for the ego claiming credit for your progress. 'Look how spiritual I am' is just another feeling (Pride) to be surrendered." },
+            { category: "Adept", q: "Running out of things to surrender?", a: "You may reach periods of peace, but deeper layers often emerge later. Remain vigilant for subtle attachments to comfort or even to the practice itself." },
+            { category: "Adept", q: "Handling major crises", a: "In a crisis, the volume of emotion is high. This is actually a golden opportunity. A massive amount of karma can be discharged quickly if you can stay present with the raw energy without resisting." },
+            { category: "Adept", q: "Attachment to outcomes", a: "Surrender doesn't mean you don't act; it means you surrender your attachment to the result. You do your best and let go of the rest." },
+
+            { category: "Pro", q: "Who is the one letting go?", a: "Eventually, you realize the 'I' trying to let go is also a thought. Surrendering the 'doer' leads to realization that everything happens spontaneously." },
+            { category: "Pro", q: "Surrender vs. Apathy", a: "Apathy is 'I can't do anything'. Surrender is 'I don't need to control anything'. Apathy feels heavy and dark. Surrender feels light and expansive. If you feel drained, it is apathy. If you feel lighter, it is surrender." },
+            { category: "Pro", q: "The Final Door", a: "The ultimate surrender is to God/Truth itself. It is the letting go of the illusion of a separate self." }
         ];
 
         // --- STATE ---
         let activeTab = 'guide';
+        
+        // Timer
         let timerInterval = null;
         let timerDuration = 600; 
         let defaultDuration = 600;
@@ -435,15 +555,21 @@
         let birdInterval = null;
         let chimeInterval = null;
 
+        // Process
         let processInterval = null;
         let processSeconds = 0;
         let processStartTime = 0;
-        let currentProcessEmotion = "";
+        let currentSelectedEmotion = "";
+        let pickerCallback = null; // Function to call when emotion selected
+
+        // Chart
+        let progressChart = null;
 
         window.onload = function() {
             initIntro();
             lucide.createIcons();
             initQA();
+            initEmotionPicker();
             updateTimerDisplay();
             loadJournal();
         };
@@ -463,7 +589,65 @@
             if(!audioContext) initAudio();
         }
 
-        // --- GENERATIVE AUDIO ENGINE (Pure Synth) ---
+        // --- EMOTION PICKER ---
+        function initEmotionPicker() {
+            const container = document.getElementById('emotion-list-container');
+            if(!container) return;
+            container.innerHTML = HAWKINS_SCALE.map(e => `
+                <button onclick="selectEmotion('${e.name}')" class="w-full text-left px-6 py-4 border-b border-slate-800 text-slate-300 hover:bg-slate-800 transition flex justify-between items-center group">
+                    <span class="font-medium text-lg">${e.name}</span>
+                    <span class="text-xs text-slate-600 font-mono group-hover:text-gold-500">${e.val}</span>
+                </button>
+            `).join('');
+        }
+
+        function selectEmotion(name) {
+            currentSelectedEmotion = name;
+            toggleModal('emotion-picker');
+            
+            // Update displays based on where we opened it
+            if(pickerCallback) {
+                pickerCallback(name);
+                pickerCallback = null;
+            } else {
+                // Default behavior if just updating state
+                const disp1 = document.getElementById('process-emotion-display');
+                const disp2 = document.getElementById('timer-emotion-display');
+                const disp3 = document.getElementById('chart-emotion-display');
+                if(disp1) { disp1.textContent = name; disp1.classList.add('text-white'); }
+                if(disp2) { disp2.textContent = name; disp2.classList.add('text-gold-500'); }
+                if(disp3) { 
+                    disp3.textContent = name; 
+                    loadChart(name); 
+                }
+            }
+        }
+
+        function openPickerFor(context) {
+            toggleModal('emotion-picker');
+            if (context === 'process') {
+                pickerCallback = (name) => {
+                    const el = document.getElementById('process-emotion-display');
+                    el.textContent = name;
+                    el.classList.remove('text-slate-400');
+                    el.classList.add('text-white');
+                };
+            } else if (context === 'timer') {
+                pickerCallback = (name) => {
+                    const el = document.getElementById('timer-emotion-display');
+                    el.textContent = name;
+                    el.classList.add('text-gold-500');
+                };
+            } else if (context === 'chart') {
+                pickerCallback = (name) => {
+                    const el = document.getElementById('chart-emotion-display');
+                    el.textContent = name;
+                    loadChart(name);
+                }
+            }
+        }
+
+        // --- AUDIO ENGINE (Pure Synth) ---
         function initAudio() {
             if(!audioContext) {
                 const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -474,7 +658,6 @@
             if(audioContext.state === 'suspended') audioContext.resume();
         }
 
-        // Buffer Generators
         function createPinkNoise() {
             const bs = audioContext.sampleRate * 2;
             const buffer = audioContext.createBuffer(1, bs, audioContext.sampleRate);
@@ -509,33 +692,25 @@
             return buffer;
         }
 
-        // Instruments
         function playSingleChime() {
             if(!audioContext) return;
             const osc = audioContext.createOscillator();
             const osc2 = audioContext.createOscillator();
             const gain = audioContext.createGain();
             const modGain = audioContext.createGain();
-            
-            // Pentatonic Frequencies
-            const freqs = [523.25, 587.33, 659.25, 783.99, 880.00]; // C5, D5, E5, G5, A5
+            const freqs = [523.25, 587.33, 659.25, 783.99, 880.00]; 
             const freq = freqs[Math.floor(Math.random() * freqs.length)];
-            
             osc.frequency.value = freq;
-            osc2.frequency.value = freq * 2.5; // Modulation ratio
-            
+            osc2.frequency.value = freq * 2.5; 
             modGain.gain.value = 500;
-            
             osc2.connect(modGain);
             modGain.connect(osc.frequency);
             osc.connect(gain);
             gain.connect(audioContext.destination);
-            
             const now = audioContext.currentTime;
             gain.gain.setValueAtTime(0, now);
             gain.gain.linearRampToValueAtTime(0.1, now + 0.02);
             gain.gain.exponentialRampToValueAtTime(0.001, now + 4);
-            
             osc.start(now);
             osc2.start(now);
             osc.stop(now + 4.5);
@@ -546,21 +721,16 @@
             if(!audioContext) return;
             const osc = audioContext.createOscillator();
             const gain = audioContext.createGain();
-            
             osc.connect(gain);
             gain.connect(audioContext.destination);
-            
             const now = audioContext.currentTime;
-            // Chirp logic
             const freq = 2000 + Math.random() * 1500;
             osc.frequency.setValueAtTime(freq, now);
             osc.frequency.linearRampToValueAtTime(freq + 500, now + 0.1);
             osc.frequency.linearRampToValueAtTime(freq - 200, now + 0.2);
-            
             gain.gain.setValueAtTime(0, now);
             gain.gain.linearRampToValueAtTime(0.05, now + 0.02);
             gain.gain.linearRampToValueAtTime(0, now + 0.25);
-            
             osc.start(now);
             osc.stop(now + 0.3);
         }
@@ -579,7 +749,6 @@
             osc.stop(audioContext.currentTime + 6);
         }
 
-        // Manager
         function stopAmbience() {
             if(noiseNode) { try{noiseNode.stop()}catch(e){}; noiseNode.disconnect(); noiseNode=null; }
             if(modOsc) { try{modOsc.stop()}catch(e){}; modOsc.disconnect(); modOsc=null; }
@@ -592,7 +761,6 @@
             initAudio();
             
             if(type === 'rain') {
-                // Rain: Pink noise + droplets
                 const gain = audioContext.createGain();
                 noiseNode = audioContext.createBufferSource();
                 noiseNode.buffer = createPinkNoise();
@@ -603,7 +771,6 @@
                 noiseNode.start();
             }
             else if(type === 'river') {
-                // River: Brown noise + filter
                 const gain = audioContext.createGain();
                 noiseNode = audioContext.createBufferSource();
                 noiseNode.buffer = createBrownNoise();
@@ -618,7 +785,6 @@
                 noiseNode.start();
             }
             else if(type === 'wind') {
-                // Wind: Pink + LFO filter
                 const gain = audioContext.createGain();
                 noiseNode = audioContext.createBufferSource();
                 noiseNode.buffer = createPinkNoise();
@@ -641,29 +807,23 @@
                 modOsc.start();
             }
             else if(type === 'birds') {
-                // Ambient background + Random chirps
                 const gain = audioContext.createGain();
                 noiseNode = audioContext.createBufferSource();
                 noiseNode.buffer = createPinkNoise();
                 noiseNode.loop = true;
                 const filter = audioContext.createBiquadFilter();
                 filter.type = 'highpass';
-                filter.frequency.value = 2000; // Light airy bg
+                filter.frequency.value = 2000; 
                 gain.gain.value = 0.02;
                 noiseNode.connect(filter);
                 filter.connect(gain);
                 gain.connect(audioContext.destination);
                 noiseNode.start();
-                
-                birdInterval = setInterval(() => {
-                    if(Math.random() > 0.6) playSingleBird();
-                }, 1500);
+                birdInterval = setInterval(() => { if(Math.random() > 0.6) playSingleBird(); }, 1500);
             }
             else if(type === 'chimes') {
-                chimeInterval = setInterval(() => {
-                    if(Math.random() > 0.5) playSingleChime();
-                }, 2500);
-                playSingleChime(); // Play one immediately
+                chimeInterval = setInterval(() => { if(Math.random() > 0.5) playSingleChime(); }, 2500);
+                playSingleChime();
             }
         }
 
@@ -676,11 +836,9 @@
                 const now = Date.now();
                 const remaining = Math.ceil((timerEndTime - now) / 1000);
                 timerDuration = remaining > 0 ? remaining : 0;
-                
                 isTimerRunning = false;
                 clearInterval(timerInterval);
                 stopAmbience();
-                
                 btn.innerHTML = '<i data-lucide="play" class="w-8 h-8 fill-current ml-1"></i>';
                 breathCircle.classList.remove('animate-breathe');
                 breathCircle.style.transform = 'scale(1)';
@@ -688,21 +846,16 @@
             } else {
                 if (timerDuration <= 0) timerDuration = defaultDuration;
                 currentTimerSessionLength = timerDuration; 
-                
                 isTimerRunning = true;
                 timerEndTime = Date.now() + (timerDuration * 1000);
-                
                 initAudio(); 
                 if(currentAmbience !== 'none') playAmbience(currentAmbience);
-                
                 btn.innerHTML = '<i data-lucide="pause" class="w-8 h-8 fill-current"></i>';
                 breathCircle.classList.add('animate-breathe');
                 updateTimerDisplay();
-                
                 timerInterval = setInterval(() => {
                     const now = Date.now();
                     const remaining = Math.ceil((timerEndTime - now) / 1000);
-                    
                     if (bellInterval !== 0 && remaining > 0) {
                         const elapsed = currentTimerSessionLength - remaining;
                         if (bellInterval === 'half') {
@@ -711,19 +864,16 @@
                             if (elapsed > 0 && elapsed % (bellInterval * 60) === 0) playBell();
                         }
                     }
-
                     if (remaining <= 0) {
                         timerDuration = 0;
                         isTimerRunning = false;
                         clearInterval(timerInterval);
                         stopAmbience();
                         playBell(); 
-                        
                         btn.innerHTML = '<i data-lucide="play" class="w-8 h-8 fill-current ml-1"></i>';
                         breathCircle.classList.remove('animate-breathe');
                         breathCircle.style.transform = 'scale(1)';
                         document.getElementById('timer-display').textContent = "00:00";
-                        
                         document.getElementById('complete-modal').classList.remove('hidden');
                         document.getElementById('complete-modal').classList.add('flex');
                     } else {
@@ -767,12 +917,21 @@
             updateTimerDisplay();
         }
 
-        // --- SETTINGS MODALS ---
+        // --- MODALS ---
         function toggleModal(id) {
+            if(id === 'emotion-picker' && !document.getElementById(id).classList.contains('hidden')) {
+                // Closing emotion picker? Clear callback just in case
+                pickerCallback = null;
+            }
+            
             const el = document.getElementById(id);
             if(el.classList.contains('hidden')) {
                 el.classList.remove('hidden');
                 el.classList.add('flex');
+                // If opening emotion picker for specific context
+                if(id === 'emotion-picker') {
+                    // Context is set by button call
+                }
             } else {
                 el.classList.add('hidden');
                 el.classList.remove('flex');
@@ -799,18 +958,20 @@
         }
 
         function saveTimerSession() {
-            const intentionInput = document.getElementById('timer-intention');
-            const intention = intentionInput && intentionInput.value.trim() ? intentionInput.value.trim() : "Meditation";
+            const intensity = document.getElementById('timer-intensity-slider').value;
+            // currentSelectedEmotion must be set via picker
+            const emotion = currentSelectedEmotion || "Meditation";
             
             const releases = JSON.parse(localStorage.getItem('releases') || '[]');
             releases.unshift({
-                emotion: intention,
+                emotion: emotion,
                 date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}),
                 time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-                duration: currentTimerSessionLength
+                duration: currentTimerSessionLength,
+                intensity: intensity
             });
             localStorage.setItem('releases', JSON.stringify(releases));
-            if(intentionInput) intentionInput.value = "";
+            
             closeCompleteModal();
             resetTimer();
             switchTab('journal');
@@ -822,7 +983,64 @@
             resetTimer();
         }
 
-        // --- Q&A ---
+        // --- PROCESS ---
+        function startProcess() {
+            if(!currentSelectedEmotion) {
+                alert("Please select an emotion first.");
+                return;
+            }
+            currentProcessEmotion = currentSelectedEmotion;
+            document.querySelectorAll('.current-emotion').forEach(el => el.textContent = currentProcessEmotion);
+            processSeconds = 0;
+            nextStep(1);
+            document.getElementById('process-reset-btn').classList.remove('hidden');
+        }
+        function nextStep(step) {
+            document.querySelectorAll('.process-step').forEach(el => el.classList.add('hidden'));
+            const target = document.getElementById(`process-step-${step}`);
+            target.classList.remove('hidden');
+            target.classList.add('animate-fade-in');
+            if (step === 4) startProcessTimer(); else stopProcessTimer();
+            if (step === 5) document.getElementById('process-reset-btn').classList.add('hidden');
+        }
+        function startProcessTimer() {
+            const display = document.getElementById('process-timer');
+            processSeconds = 0;
+            display.textContent = "00:00";
+            if (processInterval) clearInterval(processInterval);
+            processStartTime = Date.now();
+            processInterval = setInterval(() => {
+                const now = Date.now();
+                processSeconds = Math.floor((now - processStartTime) / 1000);
+                const m = Math.floor(processSeconds / 60).toString().padStart(2, '0');
+                const s = (processSeconds % 60).toString().padStart(2, '0');
+                display.textContent = `${m}:${s}`;
+            }, 1000);
+        }
+        function stopProcessTimer() { if (processInterval) clearInterval(processInterval); }
+        function finishProcess() { stopProcessTimer(); nextStep(5); }
+        function resetProcess() {
+            stopProcessTimer();
+            document.querySelectorAll('.process-step').forEach(el => el.classList.add('hidden'));
+            document.getElementById('process-step-0').classList.remove('hidden');
+            document.getElementById('process-reset-btn').classList.add('hidden');
+        }
+        function saveAndClose() {
+            const intensity = document.getElementById('process-intensity-slider').value;
+            const releases = JSON.parse(localStorage.getItem('releases') || '[]');
+            releases.unshift({
+                emotion: currentProcessEmotion,
+                date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}),
+                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                duration: processSeconds,
+                intensity: intensity
+            });
+            localStorage.setItem('releases', JSON.stringify(releases));
+            resetProcess();
+            switchTab('journal');
+        }
+
+        // --- Q&A & NAV ---
         function initQA() {
             const container = document.getElementById('qa-container');
             if (!container) return;
@@ -870,6 +1088,16 @@
                 void target.offsetWidth;
                 target.classList.add('animate-fade-in');
             }
+            
+            // Open emotion picker automatically when chart tab clicked
+            if(tabId === 'charts') {
+                // Ensure button listener is set for this context
+                document.getElementById('chart-emotion-btn').onclick = () => openPickerFor('chart');
+            }
+            if(tabId === 'process') {
+                document.getElementById('process-emotion-btn').onclick = () => openPickerFor('process');
+            }
+            
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('text-gold-500', 'text-white');
                 btn.classList.add('text-slate-500');
@@ -897,61 +1125,75 @@
             }
         }
 
-        // --- PROCESS ---
-        function startProcess() {
-            const input = document.getElementById('emotion-input');
-            if (!input.value.trim()) return;
-            currentProcessEmotion = input.value.trim();
-            document.querySelectorAll('.current-emotion').forEach(el => el.textContent = currentProcessEmotion);
-            processSeconds = 0;
-            nextStep(1);
-            document.getElementById('process-reset-btn').classList.remove('hidden');
-        }
-        function nextStep(step) {
-            document.querySelectorAll('.process-step').forEach(el => el.classList.add('hidden'));
-            const target = document.getElementById(`process-step-${step}`);
-            target.classList.remove('hidden');
-            target.classList.add('animate-fade-in');
-            if (step === 4) startProcessTimer(); else stopProcessTimer();
-            if (step === 5) document.getElementById('process-reset-btn').classList.add('hidden');
-        }
-        function startProcessTimer() {
-            const display = document.getElementById('process-timer');
-            processSeconds = 0;
-            display.textContent = "00:00";
-            if (processInterval) clearInterval(processInterval);
-            processStartTime = Date.now();
-            processInterval = setInterval(() => {
-                const now = Date.now();
-                processSeconds = Math.floor((now - processStartTime) / 1000);
-                const m = Math.floor(processSeconds / 60).toString().padStart(2, '0');
-                const s = (processSeconds % 60).toString().padStart(2, '0');
-                display.textContent = `${m}:${s}`;
-            }, 1000);
-        }
-        function stopProcessTimer() { if (processInterval) clearInterval(processInterval); }
-        function finishProcess() { stopProcessTimer(); nextStep(5); }
-        function resetProcess() {
-            stopProcessTimer();
-            document.getElementById('emotion-input').value = '';
-            document.querySelectorAll('.process-step').forEach(el => el.classList.add('hidden'));
-            document.getElementById('process-step-0').classList.remove('hidden');
-            document.getElementById('process-reset-btn').classList.add('hidden');
-        }
-        function saveAndClose() {
+        // --- CHARTS ---
+        function loadChart(emotion) {
+            const ctx = document.getElementById('progressChart');
+            if(!ctx) return;
+            
+            // Hide placeholder
+            document.getElementById('chart-placeholder').classList.add('hidden');
+            
             const releases = JSON.parse(localStorage.getItem('releases') || '[]');
-            releases.unshift({
-                emotion: currentProcessEmotion,
-                date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}),
-                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-                duration: processSeconds
+            // Filter by emotion, then sort by date (oldest first for graph)
+            const data = releases
+                .filter(r => r.emotion === emotion && r.intensity)
+                .reverse(); // Reverse to get chronological order
+                
+            if(data.length === 0) {
+                // Show placeholder or empty state
+                if(progressChart) progressChart.destroy();
+                document.getElementById('chart-placeholder').classList.remove('hidden');
+                document.getElementById('chart-placeholder').textContent = `No data yet for "${emotion}"`;
+                return;
+            }
+
+            const labels = data.map(d => d.date); // X-Axis
+            const values = data.map(d => parseInt(d.intensity)); // Y-Axis
+
+            if(progressChart) progressChart.destroy();
+
+            progressChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Intensity',
+                        data: values,
+                        borderColor: '#d4af37',
+                        backgroundColor: 'rgba(212, 175, 55, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: '#d4af37'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 10,
+                            grid: { color: '#1e293b' },
+                            ticks: { color: '#94a3b8' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#94a3b8' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#0f172a',
+                            borderColor: '#334155',
+                            borderWidth: 1
+                        }
+                    }
+                }
             });
-            localStorage.setItem('releases', JSON.stringify(releases));
-            resetProcess();
-            switchTab('journal');
         }
 
-        // --- JOURNAL WITH SWIPE TO DELETE ---
+        // --- JOURNAL ---
         function loadJournal() {
             const list = document.getElementById('journal-list');
             if (!list) return;
@@ -973,7 +1215,8 @@
                                 <p class="text-xs text-slate-500 mt-1">${entry.date} • ${entry.time}</p>
                             </div>
                             <div class="text-right shrink-0">
-                                <span class="text-xs font-mono text-gold-500">${entry.duration > 60 ? Math.floor(entry.duration/60) + 'm' : entry.duration + 's'}</span>
+                                <div class="text-xs font-mono text-gold-500">${entry.duration > 60 ? Math.floor(entry.duration/60) + 'm' : entry.duration + 's'}</div>
+                                ${entry.intensity ? `<div class="text-[10px] text-slate-500 mt-1">Int: ${entry.intensity}</div>` : ''}
                             </div>
                         </div>
                     </div>
@@ -994,9 +1237,7 @@
             if (!xDown || !activeSwipeItem) return;
             let xUp = evt.touches[0].clientX;
             let xDiff = xDown - xUp;
-            // Only swipe left
             if (xDiff > 0) {
-                // Limit swipe
                 if(xDiff > 80) xDiff = 80;
                 el.style.transform = `translateX(-${xDiff}px)`;
             }
@@ -1006,7 +1247,7 @@
             if (!xDown || !activeSwipeItem) return;
             let xUp = evt.changedTouches[0].clientX;
             let xDiff = xDown - xUp;
-            if (xDiff > 40) { // Threshold
+            if (xDiff > 40) { 
                 el.style.transform = `translateX(-80px)`;
             } else {
                 el.style.transform = `translateX(0px)`;
@@ -1022,7 +1263,6 @@
                 localStorage.setItem('releases', JSON.stringify(releases));
                 loadJournal();
             } else {
-                // Reset swipe if cancelled
                 loadJournal(); 
             }
         }
