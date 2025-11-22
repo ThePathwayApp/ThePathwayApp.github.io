@@ -144,7 +144,7 @@
         .shake-error { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; border-color: #ef4444 !important; color: #ef4444 !important; }
     </style>
 </head>
-<body class="selection:bg-gold-500 selection:text-white">
+<body class="selection:bg-gold-500 selection:text-white" ontouchstart="handleGlobalTouchStart(event)" ontouchmove="handleGlobalTouchMove(event)" ontouchend="handleGlobalTouchEnd(event)">
 
     <div id="side-menu-backdrop" onclick="toggleMenu()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90] hidden opacity-0 transition-opacity duration-[1000ms]"></div>
 
@@ -188,7 +188,7 @@
         </nav>
 
         <div class="px-6 pt-6 pb-4 text-center border-t border-slate-800/50 mt-auto">
-            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 8.9.1</p>
+            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 8.9.2</p>
         </div>
     </aside>
 
@@ -229,8 +229,8 @@
             </div>
         </section>
 
-        <section id="view-process" class="view-section hidden h-full overflow-hidden flex flex-col p-4">
-            <div class="glass-panel p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-lg flex-1 flex flex-col justify-center items-center text-center relative overflow-hidden max-w-md mx-auto w-full">
+        <section id="view-process" class="view-section hidden h-full overflow-hidden flex flex-col justify-center p-4">
+            <div class="glass-panel p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-lg w-full max-w-md mx-auto flex flex-col justify-center items-center text-center relative overflow-hidden">
                 <div id="process-step-0" class="process-step w-full">
                     <h2 class="text-2xl sm:text-3xl font-light mb-2 text-white">Identify Emotion</h2>
                     <p class="text-slate-400 mb-8 text-sm">Select the emotion on the scale.</p>
@@ -260,7 +260,13 @@
                 <div id="process-step-4" class="process-step hidden w-full">
                     <div class="absolute inset-0 flex items-center justify-center -z-10 opacity-20 pointer-events-none"><div class="w-64 h-64 bg-gold-500 rounded-full blur-3xl animate-breathe"></div></div>
                     <h2 class="text-xl font-light mb-2 text-white">Stay with it</h2>
-                    <div class="text-6xl font-extralight text-white mb-10 font-serif tabular-nums tracking-tight" id="process-timer">00:00</div>
+                    <div class="text-6xl font-extralight text-white mb-8 font-serif tabular-nums tracking-tight" id="process-timer">00:00</div>
+                    
+                    <div class="flex justify-center gap-4 mb-8">
+                        <button onclick="toggleModal('bell-modal')" class="flex items-center gap-2 px-3 py-2 bg-slate-900/80 border border-slate-800 rounded-full text-[10px] text-slate-400 hover:text-gold-500 transition"><i data-lucide="bell" class="w-3 h-3"></i> <span>Interval</span><div id="process-bell-status" class="w-1 h-1 bg-gold-500 rounded-full hidden ml-1"></div></button>
+                        <button onclick="toggleModal('ambience-modal')" class="flex items-center gap-2 px-3 py-2 bg-slate-900/80 border border-slate-800 rounded-full text-[10px] text-slate-400 hover:text-emerald-500 transition"><i data-lucide="waves" class="w-3 h-3"></i> <span>Sound</span><div id="process-ambience-status" class="w-1 h-1 bg-emerald-500 rounded-full hidden ml-1"></div></button>
+                    </div>
+
                     <button onclick="finishProcess()" class="w-full py-4 bg-emerald-900/40 hover:bg-emerald-900/60 text-emerald-100 border border-emerald-800/50 rounded-xl transition backdrop-blur-sm btn-primary">Feeling has Shifted</button>
                 </div>
                 <div id="process-step-5" class="process-step hidden w-full">
@@ -384,7 +390,7 @@
     </div>
 
     <script>
-        // SHARED VARS (accessible by module)
+        // SHARED VARS
         var currentProcessEmotion = "";
         var processSeconds = 0;
         var currentSelectedEmotion = "";
@@ -572,7 +578,10 @@
         let bellInterval = 0, currentAmbience = 'none', audioContext, noiseNode, modOsc, birdInterval, chimeInterval;
         let processInterval, processStartTime = 0, pickerCallback, progressChart;
         let lastBellMinute = -1, halfwayBellPlayed = false;
+        
+        // TOUCH VARS
         let touchStartX = 0, currentSwipeItem = null;
+        let globalTouchStartX = 0;
 
         window.onload = function() {
             initIntro();
@@ -584,6 +593,10 @@
             if (sessionStorage.getItem('intro_dismissed')) {
                 document.getElementById('intro-screen').style.display = 'none';
             }
+            
+            // CRITICAL: Unlock Audio on first touch
+            document.addEventListener('click', unlockAudio, { once: true });
+            document.addEventListener('touchstart', unlockAudio, { once: true });
         };
 
         function initIntro() { 
@@ -595,7 +608,7 @@
         }
         
         function dismissIntro() { 
-            checkAudioContext();
+            unlockAudio();
             document.getElementById('intro-screen').style.opacity='0'; 
             sessionStorage.setItem('intro_dismissed', 'true');
             setTimeout(()=>{ document.getElementById('intro-screen').style.display='none'; },1000); 
@@ -604,175 +617,261 @@
         function toggleMenu() { document.body.classList.toggle('side-menu-open'); }
         function toggleSettings() { toggleMenu(); } 
 
-        // TOUCH SWIPE LOGIC
+        // SWIPE LOGIC (Logs)
         window.handleTouchStart = (e, el) => {
             touchStartX = e.touches[0].clientX;
             currentSwipeItem = el;
-            // Close other swipes
-            document.querySelectorAll('.swipe-item').forEach(item => {
-                if(item !== el) item.style.transform = 'translateX(0)';
-            });
-            el.style.transition = 'none'; // Disable transition during drag
+            el.style.transition = 'none'; 
         };
 
         window.handleTouchMove = (e, el) => {
             if (!currentSwipeItem) return;
-            const touchX = e.touches[0].clientX;
-            const diff = touchX - touchStartX;
+            const diff = e.touches[0].clientX - touchStartX;
             
-            // Only allow left swipe
-            if (diff < 0) {
-                const translate = Math.max(diff, -80); // Limit to button width
-                el.style.transform = `translateX(${translate}px)`;
+            // Get current transform
+            const currentTransform = new WebKitCSSMatrix(getComputedStyle(el).transform);
+            const currentX = currentTransform.m41;
+
+            if (currentX < -10) {
+                // It's already open, swiping right closes it
+                if (diff > 0) el.style.transform = `translateX(${Math.min(-80 + diff, 0)}px)`;
+            } else {
+                // It's closed, swiping left opens it
+                if (diff < 0) el.style.transform = `translateX(${Math.max(diff, -80)}px)`;
             }
         };
 
         window.handleTouchEnd = (e, el) => {
             if (!currentSwipeItem) return;
-            el.style.transition = 'transform 0.2s ease-out'; // Re-enable transition
+            el.style.transition = 'transform 0.2s ease-out';
             
-            const currentTransform = getComputedStyle(el).transform;
-            const matrix = new WebKitCSSMatrix(currentTransform);
-            const translateX = matrix.m41;
+            const currentTransform = new WebKitCSSMatrix(getComputedStyle(el).transform);
+            const translateX = currentTransform.m41;
             
-            // If swiped more than half way (40px), snap open
-            if (translateX < -40) {
-                el.style.transform = 'translateX(-80px)';
-            } else {
-                el.style.transform = 'translateX(0)';
-            }
+            if (translateX < -40) el.style.transform = 'translateX(-80px)';
+            else el.style.transform = 'translateX(0)';
+            
             currentSwipeItem = null;
         };
 
-        // ROBUST AUDIO ENGINE
-        function checkAudioContext() {
-            if(!audioContext) {
+        // EDGE SWIPE LOGIC (Navigation)
+        window.handleGlobalTouchStart = (e) => {
+            globalTouchStartX = e.touches[0].clientX;
+        };
+
+        window.handleGlobalTouchMove = (e) => {
+            const x = e.touches[0].clientX;
+            const width = window.innerWidth;
+            const diff = x - globalTouchStartX;
+            const isMenuOpen = document.body.classList.contains('side-menu-open');
+
+            // Swipe Right-to-Left from Edge to Open Menu
+            if (!isMenuOpen && globalTouchStartX > width - 40 && diff < 0) {
+               // Optional: Add visual drag logic here if desired, for now we trigger on end
+            }
+            
+            // Swipe Left-to-Right on Menu to Close
+            if (isMenuOpen && diff > 0) {
+                // Logic handles at end
+            }
+        };
+
+        window.handleGlobalTouchEnd = (e) => {
+            const diff = e.changedTouches[0].clientX - globalTouchStartX;
+            const width = window.innerWidth;
+            const isMenuOpen = document.body.classList.contains('side-menu-open');
+
+            // Swipe Left (Open Menu)
+            if (!isMenuOpen && globalTouchStartX > width - 50 && diff < -50) {
+                document.body.classList.add('side-menu-open');
+            }
+            // Swipe Right (Close Menu)
+            else if (isMenuOpen && diff > 50) {
+                document.body.classList.remove('side-menu-open');
+            }
+        };
+
+        // ROBUST AUDIO ENGINE REWRITE
+        function unlockAudio() {
+            if (!audioContext) {
                 const AC = window.AudioContext || window.webkitAudioContext;
                 audioContext = new AC();
             }
-            if(audioContext.state === 'suspended') {
-                audioContext.resume();
+            if (audioContext.state === 'suspended') {
+                audioContext.resume().then(() => console.log("Audio Context Resumed"));
             }
         }
 
-        function createBuffer(type) {
-            if (!audioContext) return null;
-            const bs = audioContext.sampleRate * 2;
-            const buffer = audioContext.createBuffer(1, bs, audioContext.sampleRate);
-            const data = buffer.getChannelData(0);
-            
-            if (type === 'white') {
-                for (let i = 0; i < bs; i++) data[i] = Math.random() * 2 - 1;
-            } else if (type === 'pink') {
-                let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0; 
-                for(let i=0; i<bs; i++) { 
-                    let white = Math.random()*2-1; 
-                    b0 = 0.99886*b0 + white*0.0555179; 
-                    b1 = 0.99332*b1 + white*0.0750759; 
-                    b2 = 0.96900*b2 + white*0.1538520; 
-                    b3 = 0.86650*b3 + white*0.3104856; 
-                    b4 = 0.55000*b4 + white*0.5329522; 
-                    b5 = -0.7616*b5 - white*0.0168980; 
-                    data[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white*0.5362) * 0.11; 
-                    b6 = white*0.115926; 
-                }
-            } else if (type === 'brown') {
-                let lastOut = 0; 
-                for(let i=0; i<bs; i++) { 
-                    let white = Math.random()*2-1; 
-                    data[i] = (lastOut + (0.02*white)) / 1.02; 
-                    lastOut = data[i]; 
-                    data[i] *= 3.5; 
-                }
+        function createWhiteNoise() {
+            if(!audioContext) return;
+            const bufferSize = audioContext.sampleRate * 2; 
+            const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+            const output = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                output[i] = Math.random() * 2 - 1;
             }
             return buffer;
         }
 
-        function playSingleChime() { 
-            if(!audioContext) return; 
-            const osc = audioContext.createOscillator(), osc2 = audioContext.createOscillator(), gain = audioContext.createGain(), modGain = audioContext.createGain(); 
-            const freq = [523.25, 587.33, 659.25, 783.99, 880.00][Math.floor(Math.random()*5)]; 
-            osc.frequency.value = freq; osc2.frequency.value = freq * 2.5; modGain.gain.value = 500; 
-            osc2.connect(modGain); modGain.connect(osc.frequency); osc.connect(gain); gain.connect(audioContext.destination); 
-            const now = audioContext.currentTime; 
-            gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.1, now+0.05); gain.gain.exponentialRampToValueAtTime(0.001, now+4); 
-            osc.start(now); osc2.start(now); osc.stop(now+4.5); osc2.stop(now+4.5); 
-        }
-        
-        function playSingleBird() { 
-            if(!audioContext) return; 
-            const osc = audioContext.createOscillator(), gain = audioContext.createGain(); 
-            osc.connect(gain); gain.connect(audioContext.destination); 
-            const now = audioContext.currentTime, freq = 2000 + Math.random()*1500; 
-            osc.frequency.setValueAtTime(freq, now); osc.frequency.linearRampToValueAtTime(freq+500, now+0.1); osc.frequency.linearRampToValueAtTime(freq-200, now+0.2); 
-            gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.05, now+0.05); gain.gain.linearRampToValueAtTime(0, now+0.3); 
-            osc.start(now); osc.stop(now+0.4); 
-        }
-        
-        function playBell() { 
-            checkAudioContext();
+        function playBell() {
+            unlockAudio();
+            if(!audioContext) return;
+            
+            const t = audioContext.currentTime;
             const osc = audioContext.createOscillator();
-            const gain = audioContext.createGain(); 
-            osc.connect(gain); gain.connect(audioContext.destination); 
-            const now = audioContext.currentTime;
-            osc.frequency.setValueAtTime(440, now); 
-            gain.gain.setValueAtTime(0, now); 
-            gain.gain.linearRampToValueAtTime(0.5, now+0.1); 
-            gain.gain.exponentialRampToValueAtTime(0.001, now+3); 
-            osc.start(now); osc.stop(now+3.5); 
+            const gain = audioContext.createGain();
+            
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(440, t);
+            osc.frequency.exponentialRampToValueAtTime(110, t + 3); // Slight drop
+            
+            gain.gain.setValueAtTime(0, t);
+            gain.gain.linearRampToValueAtTime(0.4, t + 0.05); // Attack
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 4); // Decay
+            
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+            osc.start(t);
+            osc.stop(t + 4.5);
         }
-        
+
         function stopAmbience() { 
             if(noiseNode) { try{noiseNode.stop()}catch(e){}; noiseNode.disconnect(); noiseNode=null; } 
             if(modOsc) { try{modOsc.stop()}catch(e){}; modOsc.disconnect(); modOsc=null; } 
             if(birdInterval) { clearInterval(birdInterval); birdInterval=null; } 
             if(chimeInterval) { clearInterval(chimeInterval); chimeInterval=null; } 
         }
-        
+
         function playAmbience(type) {
             stopAmbience(); 
-            checkAudioContext();
+            unlockAudio();
+            if(!audioContext) return;
+
+            const t = audioContext.currentTime;
             const gain = audioContext.createGain();
-            const now = audioContext.currentTime;
-            
+            gain.connect(audioContext.destination);
+
             if(type === 'rain') { 
-                noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createBuffer('pink'); noiseNode.loop = true; 
-                gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.2, now+0.5);
-                noiseNode.connect(gain); gain.connect(audioContext.destination); noiseNode.start(now); 
-            }
-            else if(type === 'river') { 
-                noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createBuffer('brown'); noiseNode.loop = true; 
-                const f = audioContext.createBiquadFilter(); f.type='lowpass'; f.frequency.value=600; 
-                gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.4, now+0.5);
-                noiseNode.connect(f); f.connect(gain); gain.connect(audioContext.destination); noiseNode.start(now); 
+                const buffer = createWhiteNoise();
+                noiseNode = audioContext.createBufferSource();
+                noiseNode.buffer = buffer;
+                noiseNode.loop = true;
+                
+                // Filter for Pink/Rain Sound
+                const filter = audioContext.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.value = 400; 
+                
+                noiseNode.connect(filter);
+                filter.connect(gain);
+                
+                gain.gain.setValueAtTime(0, t);
+                gain.gain.linearRampToValueAtTime(0.15, t + 2); // Fade in
+                noiseNode.start(t);
             }
             else if(type === 'wind') { 
-                noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createBuffer('pink'); noiseNode.loop = true; 
-                const f = audioContext.createBiquadFilter(); f.type='lowpass'; f.Q.value=1; 
-                modOsc = audioContext.createOscillator(); modOsc.frequency.value=0.15; 
-                const mg = audioContext.createGain(); mg.gain.value=400; 
-                modOsc.connect(mg); mg.connect(f.frequency); f.frequency.value=500; 
-                noiseNode.connect(f); f.connect(gain); gain.connect(audioContext.destination); 
-                gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.3, now+0.5);
-                noiseNode.start(now); modOsc.start(now); 
+                const buffer = createWhiteNoise();
+                noiseNode = audioContext.createBufferSource();
+                noiseNode.buffer = buffer;
+                noiseNode.loop = true;
+                
+                const filter = audioContext.createBiquadFilter();
+                filter.type = 'bandpass';
+                filter.frequency.value = 400;
+                filter.Q.value = 1;
+
+                // Modulate filter frequency for "whooshing"
+                modOsc = audioContext.createOscillator();
+                modOsc.frequency.value = 0.1; // Slow modulation
+                const modGain = audioContext.createGain();
+                modGain.gain.value = 200;
+                
+                modOsc.connect(modGain);
+                modGain.connect(filter.frequency);
+                
+                noiseNode.connect(filter);
+                filter.connect(gain);
+                
+                gain.gain.setValueAtTime(0, t);
+                gain.gain.linearRampToValueAtTime(0.15, t + 2);
+                noiseNode.start(t);
+                modOsc.start(t);
             }
-            else if(type === 'birds') { 
-                const gain = audioContext.createGain(); 
-                noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createBuffer('pink'); noiseNode.loop = true; 
-                const f = audioContext.createBiquadFilter(); f.type='highpass'; f.frequency.value=2000; 
-                gain.gain.value=0.02; noiseNode.connect(f); f.connect(gain); gain.connect(audioContext.destination); 
-                noiseNode.start(now); 
-                birdInterval = setInterval(() => { if(Math.random()>0.6) playSingleBird(); }, 1500); 
+            else if(type === 'river') {
+                const buffer = createWhiteNoise();
+                noiseNode = audioContext.createBufferSource();
+                noiseNode.buffer = buffer;
+                noiseNode.loop = true;
+                
+                const filter = audioContext.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.value = 250; // Deeper than rain
+                
+                noiseNode.connect(filter);
+                filter.connect(gain);
+                
+                gain.gain.setValueAtTime(0, t);
+                gain.gain.linearRampToValueAtTime(0.3, t + 2);
+                noiseNode.start(t);
             }
-            else if(type === 'chimes') { 
-                chimeInterval = setInterval(() => { if(Math.random()>0.5) playSingleChime(); }, 2500); 
-                playSingleChime(); 
+            else if(type === 'birds') {
+                birdInterval = setInterval(() => {
+                    if(Math.random() > 0.7) playSingleBird();
+                }, 2000);
             }
+            else if(type === 'chimes') {
+                chimeInterval = setInterval(() => {
+                    if(Math.random() > 0.6) playSingleChime();
+                }, 3000);
+                playSingleChime();
+            }
+        }
+
+        function playSingleBird() {
+            unlockAudio();
+            if(!audioContext) return;
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+            
+            const t = audioContext.currentTime;
+            const freq = 2000 + Math.random() * 1500;
+            
+            osc.frequency.setValueAtTime(freq, t);
+            osc.frequency.linearRampToValueAtTime(freq + 500, t + 0.1);
+            
+            gain.gain.setValueAtTime(0, t);
+            gain.gain.linearRampToValueAtTime(0.05, t + 0.05);
+            gain.gain.linearRampToValueAtTime(0, t + 0.2);
+            
+            osc.start(t);
+            osc.stop(t + 0.3);
+        }
+
+        function playSingleChime() {
+            unlockAudio();
+            if(!audioContext) return;
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+            
+            const t = audioContext.currentTime;
+            const freqs = [523.25, 659.25, 783.99, 1046.50]; // C majorish
+            osc.frequency.value = freqs[Math.floor(Math.random() * freqs.length)];
+            
+            gain.gain.setValueAtTime(0, t);
+            gain.gain.linearRampToValueAtTime(0.05, t + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 3);
+            
+            osc.start(t);
+            osc.stop(t + 3.5);
         }
 
         // TIMER Logic
         function toggleTimer() {
-            checkAudioContext();
+            unlockAudio();
             const btn = document.getElementById('timer-toggle'), emotionBtn = document.getElementById('timer-emotion-btn');
             if (!currentSelectedEmotion && !isTimerRunning) { emotionBtn.classList.add('shake-error'); setTimeout(() => { emotionBtn.classList.remove('shake-error'); }, 500); return; }
             const bc = document.getElementById('breath-circle'), d = document.getElementById('timer-display');
@@ -782,7 +881,7 @@
             } else {
                 if (timerDuration <= 0) timerDuration = defaultDuration;
                 currentTimerSessionLength = timerDuration; isTimerRunning = true; timerEndTime = Date.now() + (timerDuration*1000);
-                lastBellMinute = -1; halfwayBellPlayed = false; // Reset bell state
+                lastBellMinute = -1; halfwayBellPlayed = false; 
                 
                 if(currentAmbience !== 'none') playAmbience(currentAmbience);
                 btn.innerHTML = '<i data-lucide="pause" class="w-8 h-8 fill-current"></i>'; bc.classList.add('animate-breathe'); d.disabled = true; updateTimerDisplay();
@@ -790,20 +889,15 @@
                 timerInterval = setInterval(() => {
                     const now = Date.now(), rem = Math.ceil((timerEndTime - now)/1000);
                     
-                    // Improved Interval Logic
                     if (bellInterval !== 0 && rem > 0) {
                         const elapsed = currentTimerSessionLength - rem;
-                        
                         if (bellInterval === 'half') {
                             const halfWay = Math.floor(currentTimerSessionLength / 2);
-                            if (Math.abs(elapsed - halfWay) < 2 && !halfwayBellPlayed) {
-                                playBell(); halfwayBellPlayed = true;
-                            }
+                            if (Math.abs(elapsed - halfWay) < 2 && !halfwayBellPlayed) { playBell(); halfwayBellPlayed = true; }
                         } else {
                             const currentMinute = Math.floor(elapsed / 60);
-                            if (currentMinute > lastBellMinute && currentMinute > 0) {
-                                lastBellMinute = currentMinute;
-                                if (currentMinute % bellInterval === 0) playBell();
+                            if (currentMinute > lastBellMinute && currentMinute > 0 && currentMinute % bellInterval === 0) {
+                                lastBellMinute = currentMinute; playBell();
                             }
                         }
                     }
@@ -828,7 +922,7 @@
         }
         
         function adjustTimer(amt) { 
-            checkAudioContext(); 
+            unlockAudio(); 
             if(isTimerRunning) return; 
             if(timerDuration+amt > 0) { 
                 timerDuration+=amt; 
@@ -838,7 +932,7 @@
         }
         
         function resetTimer() { 
-            checkAudioContext();
+            unlockAudio();
             isTimerRunning = false; clearInterval(timerInterval); stopAmbience(); 
             timerDuration = defaultDuration; 
             const btn = document.getElementById('timer-toggle'), bc = document.getElementById('breath-circle'), d = document.getElementById('timer-display'); 
@@ -854,17 +948,30 @@
             const el = document.getElementById(id); el.classList.toggle('hidden'); el.classList.toggle('flex'); 
         }
         function setBellInterval(val) { 
-            checkAudioContext(); bellInterval=val; 
+            unlockAudio(); bellInterval=val; 
             ['0','1','5','half'].forEach(v => document.getElementById(`bell-check-${v}`).classList.add('hidden')); 
             document.getElementById(`bell-check-${val}`).classList.remove('hidden'); 
+            
+            // Update indicators in both places
+            const mainInd = document.getElementById('bell-status');
+            const procInd = document.getElementById('process-bell-status');
+            if(mainInd) mainInd.classList.toggle('hidden', val===0);
+            if(procInd) procInd.classList.toggle('hidden', val===0);
+            
             toggleModal('bell-modal'); 
         }
         function setAmbience(val) { 
-            checkAudioContext(); currentAmbience=val; 
+            unlockAudio(); currentAmbience=val; 
             ['none','rain','wind','river','birds','chimes'].forEach(v => document.getElementById(`amb-check-${v}`).classList.add('hidden')); 
             document.getElementById(`amb-check-${val}`).classList.remove('hidden'); 
-            document.getElementById('ambience-status').classList.toggle('hidden', val==='none'); 
-            if(isTimerRunning) playAmbience(val); 
+            
+            // Update indicators in both places
+            const mainInd = document.getElementById('ambience-status');
+            const procInd = document.getElementById('process-ambience-status');
+            if(mainInd) mainInd.classList.toggle('hidden', val==='none');
+            if(procInd) procInd.classList.toggle('hidden', val==='none');
+
+            if(isTimerRunning || document.getElementById('process-step-4').classList.contains('hidden') === false) playAmbience(val); 
             toggleModal('ambience-modal'); 
         }
         function initQA() { const c=document.getElementById('qa-container'); if(!c) return; let html="", cat=""; QA_DATA.forEach((item,i)=>{ if(item.category!==cat){ cat=item.category; html+=`<h3 class="text-gold-500 text-xs uppercase tracking-widest mt-6 mb-2 font-medium pl-1">${cat}</h3>`; } html+=`<div class="glass-panel rounded-xl overflow-hidden mb-3"><button onclick="toggleFAQ(${i})" class="w-full px-5 py-4 text-left flex justify-between items-center hover:bg-slate-800/50 transition focus:outline-none select-none"><span class="text-slate-200 font-medium pr-4 text-sm">${item.q}</span><i data-lucide="chevron-down" id="faq-icon-${i}" class="faq-icon w-4 h-4 text-slate-500 shrink-0"></i></button><div id="faq-ans-${i}" class="faq-answer bg-slate-900/30 border-t border-slate-800/50"><p class="p-5 text-slate-400 text-sm leading-relaxed font-light">${item.a}</p></div></div>`; }); c.innerHTML=html; lucide.createIcons(); }
@@ -894,11 +1001,21 @@
         // BRIDGE FUNCTIONS
         window.saveTimerSession = () => {}; window.saveAndClose = () => {}; window.deleteEntry = () => {}; window.renameEntry = () => {}; window.clearJournal = () => {}; window.loadJournal = () => {};
         window.startProcess = () => { if(!currentSelectedEmotion) { alert("Please select an emotion first."); return; } currentProcessEmotion = currentSelectedEmotion; document.querySelectorAll('.current-emotion').forEach(el=>el.textContent=currentProcessEmotion); processSeconds=0; nextStep(1); document.getElementById('process-reset-btn').classList.remove('hidden'); };
-        window.nextStep = (s) => { document.querySelectorAll('.process-step').forEach(e=>e.classList.add('hidden')); const t=document.getElementById(`process-step-${s}`); t.classList.remove('hidden'); t.classList.add('animate-fade-in'); if(s===4) startProcessTimer(); else stopProcessTimer(); if(s===5) document.getElementById('process-reset-btn').classList.add('hidden'); };
+        window.nextStep = (s) => { 
+            document.querySelectorAll('.process-step').forEach(e=>e.classList.add('hidden')); 
+            const t=document.getElementById(`process-step-${s}`); 
+            t.classList.remove('hidden'); t.classList.add('animate-fade-in'); 
+            if(s===4) {
+                startProcessTimer(); 
+                // Auto-start ambience if selected
+                if(currentAmbience !== 'none') playAmbience(currentAmbience);
+            } else stopProcessTimer(); 
+            if(s===5) document.getElementById('process-reset-btn').classList.add('hidden'); 
+        };
         window.startProcessTimer = () => { const d=document.getElementById('process-timer'); processSeconds=0; d.textContent="00:00"; if(processInterval) clearInterval(processInterval); processStartTime=Date.now(); processInterval=setInterval(()=>{ const now=Date.now(); processSeconds=Math.floor((now-processStartTime)/1000); const m=Math.floor(processSeconds/60).toString().padStart(2,'0'), s=(processSeconds%60).toString().padStart(2,'0'); d.textContent=`${m}:${s}`; },1000); };
         window.stopProcessTimer = () => { if(processInterval) clearInterval(processInterval); };
-        window.finishProcess = () => { stopProcessTimer(); nextStep(5); };
-        window.resetProcess = () => { stopProcessTimer(); document.querySelectorAll('.process-step').forEach(e=>e.classList.add('hidden')); document.getElementById('process-step-0').classList.remove('hidden'); document.getElementById('process-reset-btn').classList.add('hidden'); };
+        window.finishProcess = () => { stopProcessTimer(); stopAmbience(); nextStep(5); };
+        window.resetProcess = () => { stopProcessTimer(); stopAmbience(); document.querySelectorAll('.process-step').forEach(e=>e.classList.add('hidden')); document.getElementById('process-step-0').classList.remove('hidden'); document.getElementById('process-reset-btn').classList.add('hidden'); };
         window.saveAndClose = () => { const int = document.getElementById('process-intensity-slider').value; const rel = JSON.parse(localStorage.getItem('releases') || '[]'); rel.unshift({ emotion: currentProcessEmotion, date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}), time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), duration: window.processSeconds, intensity: int }); localStorage.setItem('releases', JSON.stringify(rel)); resetProcess(); switchTab('journal'); }
         window.loadChart = (em) => { const ctx = document.getElementById('progressChart'); if(!ctx) return; document.getElementById('chart-placeholder').classList.add('hidden'); let data = globalLogData.filter(r => r.emotion === em && r.intensity).reverse(); if(data.length===0) { if(progressChart) progressChart.destroy(); document.getElementById('chart-placeholder').classList.remove('hidden'); document.getElementById('chart-placeholder').textContent = `No data yet for "${em}"`; return; } const lbl = data.map(x => x.date), val = data.map(x => parseInt(x.intensity)); if(progressChart) progressChart.destroy(); progressChart = new Chart(ctx, { type: 'line', data: { labels: lbl, datasets: [{ label: 'Intensity', data: val, borderColor: '#d4af37', backgroundColor: 'rgba(212, 175, 55, 0.1)', tension: 0.4, fill: true, pointBackgroundColor: '#d4af37' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 10, grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } }, x: { grid: { display: false }, ticks: { color: '#94a3b8' } } }, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#0f172a', borderColor: '#334155', borderWidth: 1 } } } }); };
         window.closeCompleteModal = () => { document.getElementById('complete-modal').classList.add('hidden'); document.getElementById('complete-modal').classList.remove('flex'); resetTimer(); };
