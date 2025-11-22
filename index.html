@@ -203,7 +203,7 @@
                 <div class="relative w-64 h-64 mx-auto mb-10 flex items-center justify-center z-10">
                     <div id="breath-circle" class="absolute inset-0 bg-slate-800 rounded-full opacity-50 scale-100 transition-transform duration-1000"></div>
                     <div id="breath-circle-inner" class="absolute w-40 h-40 bg-slate-700/50 rounded-full blur-2xl"></div>
-                    <input type="text" inputmode="numeric" id="timer-display" class="relative z-10 text-6xl font-extralight text-white font-serif tabular-nums tracking-tight bg-transparent text-center w-full focus:outline-none border-none p-0 m-0" value="10:00" onclick="this.select()" oninput="handleTimerInput(this)">
+                    <input type="text" inputmode="numeric" id="timer-display" class="relative z-10 text-6xl font-extralight text-white font-serif tabular-nums tracking-tight bg-transparent text-center w-full focus:outline-none border-none p-0 m-0" value="10:00" onfocus="this.select()" onchange="updateCustomTime(this.value)" onblur="formatInputTime(this)">
                 </div>
 
                 <div class="flex justify-center gap-8 mb-8">
@@ -269,7 +269,7 @@
     <div id="info-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60] hidden items-center justify-center p-6 animate-fade-in">
         <div class="bg-slate-900 border border-slate-700 p-8 rounded-3xl max-w-xs w-full shadow-2xl text-center">
             <h3 class="text-xl text-white mb-2 font-serif italic">The Pathway</h3>
-            <p class="text-slate-500 text-xs mb-6 uppercase tracking-widest">Version 4.9 (Microwave Timer)</p>
+            <p class="text-slate-500 text-xs mb-6 uppercase tracking-widest">Version 5.1 (Hard Reset)</p>
             <div class="space-y-4 text-sm text-slate-400 mb-8 text-left"><p>Based on "Letting Go" by Dr. David R. Hawkins.</p><p>This app is constantly updated.</p></div>
             <button onclick="toggleSettings()" class="w-full py-3 bg-slate-800 text-white rounded-xl hover:bg-slate-700 transition font-medium">Close</button>
         </div>
@@ -495,10 +495,12 @@
                 noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createPinkNoise(); noiseNode.loop = true;
                 gain.gain.value = 0.15; noiseNode.connect(gain); gain.connect(audioContext.destination); noiseNode.start();
             } else if(type === 'river') {
+                const gain = audioContext.createGain();
                 noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createBrownNoise(); noiseNode.loop = true;
                 const f = audioContext.createBiquadFilter(); f.type='lowpass'; f.frequency.value=600; gain.gain.value=0.3;
                 noiseNode.connect(f); f.connect(gain); gain.connect(audioContext.destination); noiseNode.start();
             } else if(type === 'wind') {
+                const gain = audioContext.createGain();
                 noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createPinkNoise(); noiseNode.loop = true;
                 const f = audioContext.createBiquadFilter(); f.type='lowpass'; f.Q.value=1;
                 modOsc = audioContext.createOscillator(); modOsc.frequency.value=0.15;
@@ -507,6 +509,7 @@
                 noiseNode.connect(f); f.connect(gain); gain.connect(audioContext.destination); gain.gain.value=0.3;
                 noiseNode.start(); modOsc.start();
             } else if(type === 'birds') {
+                const gain = audioContext.createGain();
                 noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createPinkNoise(); noiseNode.loop = true;
                 const f = audioContext.createBiquadFilter(); f.type='highpass'; f.frequency.value=2000; gain.gain.value=0.02;
                 noiseNode.connect(f); f.connect(gain); gain.connect(audioContext.destination); noiseNode.start();
@@ -574,29 +577,30 @@
             val = val.padStart(4, '0');
             const m = parseInt(val.slice(0, 2), 10);
             const s = parseInt(val.slice(2, 4), 10);
-            
-            // Cap seconds at 59 visually for clarity if desired, but 99 seconds is technically valid input that converts to 1m 39s.
-            // For standard timer input logic, we usually allow it and then normalize, or just treat as raw seconds.
-            // Let's stick to pure total seconds conversion.
             const totalSec = (m * 60) + s;
-            
             timerDuration = totalSec;
             defaultDuration = totalSec;
-            
-            // Update display immediately to formatted M:S
-            // However, while typing, user expects to see digits shift.
-            // val (0030) -> "00:30"
             input.value = `${val.slice(0,2)}:${val.slice(2,4)}`;
         }
         function updateCustomTime(val) {
             // Handled by handleTimerInput
         }
         function formatInputTime(input) {
-            // On blur, ensure strict M:S format from model
             updateTimerDisplay();
         }
         function adjustTimer(amt) { if(isTimerRunning) return; if(timerDuration+amt > 0) { timerDuration+=amt; defaultDuration=timerDuration; updateTimerDisplay(); } }
-        function resetTimer() { if(isTimerRunning) toggleTimer(); timerDuration = defaultDuration; stopAmbience(); updateTimerDisplay(); }
+        function resetTimer() { 
+            if(isTimerRunning) toggleTimer(); 
+            timerDuration = 600; // Force hard reset to 10:00
+            defaultDuration = 600; 
+            stopAmbience(); 
+            
+            // Update UI explicitly
+            const display = document.getElementById('timer-display');
+            if(display) display.value = "10:00";
+            
+            updateTimerDisplay(); 
+        }
         function toggleSettings() {
             const modal = document.getElementById('info-modal');
             if (modal.classList.contains('hidden')) { modal.classList.remove('hidden'); modal.classList.add('flex'); }
@@ -740,3 +744,5 @@
     </script>
 </body>
 </html>
+
+
