@@ -29,7 +29,7 @@
                     },
                     animation: {
                         'breathe': 'breathe 8s infinite ease-in-out',
-                        'fade-in': 'fadeIn 0.3s ease-out forwards', /* Speed up UI transition */
+                        'fade-in': 'fadeIn 0.3s ease-out forwards', /* Fast transition */
                         'fade-out': 'fadeOut 0.2s ease-in forwards', 
                         'slide-up': 'slideUp 0.3s ease-out forwards',
                         'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
@@ -97,7 +97,7 @@
         .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
         .pt-safe { padding-top: env(safe-area-inset-top, 20px); }
         
-        /* SMOOTH TRANSITIONS - Speed up to 0.3s */
+        /* SMOOTH TRANSITIONS */
         .view-section {
             opacity: 0;
             transition: opacity 0.3s ease-in-out; 
@@ -135,10 +135,10 @@
 
     <aside id="side-menu" class="fixed top-0 bottom-0 right-0 w-3/4 max-w-xs bg-slate-900/95 backdrop-blur-xl border-l border-slate-800 z-[100] transform translate-x-full transition-transform duration-[700ms] ease-out flex flex-col shadow-2xl pt-safe pb-safe">
         
-        <div class="px-6 pb-6 border-b border-slate-800 flex flex-col relative" style="padding-top: env(safe-area-inset-top);">
-            <button onclick="toggleMenu()" class="absolute top-0 right-6 text-slate-400 hover:text-white transition" style="margin-top: env(safe-area-inset-top);"><i data-lucide="x" class="w-6 h-6"></i></button>
+        <div class="px-6 pb-6 border-b border-slate-800 flex flex-col relative" style="padding-top: calc(env(safe-area-inset-top) - 0.25rem);">
+            <button onclick="toggleMenu()" class="absolute top-0 right-6 text-slate-400 hover:text-white transition" style="margin-top: calc(env(safe-area-inset-top) + 0.25rem);"><i data-lucide="x" class="w-6 h-6"></i></button>
             
-            <div class="mt-4 mb-2">
+            <div class="mt-6 mb-2">
                 <h2 class="text-xl font-serif italic text-gold-500 tracking-wide">The Pathway</h2>
                 <p class="text-[10px] text-slate-500 uppercase tracking-[0.2em] mt-1">Mechanism of Surrender</p>
             </div>
@@ -173,7 +173,7 @@
         </nav>
 
         <div class="px-6 pt-6 pb-4 text-center border-t border-slate-800/50 mt-auto">
-            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 8.8</p>
+            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 8.9</p>
         </div>
     </aside>
 
@@ -212,7 +212,7 @@
             </div>
         </section>
 
-        <section id="view-process" class="view-section hidden h-full overflow-hidden flex flex-col p-4 pb-8">
+        <section id="view-process" class="view-section hidden h-full overflow-hidden flex flex-col p-4 pb-0">
             <div class="glass-panel p-6 rounded-2xl shadow-lg flex-1 flex flex-col justify-center items-center text-center relative overflow-hidden">
                 <div id="process-step-0" class="process-step w-full">
                     <h2 class="text-3xl font-light mb-2 text-white">Identify Emotion</h2>
@@ -257,7 +257,7 @@
             </div>
         </section>
 
-        <section id="view-timer" class="view-section hidden h-full overflow-hidden flex flex-col justify-center p-4 pb-8">
+        <section id="view-timer" class="view-section hidden h-full overflow-hidden flex flex-col justify-center p-4 pb-0">
             <div class="text-center w-full">
                 <div class="mb-8 max-w-[240px] mx-auto mt-8 relative z-30">
                     <button onclick="toggleModal('emotion-picker')" id="timer-emotion-btn" class="w-full flex items-center justify-between bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-2 text-slate-300 text-sm hover:border-gold-500 transition">
@@ -289,7 +289,7 @@
             </div>
         </section>
 
-        <section id="view-charts" class="view-section hidden h-full overflow-hidden flex flex-col p-4 pb-8">
+        <section id="view-charts" class="view-section hidden h-full overflow-hidden flex flex-col p-4 pb-0">
             <div class="mb-4 flex justify-between items-end"><h2 class="text-2xl font-light text-white">Progress</h2></div>
             <div class="mb-6">
                 <label class="text-xs text-slate-500 uppercase tracking-wider mb-2 block">Select Emotion</label>
@@ -507,7 +507,7 @@
             if(id==='charts') document.getElementById('chart-emotion-btn').onclick=()=>openPickerFor('chart'); 
             if(id==='process') document.getElementById('process-emotion-btn').onclick=()=>openPickerFor('process');
 
-            // Transition: Wait for menu close (300ms) before switching content
+            // Transition: Wait for menu close (700ms) before switching content
             if (current) {
                 current.classList.remove('active-view');
                 setTimeout(() => {
@@ -521,7 +521,7 @@
                             });
                         });
                     }
-                }, 300); // Matches CSS transition duration (Synchronous with Menu)
+                }, 700); // Matches CSS transition duration (Synchronous with Menu)
             } else {
                 // Initial load fallback
                 if(next) {
