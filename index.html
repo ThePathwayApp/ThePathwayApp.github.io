@@ -66,7 +66,6 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Merriweather:ital,wght@0,300;0,400;1,300&display=swap');
         
-        /* NEW: let iOS PWA handle viewport height instead of hard 100vh + fixed */
         html,
         body {
             height: 100%;
@@ -77,10 +76,9 @@
             color: #e2e8f0;
             -webkit-font-smoothing: antialiased;
             -webkit-tap-highlight-color: transparent;
-            overflow: hidden; /* Kept to maintain app-like feel */
+            overflow: hidden; 
         }
 
-        /* For newer Safari: extend min-height to full “real” viewport */
         @supports (height: 100dvh) {
             body {
                 min-height: 100dvh;
@@ -110,7 +108,7 @@
         .view-section {
             opacity: 0;
             transition: opacity 0.25s ease-in-out;
-            padding-bottom: calc(env(safe-area-inset-bottom) + 2rem); /* Kept extra padding for visibility */
+            padding-bottom: calc(env(safe-area-inset-bottom) + 2rem); 
         }
         .view-section.active-view {
             opacity: 1;
@@ -120,7 +118,7 @@
         .faq-answer.active { display: block; animation: slideUp 0.3s ease-out forwards; }
         .faq-icon { transition: transform 0.3s ease; }
         .faq-icon.active { transform: rotate(180deg); }
-        .quote-wrapper { position: relative; display: inline-block; padding: 2rem 3rem; }
+        .quote-wrapper { position: relative; display: inline-block; padding: 2rem 3rem; min-height: 150px; display: flex; align-items: center; justify-content: center; }
         .quote-mark { position: absolute; width: 2.5rem; height: 2.5rem; color: rgba(212, 175, 55, 0.4); }
         .quote-mark.start { top: 0; left: 0; }
         .quote-mark.end { bottom: 0; right: 0; transform: rotate(180deg); }
@@ -194,15 +192,16 @@
             <div class="flex justify-center">
                 <div class="quote-wrapper max-w-md">
                     <svg class="quote-mark start" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21L14.017 18C14.017 16.896 14.321 15.923 14.929 15.081C15.537 14.239 16.357 13.459 17.389 12.741L16.731 10.561C15.039 11.623 14.069 12.878 13.821 14.326C13.821 14.326 13.821 14.326 13.821 14.326C13.545 13.714 13.407 13.052 13.407 12.34C13.407 10.284 14.147 8.528 15.627 7.072C17.107 5.616 18.867 4.888 20.907 4.888C21.787 4.888 22.467 5.568 22.947 6.928C23.427 8.288 23.667 9.528 23.667 10.648C23.667 14.304 22.397 17.754 19.857 21L14.017 21ZM6.007 21L6.007 18C6.007 16.896 6.311 15.923 6.919 15.081C7.527 14.239 8.347 13.459 9.379 12.741L8.721 10.561C7.029 11.623 6.059 12.878 5.811 14.326C5.811 14.326 5.811 14.326 5.811 14.326C5.535 13.714 5.397 13.052 5.397 12.34C5.397 10.284 6.137 8.528 7.617 7.072C9.097 5.616 10.857 4.888 12.897 4.888C13.777 4.888 14.457 5.568 14.937 6.928C15.417 8.288 15.657 9.528 15.657 10.648C15.657 14.304 14.387 17.754 11.847 21L6.007 21Z" /></svg>
+                    <p id="intro-quote" class="text-lg md:text-xl text-slate-300 font-serif italic relative z-10 px-8 leading-relaxed"></p>
                 </div>
             </div>
-            <p class="text-xs text-gold-500 uppercase tracking-[0.25em] font-sans text-center opacity-80 mt-8">— David R. Hawkins</p>
+            <p id="intro-author" class="text-xs text-gold-500 uppercase tracking-[0.25em] font-sans text-center opacity-80 mt-8"></p>
             <div class="mt-16 animate-pulse opacity-50"><span class="text-[10px] text-slate-400 uppercase tracking-[0.4em]">Tap to Begin</span></div>
         </div>
     </div>
 
     <header class="flex-none w-full px-6 pb-4 border-b border-slate-800/50 bg-slate-950/90 backdrop-blur z-50 flex justify-between items-center relative" style="padding-top: max(2.5rem, calc(env(safe-area-inset-top) + 1rem));">
-        <div><h1 class="text-4xl font-serif italic text-gold-500 tracking-wide">The Pathway</h1><p class="text-[10px] text-slate-500 uppercase tracking-[0.2em] mt-0.5">Mechanism of Surrender</p></div>
+        <div><h1 class="text-2xl font-serif italic text-gold-500 tracking-wide">The Pathway</h1><p class="text-[10px] text-slate-500 uppercase tracking-[0.2em] mt-0.5">Mechanism of Surrender</p></div>
         <button onclick="toggleMenu()" class="text-slate-400 hover:text-white transition p-2"><i data-lucide="menu" class="w-6 h-6"></i></button>
     </header>
 
@@ -274,7 +273,7 @@
                         <span id="timer-emotion-display">Select Emotion...</span><i data-lucide="chevron-down" class="w-4 h-4 opacity-50"></i>
                     </button>
                 </div>
-               
+                
                 <div class="relative w-64 h-64 mx-auto mb-10 flex items-center justify-center z-10">
                     <div id="breath-circle" class="absolute inset-0 bg-slate-800 rounded-full opacity-50 scale-100 transition-transform duration-1000"></div>
                     <div id="breath-circle-inner" class="absolute w-40 h-40 bg-slate-700/50 rounded-full blur-2xl"></div>
@@ -385,9 +384,168 @@
         var globalLogData = [];
 
         // --- DATA ---
-        const INTRO_QUOTES = [ "To be surrendered means to have no strong emotion about a thing: 'It's okay if it happens, and it's okay if it doesn't.'", "We change the world not by what we say or do, but as a consequence of what we have become.", "The more we let go, the more loving we become.", "Peace is the natural state of the Self.", "Everything you see happening is the consequence of that which you are.", "Surrender is a constant process of not resisting or clinging to the moment.", "Love is misunderstood to be an emotion; actually, it is a state of awareness.", "The letting go technique is a system of eliminating the ego.", "When you give up the resistance to the feeling, the energy behind it runs out.", "You are the context in which the content of your life is unfolding.", "The goal of letting go is the elimination of the ego.", "All we have to do is hand it over to God.", "You are not the feeling; you are the witness of the feeling.", "What you resist, persists.", "The energy of the suppressed feeling is the cause of the thought.", "We are all doing the best we can with what we have at the moment.", "There is no 'out there'. It is all 'in here'.", "Love promotes healing. When we hold it for others, we are healing ourselves.", "The only thing that stands between you and God is a thought.", "Desire is the energy of 'I want'. Surrender is the energy of 'I have'.", "Humility is the doorway to the truth." ];
+        const INTRO_QUOTES = [
+            // David R. Hawkins
+            { q: "To be surrendered means to have no strong emotion about a thing: 'It's okay if it happens, and it's okay if it doesn't.'", a: "David R. Hawkins" },
+            { q: "The more we let go, the more loving we become.", a: "David R. Hawkins" },
+            { q: "Peace is the natural state of the Self.", a: "David R. Hawkins" },
+            { q: "Everything you see happening is the consequence of that which you are.", a: "David R. Hawkins" },
+            { q: "Surrender is a constant process of not resisting or clinging to the moment.", a: "David R. Hawkins" },
+            { q: "Love is misunderstood to be an emotion; actually, it is a state of awareness.", a: "David R. Hawkins" },
+            { q: "The letting go technique is a system of eliminating the ego.", a: "David R. Hawkins" },
+            { q: "When you give up the resistance to the feeling, the energy behind it runs out.", a: "David R. Hawkins" },
+            { q: "You are the context in which the content of your life is unfolding.", a: "David R. Hawkins" },
+            { q: "The goal of letting go is the elimination of the ego.", a: "David R. Hawkins" },
+            { q: "All we have to do is hand it over to God.", a: "David R. Hawkins" },
+            { q: "You are not the feeling; you are the witness of the feeling.", a: "David R. Hawkins" },
+            { q: "What you resist, persists.", a: "David R. Hawkins" },
+            { q: "The energy of the suppressed feeling is the cause of the thought.", a: "David R. Hawkins" },
+            { q: "We are all doing the best we can with what we have at the moment.", a: "David R. Hawkins" },
+            { q: "There is no 'out there'. It is all 'in here'.", a: "David R. Hawkins" },
+            { q: "Love promotes healing. When we hold it for others, we are healing ourselves.", a: "David R. Hawkins" },
+            { q: "The only thing that stands between you and God is a thought.", a: "David R. Hawkins" },
+            { q: "Desire is the energy of 'I want'. Surrender is the energy of 'I have'.", a: "David R. Hawkins" },
+            { q: "Humility is the doorway to the truth.", a: "David R. Hawkins" },
+            { q: "We change the world not by what we say or do, but as a consequence of what we have become.", a: "David R. Hawkins" },
+            { q: "The body is the mind in form.", a: "David R. Hawkins" },
+            { q: "All suffering is the result of attachment.", a: "David R. Hawkins" },
+            { q: "It is only the ego that is vulnerable; the real Self is invulnerable.", a: "David R. Hawkins" },
+            { q: "To become more loving is the greatest gift you can give to the world.", a: "David R. Hawkins" },
+            { q: "The mind is a tool. You are not the mind.", a: "David R. Hawkins" },
+            { q: "Forgiveness is the key to freedom.", a: "David R. Hawkins" },
+            { q: "Every feeling is an opportunity for freedom.", a: "David R. Hawkins" },
+            { q: "Letting go is the pathway to peace.", a: "David R. Hawkins" },
+            { q: "The ego is nothing but a set of programs.", a: "David R. Hawkins" },
+            { q: "Truth is self-evident.", a: "David R. Hawkins" },
+            { q: "Power is silent; force is noisy.", a: "David R. Hawkins" },
+            { q: "You can't change the world until you change yourself.", a: "David R. Hawkins" },
+            { q: "The presence of God is always here; we just have to clear the clouds.", a: "David R. Hawkins" },
+            { q: "Acceptance is the first step towards transformation.", a: "David R. Hawkins" },
+            { q: "Anger is a weakness; it is not a strength.", a: "David R. Hawkins" },
+            { q: "Fear is the basis of all negativity.", a: "David R. Hawkins" },
+            { q: "Courage is the willingness to let go.", a: "David R. Hawkins" },
+            { q: "Reason is the bridge between the lower and higher mind.", a: "David R. Hawkins" },
+            { q: "Joy is not something you get; it is something you are.", a: "David R. Hawkins" },
+            { q: "When the ego collapses, the Self shines forth.", a: "David R. Hawkins" },
+            { q: "Guilt is a self-imposed prison.", a: "David R. Hawkins" },
+            { q: "Shame is the lowest vibration.", a: "David R. Hawkins" },
+            { q: "Apathy is the belief that 'I can't'.", a: "David R. Hawkins" },
+            { q: "Pride is the defense of the ego.", a: "David R. Hawkins" },
+            { q: "Neutrality is the beginning of freedom.", a: "David R. Hawkins" },
+            { q: "Willingness opens the door to power.", a: "David R. Hawkins" },
+            { q: "Love is a way of being in the world.", a: "David R. Hawkins" },
+            { q: "Peace is the absence of conflict.", a: "David R. Hawkins" },
+            { q: "Enlightenment is the realization of the Self.", a: "David R. Hawkins" },
+            
+            // Philosophers, Psychologists, Spiritual Teachers
+            { q: "He who has a why to live can bear almost any how.", a: "Friedrich Nietzsche" },
+            { q: "The only way out is through.", a: "Robert Frost" },
+            { q: "Pain is inevitable. Suffering is optional.", a: "Haruki Murakami" },
+            { q: "The present moment is the only moment available to us, and it is the door to all moments.", a: "Thich Nhat Hanh" },
+            { q: "You cannot step into the same river twice.", a: "Heraclitus" },
+            { q: "Knowing others is wisdom, knowing yourself is Enlightenment.", a: "Lao Tzu" },
+            { q: "The unexamined life is not worth living.", a: "Socrates" },
+            { q: "We suffer more often in imagination than in reality.", a: "Seneca" },
+            { q: "To know thyself is the beginning of wisdom.", a: "Socrates" },
+            { q: "The mind is everything. What you think you become.", a: "Buddha" },
+            { q: "Do not dwell in the past, do not dream of the future, concentrate the mind on the present moment.", a: "Buddha" },
+            { q: "It is not what happens to you, but how you react to it that matters.", a: "Epictetus" },
+            { q: "He who fears death will never do anything worth of a man who is alive.", a: "Seneca" },
+            { q: "Life is very simple, but we insist on making it complicated.", a: "Confucius" },
+            { q: "The journey of a thousand miles begins with one step.", a: "Lao Tzu" },
+            { q: "If you are depressed you are living in the past. If you are anxious you are living in the future. If you are at peace you are living in the present.", a: "Lao Tzu" },
+            { q: "Happiness depends upon ourselves.", a: "Aristotle" },
+            { q: "The privilege of a lifetime is to become who you truly are.", a: "Carl Jung" },
+            { q: "Your vision will become clear only when you can look into your own heart. Who looks outside, dreams; who looks inside, awakes.", a: "Carl Jung" },
+            { q: "Until you make the unconscious conscious, it will direct your life and you will call it fate.", a: "Carl Jung" },
+            { q: "Everything that irritates us about others can lead us to an understanding of ourselves.", a: "Carl Jung" },
+            { q: "I am not what happened to me, I am what I choose to become.", a: "Carl Jung" },
+            { q: "The pendulum of the mind oscillates between sense and nonsense, not between right and wrong.", a: "Carl Jung" },
+            { q: "The curiosity of the child is the philosopher's stone.", a: "Carl Jung" },
+            { q: "Man is not what he thinks he is, he is what he hides.", a: "André Malraux" },
+            { q: "The greatest discovery of my generation is that a human being can alter his life by altering his attitudes.", a: "William James" },
+            { q: "Act as if what you do makes a difference. It does.", a: "William James" },
+            { q: "The art of being wise is the art of knowing what to overlook.", a: "William James" },
+            { q: "Believe that life is worth living and your belief will help create the fact.", a: "William James" },
+            { q: "A great many people think they are thinking when they are merely rearranging their prejudices.", a: "William James" },
+            { q: "The purpose of life is to find your gift. The meaning of life is to give it away.", a: "Pablo Picasso" },
+            { q: "We are what we repeatedly do. Excellence, then, is not an act, but a habit.", a: "Aristotle" },
+            { q: "The soul becomes dyed with the color of its thoughts.", a: "Marcus Aurelius" },
+            { q: "You have power over your mind - not outside events. Realize this, and you will find strength.", a: "Marcus Aurelius" },
+            { q: "The happiness of your life depends upon the quality of your thoughts.", a: "Marcus Aurelius" },
+            { q: "Very little is needed to make a happy life; it is all within yourself, in your way of thinking.", a: "Marcus Aurelius" },
+            { q: "Accept the things to which fate binds you, and love the people with whom fate brings you together, but do so with all your heart.", a: "Marcus Aurelius" },
+            { q: "Waste no more time arguing about what a good man should be. Be one.", a: "Marcus Aurelius" },
+            { q: "The best revenge is to be unlike him who performed the injury.", a: "Marcus Aurelius" },
+            { q: "When you arise in the morning think of what a privilege it is to be alive, to think, to enjoy, to love ...", a: "Marcus Aurelius" },
+            { q: "It is not death that a man should fear, but he should fear never beginning to live.", a: "Marcus Aurelius" },
+            { q: "The universe is change; our life is what our thoughts make it.", a: "Marcus Aurelius" },
+            { q: "He who lives in harmony with himself lives in harmony with the universe.", a: "Marcus Aurelius" },
+            { q: "Confine yourself to the present.", a: "Marcus Aurelius" },
+            { q: "To live is the rarest thing in the world. Most people exist, that is all.", a: "Oscar Wilde" },
+            { q: "Be yourself; everyone else is already taken.", a: "Oscar Wilde" },
+            { q: "Experience is simply the name we give our mistakes.", a: "Oscar Wilde" },
+            { q: "The truth is rarely pure and never simple.", a: "Oscar Wilde" },
+            { q: "Man is least himself when he talks in his own person. Give him a mask, and he will tell you the truth.", a: "Oscar Wilde" },
+            { q: "We are all in the gutter, but some of us are looking at the stars.", a: "Oscar Wilde" },
+            { q: "Freedom is not worth having if it does not include the freedom to make mistakes.", a: "Mahatma Gandhi" },
+            { q: "Be the change that you wish to see in the world.", a: "Mahatma Gandhi" },
+            { q: "The weak can never forgive. Forgiveness is the attribute of the strong.", a: "Mahatma Gandhi" },
+            { q: "Happiness is when what you think, what you say, and what you do are in harmony.", a: "Mahatma Gandhi" },
+            { q: "An eye for an eye only ends up making the whole world blind.", a: "Mahatma Gandhi" },
+            { q: "Live as if you were to die tomorrow. Learn as if you were to live forever.", a: "Mahatma Gandhi" },
+            { q: "Where there is love there is life.", a: "Mahatma Gandhi" },
+            { q: "The future depends on what you do today.", a: "Mahatma Gandhi" },
+            { q: "Nobody can hurt me without my permission.", a: "Mahatma Gandhi" },
+            { q: "In a gentle way, you can shake the world.", a: "Mahatma Gandhi" },
+            { q: "The only true wisdom is in knowing you know nothing.", a: "Socrates" },
+            { q: "Wonder is the beginning of wisdom.", a: "Socrates" },
+            { q: "Be kind, for everyone you meet is fighting a hard battle.", a: "Plato" },
+            { q: "We can easily forgive a child who is afraid of the dark; the real tragedy of life is when men are afraid of the light.", a: "Plato" },
+            { q: "Courage is knowing what not to fear.", a: "Plato" },
+            { q: "The first and greatest victory is to conquer yourself.", a: "Plato" },
+            { q: "At the touch of love everyone becomes a poet.", a: "Plato" },
+            { q: "Ignorance, the root and stem of all evil.", a: "Plato" },
+            { q: "Opinion is the medium between knowledge and ignorance.", a: "Plato" },
+            { q: "Good actions give strength to ourselves and inspire good actions in others.", a: "Plato" },
+            { q: "The beginning is the most important part of the work.", a: "Plato" },
+            { q: "This is the real secret of life -- to be completely engaged with what you are doing in the here and now. And instead of calling it work, realize it is play.", a: "Alan Watts" },
+            { q: "The only way to make sense out of change is to plunge into it, move with it, and join the dance.", a: "Alan Watts" },
+            { q: "Try to imagine what it will be like to go to sleep and never wake up... now try to imagine what it was like to wake up having never gone to sleep.", a: "Alan Watts" },
+            { q: "Muddy water is best cleared by leaving it alone.", a: "Alan Watts" },
+            { q: "To have faith is to trust yourself to the water. When you swim you don't grab hold of the water, because if you do you will sink and drown. Instead you relax, and float.", a: "Alan Watts" },
+            { q: "The menu is not the meal.", a: "Alan Watts" },
+            { q: "You are an aperture through which the universe is looking at and exploring itself.", a: "Alan Watts" },
+            { q: "Things are as they are. Looking out into the universe at night, we make no comparisons between right and wrong stars, nor between well and badly arranged constellations.", a: "Alan Watts" },
+            { q: "You cannot be happy unless you are unhappy sometimes.", a: "Lauren Oliver" },
+            { q: "If you want to find the secrets of the universe, think in terms of energy, frequency and vibration.", a: "Nikola Tesla" },
+            { q: "The present moment is filled with joy and happiness. If you are attentive, you will see it.", a: "Thich Nhat Hanh" },
+            { q: "Smile, breathe and go slowly.", a: "Thich Nhat Hanh" },
+            { q: "Because you are alive, everything is possible.", a: "Thich Nhat Hanh" },
+            { q: "Waking up this morning, I smile. Twenty-four brand new hours are before me. I vow to live fully in each moment and to look at all beings with eyes of compassion.", a: "Thich Nhat Hanh" },
+            { q: "People have a hard time letting go of their suffering. Out of a fear of the unknown, they prefer suffering that is familiar.", a: "Thich Nhat Hanh" },
+            { q: "To be beautiful means to be yourself. You don’t need to be accepted by others. You need to accept yourself.", a: "Thich Nhat Hanh" },
+            { q: "Letting go gives us freedom, and freedom is the only condition for happiness.", a: "Thich Nhat Hanh" },
+            { q: "Silence is essential. We need silence just as much as we need air, just as much as plants need light.", a: "Thich Nhat Hanh" },
+            { q: "Truth is a pathless land.", a: "Jiddu Krishnamurti" },
+            { q: "It is no measure of health to be well adjusted to a profoundly sick society.", a: "Jiddu Krishnamurti" },
+            { q: "The ability to observe without evaluating is the highest form of intelligence.", a: "Jiddu Krishnamurti" },
+            { q: "Freedom is not a reaction; freedom is not a choice. It is man's pretence that because he has choice he is free. Freedom is pure observation without direction, without fear of punishment and reward.", a: "Jiddu Krishnamurti" },
+            { q: "To understand the immeasurable, the mind must be extraordinarily quiet, still.", a: "Jiddu Krishnamurti" },
+            { q: "Real learning comes about when the competitive spirit has ceased.", a: "Jiddu Krishnamurti" },
+            { q: "In oneself lies the whole world and if you know how to look and learn, the door is there and the key is in your hand.", a: "Jiddu Krishnamurti" },
+            { q: "You are the world and the world is you.", a: "Jiddu Krishnamurti" }
+        ];
         const HAWKINS_SCALE = [ { name: "Shame", val: 20 }, { name: "Guilt", val: 30 }, { name: "Apathy", val: 50 }, { name: "Grief", val: 75 }, { name: "Fear", val: 100 }, { name: "Desire", val: 125 }, { name: "Anger", val: 150 }, { name: "Pride", val: 175 }, { name: "Courage", val: 200 }, { name: "Neutrality", val: 250 }, { name: "Willingness", val: 310 }, { name: "Acceptance", val: 350 }, { name: "Reason", val: 400 }, { name: "Love", val: 500 }, { name: "Joy", val: 540 }, { name: "Peace", val: 600 } ];
-        const QA_DATA = [ { category: "Beginner / Skeptic", q: "Why aren't I sensing my feelings inside my body?", a: "This numbness is due to ingrained, conditioned resistance. Because the feeling was unpleasant, the mind automatically pushed it out of awareness. It has been repressed for so long that you have lost touch with the physical sensation. Be patient; simply intending to look is the first step." }, { category: "Beginner / Skeptic", q: "Is this just suppressing feelings?", a: "No. Suppression is pushing a feeling down to avoid it. Letting go is the opposite: it is allowing the feeling to come up, acknowledging it, and letting the energy escape." }, { category: "Beginner / Skeptic", q: "Why should I ignore my thoughts?", a: "Thoughts are rationalizations created by the mind to explain the presence of a feeling. They are often repetitive. Focusing on the physical sensation cuts the fuel supply to thoughts." }, { category: "Beginner / Skeptic", q: "What if the feeling is too strong?", a: "If overwhelmed, surrender to the fear of the feeling first. Acknowledge you are afraid. Let go of resistance to the fear." }, { category: "Beginner / Skeptic", q: "Is there scientific proof for this?", a: "Dr. Hawkins' work correlates vibrational states with muscle testing (kinesiology). While the subjective experience is internal, the physiological benefits of stress reduction are well-documented." }, { category: "Beginner / Skeptic", q: "How is this different from relaxation?", a: "Relaxation often targets the body directly. Letting go targets the emotional energy *causing* the tension. It is a permanent release rather than a temporary respite." }, { category: "Beginner / Skeptic", q: "Can I surrender to physical pain?", a: "Yes. Much pain is held in place by resistance. If you stop resisting the sensation and just experience it as pure energy, it often shifts or diminishes." }, { category: "Novice", q: "Nothing seems to be changing in my life?", a: "Letting Go can be subtle or dramatic, both inwardly and outwardly. Often it is others in our life who notice our change before we do. Like shoveling coal from a pile, we're unaware of the amount we've handled because our focus is on what is at hand." }, { category: "Novice", q: "I feel stuck. Nothing is happening.", a: "You may be 'wanting' it to change. Wanting is resistance. Can you let go of the desire to change it? Can you allow it to just be?" }, { category: "Novice", q: "Can I do this in public?", a: "Yes. It's internal. Notice the tension, drop resistance, and let it pass through while walking or in a meeting." }, { category: "Novice", q: "How do I know if I've let go?", a: "You feel lighter, relieved, or clear. Thoughts stop returning, or lack emotional charge." }, { category: "Novice", q: "Why do I feel worse sometimes?", a: "This is the 'healing crisis.' As you open the doors, suppressed energy rushes up to be released. It feels intense, but it is actually leaving. Stay with it." }, { category: "Novice", q: "Is crying okay?", a: "Absolutely. Crying is a natural mechanism of release, especially for Grief. Do not suppress the tears; let them flow until they stop on their own." }, { category: "Adept", q: "Spiritual Pride", a: "Watch out for the ego claiming credit for your progress. 'Look how spiritual I am' is just another feeling (Pride) to be surrendered." }, { category: "Adept", q: "Running out of things to surrender?", a: "You may reach periods of peace, but deeper layers often emerge later. Remain vigilant for subtle attachments to comfort or even to the practice itself." }, { category: "Adept", q: "Handling major crises", a: "In a crisis, the volume of emotion is high. This is actually a golden opportunity. A massive amount of karma can be discharged quickly if you can stay present with the raw energy without resisting." }, { category: "Adept", q: "Attachment to outcomes", a: "Surrender doesn't mean you don't act; it means you surrender your attachment to the result. You do your best and let go of the rest." }, { category: "Adept", q: "The dark night of the soul?", a: "This often occurs before a major transition. It feels like abandonment or total despair. It is the ego facing its own demise. Surrender to the despair itself." }, { category: "Pro", q: "Who is the one letting go?", a: "Eventually, you realize the 'I' trying to let go is also a thought. Surrendering the 'doer' leads to realization that everything happens spontaneously." }, { category: "Pro", q: "Surrender vs. Apathy", a: "Apathy is 'I can't do anything'. Surrender is 'I don't need to control anything'. Apathy feels heavy and dark. Surrender feels light and expansive. If you feel drained, it is apathy. If you feel lighter, it is surrender." }, { category: "Pro", q: "The Final Door", a: "The ultimate surrender is to God/Truth itself. It is the letting go of the illusion of a separate self." }, { category: "Pro", q: "Surrendering the desire for enlightenment?", a: "Even the desire for God or Truth can be an obstruction if it is filled with 'wanting'. Surrender the wanting, and what you seek is revealed to have been there all along." } ];
+        const QA_DATA = [ { category: "Beginner / Skeptic", q: "Why aren't I sensing my feelings inside my body?", a: "This numbness is due to ingrained, conditioned resistance. Because the feeling was unpleasant, the mind automatically pushed it out of awareness. It has been repressed for so long that you have lost touch with the physical sensation. Be patient; simply intending to look is the first step." }, { category: "Beginner / Skeptic", q: "Is this just suppressing feelings?", a: "No. Suppression is pushing a feeling down to avoid it. Letting go is the opposite: it is allowing the feeling to come up, acknowledging it, and letting the energy escape." }, { category: "Beginner / Skeptic", q: "Why should I ignore my thoughts?", a: "Thoughts are rationalizations created by the mind to explain the presence of a feeling. They are often repetitive. Focusing on the physical sensation cuts the fuel supply to thoughts." }, { category: "Beginner / Skeptic", q: "What if the feeling is too strong?", a: "If overwhelmed, surrender to the fear of the feeling first. Acknowledge you are afraid. Let go of resistance to the fear." }, { category: "Beginner / Skeptic", q: "Is there scientific proof for this?", a: "Dr. Hawkins' work correlates vibrational states with muscle testing (kinesiology). While the subjective experience is internal, the physiological benefits of stress reduction are well-documented." }, { category: "Beginner / Skeptic", q: "How is this different from relaxation?", a: "Relaxation often targets the body directly. Letting go targets the emotional energy *causing* the tension. It is a permanent release rather than a temporary respite." }, { category: "Beginner / Skeptic", q: "Can I surrender to physical pain?", a: "Yes. Much pain is held in place by resistance. If you stop resisting the sensation and just experience it as pure energy, it often shifts or diminishes." }, { category: "Novice", q: "Nothing seems to be changing in my life?", a: "Letting Go can be subtle or dramatic, both inwardly and outwardly. Often it is others in our life who notice our change before we do. Like shoveling coal from a pile, we're unaware of the amount we've handled because our focus is on what is at hand." }, { category: "Novice", q: "I feel stuck. Nothing is happening.", a: "You may be 'wanting' it to change. Wanting is resistance. Can you let go of the desire to change it? Can you allow it to just be?" }, { category: "Novice", q: "Can I do this in public?", a: "Yes. It's internal. Notice the tension, drop resistance, and let it pass through while walking or in a meeting." }, { category: "Novice", q: "How do I know if I've let go?", a: "You feel lighter, relieved, or clear. Thoughts stop returning, or lack emotional charge." }, { category: "Novice", q: "Why do I feel worse sometimes?", a: "This is the 'healing crisis.' As you open the doors, suppressed energy rushes up to be released. It feels intense, but it is actually leaving. Stay with it." }, { category: "Novice", q: "Is crying okay?", a: "Absolutely. Crying is a natural mechanism of release, especially for Grief. Do not suppress the tears; let them flow until they stop on their own." }, { category: "Adept", q: "Spiritual Pride", a: "Watch out for the ego claiming credit for your progress. 'Look how spiritual I am' is just another feeling (Pride) to be surrendered." }, { category: "Adept", q: "Running out of things to surrender?", a: "You may reach periods of peace, but deeper layers often emerge later. Remain vigilant for subtle attachments to comfort or even to the practice itself." }, { category: "Adept", q: "Handling major crises", a: "In a crisis, the volume of emotion is high. This is actually a golden opportunity. A massive amount of karma can be discharged quickly if you can stay present with the raw energy without resisting." }, { category: "Adept", q: "Attachment to outcomes", a: "Surrender doesn't mean you don't act; it means you surrender your attachment to the result. You do your best and let go of the rest." }, { category: "Adept", q: "The dark night of the soul?", a: "This often occurs before a major transition. It feels like abandonment or total despair. It is the ego facing its own demise. Surrender to the despair itself." }, 
+        // PRO CATEGORY REVISED
+        { category: "Pro / Nuance", q: "The 'Boredom' Barrier", a: "Deep practice often hits a plateau of profound boredom. This is not lack of progress; it is the ego losing its entertainment (drama). The 'juice' of life (ups and downs) is fading. Surrender the desire for stimulation. Surrender the resistance to the quiet. This is the vestibule to Peace." },
+        { category: "Pro / Nuance", q: "Micro-Resistance in the Body", a: "As gross emotions clear, you will detect subtle micro-tensions: a slight clench in the jaw, a holding in the diaphragm, a flicker behind the eyes. These are 'petrified' attitudes. Do not analyze them. Apply the mechanism to these subtle physical sensations exactly as you did with gross anger or fear." },
+        { category: "Pro / Nuance", q: "Surrendering the 'Witness'", a: "You have established a position as the Observer/Witness of phenomena. The final trap is the pride or attachment to *being* the Witness. Notice the sense of 'I am watching this'. That 'I' is also a phenomenon. Can you surrender the one who is watching? Is there a witnessing happening without a 'witnesser'?" },
+        { category: "Pro / Nuance", q: "The Re-emergence of Primitive States", a: "Advanced practitioners often report a sudden resurgence of very primitive, infantile fears or rage after years of peace. This is 'scraping the bottom of the barrel.' It is old, pre-verbal residue clearing out. It does not mean you have regressed. It means you are safe enough to process what was previously impossible to touch." },
+        { category: "Pro / Nuance", q: "Subtle Guilt of 'Not Doing'", a: "As drive and ambition (Desire) fade, a subtle guilt about 'being lazy' or 'unproductive' arises. This is the work ethic of the world (Pride/Guilt) fighting for survival. Surrender the need to justify your existence through action. Action will still happen, but it will come from inspiration, not desperation." },
+        { category: "Pro / Nuance", q: "Oscillation between States", a: "You may jump from high states (Love/Joy) back to Apathy or Grief rapidly. This rapid cycling is the system metabolizing energy quickly. Do not cling to the high state or resist the low one. Be the space in which the weather changes." }
+        ];
 
         // STATE
         let activeTab = 'guide';
@@ -402,7 +560,6 @@
             initEmotionPicker();
             updateTimerDisplay();
             loadJournal();
-            // initSwipe(); // Removed as requested
             
             // Check if we should skip intro
             if (sessionStorage.getItem('intro_dismissed')) {
@@ -410,7 +567,14 @@
             }
         };
 
-        function initIntro() { const el = document.getElementById('intro-quote'); if(el) el.textContent = INTRO_QUOTES[Math.floor(Math.random()*INTRO_QUOTES.length)]; }
+        function initIntro() { 
+            const rand = INTRO_QUOTES[Math.floor(Math.random()*INTRO_QUOTES.length)];
+            const qEl = document.getElementById('intro-quote');
+            const aEl = document.getElementById('intro-author');
+            if(qEl) qEl.innerText = rand.q;
+            if(aEl) aEl.innerText = "— " + rand.a;
+        }
+        
         function dismissIntro() { 
             document.getElementById('intro-screen').style.opacity='0'; 
             sessionStorage.setItem('intro_dismissed', 'true');
@@ -434,17 +598,21 @@
                 mainGain = audioContext.createGain();
                 mainGain.connect(audioContext.destination);
             }
-            if(audioContext.state === 'suspended') audioContext.resume();
+            if(audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
         }
         // ... (Audio synthesis functions) ...
         function createPinkNoise() { const bs = audioContext.sampleRate * 2, buffer = audioContext.createBuffer(1, bs, audioContext.sampleRate), data = buffer.getChannelData(0); let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0; for(let i=0; i<bs; i++) { let white = Math.random()*2-1; b0 = 0.99886*b0 + white*0.0555179; b1 = 0.99332*b1 + white*0.0750759; b2 = 0.96900*b2 + white*0.1538520; b3 = 0.86650*b3 + white*0.3104856; b4 = 0.55000*b4 + white*0.5329522; b5 = -0.7616*b5 - white*0.0168980; data[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white*0.5362) * 0.11; b6 = white*0.115926; } return buffer; }
         function createBrownNoise() { const bs = audioContext.sampleRate * 2, buffer = audioContext.createBuffer(1, bs, audioContext.sampleRate), data = buffer.getChannelData(0); let lastOut = 0; for(let i=0; i<bs; i++) { let white = Math.random()*2-1; data[i] = (lastOut + (0.02*white)) / 1.02; lastOut = data[i]; data[i] *= 3.5; } return buffer; }
-        function playSingleChime() { if(!audioContext) return; const osc = audioContext.createOscillator(), osc2 = audioContext.createOscillator(), gain = audioContext.createGain(), modGain = audioContext.createGain(); const freq = [523.25, 587.33, 659.25, 783.99, 880.00][Math.floor(Math.random()*5)]; osc.frequency.value = freq; osc2.frequency.value = freq * 2.5; modGain.gain.value = 500; osc2.connect(modGain); modGain.connect(osc.frequency); osc.connect(gain); gain.connect(audioContext.destination); const now = audioContext.currentTime; gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.1, now+0.02); gain.gain.exponentialRampToValueAtTime(0.001, now+4); osc.start(now); osc2.start(now); osc.stop(now+4.5); osc2.stop(now+4.5); }
+        function playSingleChime() { if(!audioContext) return; const osc = audioContext.createOscillator(), osc2 = audioContext.createOscillator(), gain = audioContext.createGain(), modGain = audioContext.createGain(); const freq = [523.25, 587.33, 659.25, 783.99, 880.00][Math.floor(Math.random()*5)]; osc.frequency.value = freq; osc2.frequency.value = freq * 2.5; modGain.gain.value = 500; osc2.connect(modGain); modGain.connect(osc.frequency); osc.connect(gain); gain.connect(audioContext.destination); const now = audioContext.currentTime; gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.3, now+0.02); gain.gain.exponentialRampToValueAtTime(0.001, now+4); osc.start(now); osc2.start(now); osc.stop(now+4.5); osc2.stop(now+4.5); }
         function playSingleBird() { if(!audioContext) return; const osc = audioContext.createOscillator(), gain = audioContext.createGain(); osc.connect(gain); gain.connect(audioContext.destination); const now = audioContext.currentTime, freq = 2000 + Math.random()*1500; osc.frequency.setValueAtTime(freq, now); osc.frequency.linearRampToValueAtTime(freq+500, now+0.1); osc.frequency.linearRampToValueAtTime(freq-200, now+0.2); gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.05, now+0.02); gain.gain.linearRampToValueAtTime(0, now+0.25); osc.start(now); osc.stop(now+0.3); }
-        function playBell() { if(!audioContext) return; const osc = audioContext.createOscillator(), gain = audioContext.createGain(); osc.connect(gain); gain.connect(audioContext.destination); osc.frequency.setValueAtTime(440, audioContext.currentTime); gain.gain.setValueAtTime(0, audioContext.currentTime); gain.gain.linearRampToValueAtTime(0.3, audioContext.currentTime+0.05); gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime+6); osc.start(audioContext.currentTime); osc.stop(audioContext.currentTime+6); }
+        function playBell() { if(!audioContext) return; const osc = audioContext.createOscillator(), gain = audioContext.createGain(); osc.connect(gain); gain.connect(audioContext.destination); osc.frequency.setValueAtTime(440, audioContext.currentTime); gain.gain.setValueAtTime(0, audioContext.currentTime); gain.gain.linearRampToValueAtTime(0.5, audioContext.currentTime+0.05); gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime+6); osc.start(audioContext.currentTime); osc.stop(audioContext.currentTime+6); }
         function stopAmbience() { if(noiseNode) { try{noiseNode.stop()}catch(e){}; noiseNode.disconnect(); noiseNode=null; } if(modOsc) { try{modOsc.stop()}catch(e){}; modOsc.disconnect(); modOsc=null; } if(birdInterval) { clearInterval(birdInterval); birdInterval=null; } if(chimeInterval) { clearInterval(chimeInterval); chimeInterval=null; } }
         function playAmbience(type) {
             stopAmbience(); initAudio();
+            if(audioContext.state === 'suspended') audioContext.resume();
+            
             const gain = audioContext.createGain();
             if(type === 'rain') { noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createPinkNoise(); noiseNode.loop = true; gain.gain.value = 0.15; noiseNode.connect(gain); gain.connect(audioContext.destination); noiseNode.start(); }
             else if(type === 'river') { noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createBrownNoise(); noiseNode.loop = true; const f = audioContext.createBiquadFilter(); f.type='lowpass'; f.frequency.value=600; gain.gain.value=0.3; noiseNode.connect(f); f.connect(gain); gain.connect(audioContext.destination); noiseNode.start(); }
@@ -456,6 +624,8 @@
         // TIMER Logic
         function toggleTimer() {
             initAudio();
+            if(audioContext && audioContext.state === 'suspended') audioContext.resume();
+
             const btn = document.getElementById('timer-toggle'), emotionBtn = document.getElementById('timer-emotion-btn');
             if (!currentSelectedEmotion && !isTimerRunning) { emotionBtn.classList.add('shake-error'); setTimeout(() => { emotionBtn.classList.remove('shake-error'); }, 500); return; }
             const bc = document.getElementById('breath-circle'), d = document.getElementById('timer-display');
@@ -480,13 +650,25 @@
         function handleTimerInput(input) { let val = input.value.replace(/\D/g, ''); if (val.length > 4) val = val.slice(-4); val = val.padStart(4, '0'); const m = parseInt(val.slice(0, 2), 10); const s = parseInt(val.slice(2, 4), 10); timerDuration = (m * 60) + s; defaultDuration = timerDuration; input.value = `${val.slice(0,2)}:${val.slice(2,4)}`; }
         function formatInputTime(input) { updateTimerDisplay(); }
         function adjustTimer(amt) { initAudio(); if(isTimerRunning) return; if(timerDuration+amt > 0) { timerDuration+=amt; defaultDuration=timerDuration; updateTimerDisplay(); } }
-        function resetTimer() { initAudio(); isTimerRunning = false; clearInterval(timerInterval); stopAmbience(); timerDuration = defaultDuration; const btn = document.getElementById('timer-toggle'), bc = document.getElementById('breath-circle'), d = document.getElementById('timer-display'); if(btn) btn.innerHTML = '<i data-lucide="play" class="w-8 h-8 fill-current ml-1"></i>'; if(bc) { bc.classList.remove('animate-breathe'); bc.style.transform='scale(1)'; } if(d) d.disabled = false; lucide.createIcons(); updateTimerDisplay(); }
+        function resetTimer() { 
+            initAudio(); 
+            isTimerRunning = false; 
+            clearInterval(timerInterval); 
+            stopAmbience(); 
+            timerDuration = defaultDuration; // Force back to user-set default
+            const btn = document.getElementById('timer-toggle'), bc = document.getElementById('breath-circle'), d = document.getElementById('timer-display'); 
+            if(btn) btn.innerHTML = '<i data-lucide="play" class="w-8 h-8 fill-current ml-1"></i>'; 
+            if(bc) { bc.classList.remove('animate-breathe'); bc.style.transform='scale(1)'; } 
+            if(d) d.disabled = false; 
+            lucide.createIcons(); 
+            updateTimerDisplay(); 
+        }
 
         // UI HELPERS
         // function toggleSettings() { const m = document.getElementById('info-modal'); m.classList.toggle('hidden'); m.classList.toggle('flex'); } // DEPRECATED
         function toggleModal(id) { if(id === 'emotion-picker' && !document.getElementById(id).classList.contains('hidden')) pickerCallback = null; const el = document.getElementById(id); el.classList.toggle('hidden'); el.classList.toggle('flex'); }
-        function setBellInterval(val) { initAudio(); bellInterval=val; ['0','1','5','half'].forEach(v => document.getElementById(`bell-check-${v}`).classList.add('hidden')); document.getElementById(`bell-check-${val}`).classList.remove('hidden'); document.getElementById('bell-status').classList.toggle('hidden', val===0); toggleModal('bell-modal'); }
-        function setAmbience(val) { initAudio(); currentAmbience=val; ['none','rain','wind','river','birds','chimes'].forEach(v => document.getElementById(`amb-check-${v}`).classList.add('hidden')); document.getElementById(`amb-check-${val}`).classList.remove('hidden'); document.getElementById('ambience-status').classList.toggle('hidden', val==='none'); if(isTimerRunning) playAmbience(val); toggleModal('ambience-modal'); }
+        function setBellInterval(val) { initAudio(); if(audioContext && audioContext.state === 'suspended') audioContext.resume(); bellInterval=val; ['0','1','5','half'].forEach(v => document.getElementById(`bell-check-${v}`).classList.add('hidden')); document.getElementById(`bell-check-${val}`).classList.remove('hidden'); document.getElementById('bell-status').classList.toggle('hidden', val===0); toggleModal('bell-modal'); }
+        function setAmbience(val) { initAudio(); if(audioContext && audioContext.state === 'suspended') audioContext.resume(); currentAmbience=val; ['none','rain','wind','river','birds','chimes'].forEach(v => document.getElementById(`amb-check-${v}`).classList.add('hidden')); document.getElementById(`amb-check-${val}`).classList.remove('hidden'); document.getElementById('ambience-status').classList.toggle('hidden', val==='none'); if(isTimerRunning) playAmbience(val); toggleModal('ambience-modal'); }
         function initQA() { const c=document.getElementById('qa-container'); if(!c) return; let html="", cat=""; QA_DATA.forEach((item,i)=>{ if(item.category!==cat){ cat=item.category; html+=`<h3 class="text-gold-500 text-xs uppercase tracking-widest mt-6 mb-2 font-medium pl-1">${cat}</h3>`; } html+=`<div class="glass-panel rounded-xl overflow-hidden mb-3"><button onclick="toggleFAQ(${i})" class="w-full px-5 py-4 text-left flex justify-between items-center hover:bg-slate-800/50 transition focus:outline-none select-none"><span class="text-slate-200 font-medium pr-4 text-sm">${item.q}</span><i data-lucide="chevron-down" id="faq-icon-${i}" class="faq-icon w-4 h-4 text-slate-500 shrink-0"></i></button><div id="faq-ans-${i}" class="faq-answer bg-slate-900/30 border-t border-slate-800/50"><p class="p-5 text-slate-400 text-sm leading-relaxed font-light">${item.a}</p></div></div>`; }); c.innerHTML=html; lucide.createIcons(); }
         function toggleFAQ(i) { const a=document.getElementById(`faq-ans-${i}`), ic=document.getElementById(`faq-icon-${i}`); a.classList.toggle('active'); ic.classList.toggle('active'); }
         function initEmotionPicker() { const c=document.getElementById('emotion-list-container'); if(c) c.innerHTML = HAWKINS_SCALE.map(e => `<button onclick="selectEmotion('${e.name}')" class="w-full text-left px-6 py-4 border-b border-slate-800 text-slate-300 hover:bg-slate-800 transition flex justify-between items-center group"><span class="font-medium text-lg">${e.name}</span><span class="text-xs text-slate-600 font-mono group-hover:text-gold-500">${e.val}</span></button>`).join(''); }
