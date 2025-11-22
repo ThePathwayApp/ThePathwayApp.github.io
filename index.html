@@ -66,29 +66,28 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Merriweather:ital,wght@0,300;0,400;1,300&display=swap');
         
-        /* LOCKED VIEWPORT - Nuclear Fix for iOS PWA Height */
-        html {
-            height: 100%;
-            height: -webkit-fill-available; /* Forces WebKit to use actual available space */
-            background-color: #020617;
-        }
-        
+        /* NEW: let iOS PWA handle viewport height instead of hard 100vh + fixed */
+        html,
         body {
-            /* Fallback */
+            height: 100%;
             min-height: 100vh;
-            /* iOS PWA Fix: This fills the 'real' window height minus system bars */
-            min-height: -webkit-fill-available;
-            height: 100%; 
-            
-            width: 100vw;
-            overflow: hidden;
-            background-color: #020617; 
+            width: 100%;
+            margin: 0;
+            background-color: #020617;
             color: #e2e8f0;
             -webkit-font-smoothing: antialiased;
             -webkit-tap-highlight-color: transparent;
-            
-            position: fixed;
-            inset: 0;
+            overflow: hidden; /* Kept to maintain app-like feel */
+        }
+
+        /* For newer Safari: extend min-height to full “real” viewport */
+        @supports (height: 100dvh) {
+            body {
+                min-height: 100dvh;
+            }
+        }
+
+        body {
             display: flex;
             flex-direction: column;
         }
@@ -103,21 +102,15 @@
         .btn-primary:active { transform: scale(0.96); }
         
         /* SAFE AREA UTILS */
-        .pb-safe { padding-bottom: 0 !important; }
-        .mb-safe { margin-bottom: env(safe-area-inset-bottom); }
+        .pb-safe { padding-bottom: 0; }
         .pt-safe { padding-top: env(safe-area-inset-top, 20px); }
+        .mb-safe { margin-bottom: 0; }
         
         /* SMOOTH TRANSITIONS */
         .view-section {
             opacity: 0;
-            transition: opacity 0.15s ease-in-out; 
-            /* CRITICAL PWA FIX: 
-               We add substantial extra padding (2rem) + the environment safe area 
-               to the BOTTOM of the scroll container. This ensures that even if 
-               the phone thinks the viewport is shorter, the content can scroll 
-               UP above the ghost bar/home indicator.
-            */
-            padding-bottom: calc(env(safe-area-inset-bottom) + 2rem); 
+            transition: opacity 0.25s ease-in-out;
+            padding-bottom: calc(env(safe-area-inset-bottom) + 2rem); /* Kept extra padding for visibility */
         }
         .view-section.active-view {
             opacity: 1;
