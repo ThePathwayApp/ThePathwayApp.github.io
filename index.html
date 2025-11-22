@@ -188,24 +188,30 @@
         <!-- TIMER -->
         <section id="view-timer" class="view-section hidden animate-fade-in h-full flex flex-col justify-center pt-16">
             <div class="text-center w-full">
+                <!-- Dropdown Container with High Z-Index -->
                 <div class="mb-8 max-w-[240px] mx-auto mt-8 relative z-30">
                     <button onclick="toggleModal('emotion-picker')" id="timer-emotion-btn" class="w-full flex items-center justify-between bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-2 text-slate-300 text-sm hover:border-gold-500 transition">
                         <span id="timer-emotion-display">Select Emotion...</span><i data-lucide="chevron-down" class="w-4 h-4 opacity-50"></i>
                     </button>
                 </div>
+                
+                <!-- Breath Circle Container with Lower Z-Index -->
                 <div class="relative w-64 h-64 mx-auto mb-10 flex items-center justify-center z-10">
                     <div id="breath-circle" class="absolute inset-0 bg-slate-800 rounded-full opacity-50 scale-100 transition-transform duration-1000"></div>
                     <div id="breath-circle-inner" class="absolute w-40 h-40 bg-slate-700/50 rounded-full blur-2xl"></div>
                     <input type="text" inputmode="numeric" id="timer-display" class="relative z-10 text-6xl font-extralight text-white font-serif tabular-nums tracking-tight bg-transparent text-center w-full focus:outline-none border-none p-0 m-0" value="10:00" onclick="this.select()" oninput="handleTimerInput(this)">
                 </div>
+
                 <div class="flex justify-center gap-8 mb-8">
                     <button onclick="adjustTimer(-60)" class="text-slate-600 hover:text-slate-300 transition p-4 bg-slate-900 rounded-full"><i data-lucide="minus" class="w-6 h-6"></i></button>
                     <button onclick="adjustTimer(60)" class="text-slate-600 hover:text-slate-300 transition p-4 bg-slate-900 rounded-full"><i data-lucide="plus" class="w-6 h-6"></i></button>
                 </div>
+
                 <div class="flex justify-center gap-6 items-center mb-10">
                     <button onclick="resetTimer()" class="w-14 h-14 rounded-full bg-slate-900 border border-slate-800 text-slate-400 flex items-center justify-center transition hover:bg-slate-800"><i data-lucide="rotate-ccw" class="w-5 h-5"></i></button>
                     <button id="timer-toggle" onclick="toggleTimer()" class="w-20 h-20 rounded-full bg-gold-600 hover:bg-gold-500 text-white flex items-center justify-center shadow-xl shadow-gold-900/30 transition btn-primary"><i data-lucide="play" class="w-8 h-8 fill-current ml-1"></i></button>
                 </div>
+
                 <div class="flex justify-center gap-4">
                     <button onclick="toggleModal('bell-modal')" class="flex items-center gap-2 px-4 py-2 bg-slate-900/80 border border-slate-800 rounded-full text-xs text-slate-400 hover:text-gold-500 transition"><i data-lucide="bell" class="w-4 h-4"></i> <span>Interval</span><div id="bell-status" class="w-1.5 h-1.5 bg-gold-500 rounded-full hidden ml-1"></div></button>
                     <button onclick="toggleModal('ambience-modal')" class="flex items-center gap-2 px-4 py-2 bg-slate-900/80 border border-slate-800 rounded-full text-xs text-slate-400 hover:text-emerald-500 transition"><i data-lucide="waves" class="w-4 h-4"></i> <span>Sound</span><div id="ambience-status" class="w-1.5 h-1.5 bg-emerald-500 rounded-full hidden ml-1"></div></button>
@@ -259,7 +265,7 @@
     <div id="info-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60] hidden items-center justify-center p-6 animate-fade-in">
         <div class="bg-slate-900 border border-slate-700 p-8 rounded-3xl max-w-xs w-full shadow-2xl text-center">
             <h3 class="text-xl text-white mb-2 font-serif italic">The Pathway</h3>
-            <p class="text-slate-500 text-xs mb-6 uppercase tracking-widest">Version 6.0 (PWA + Audio)</p>
+            <p class="text-slate-500 text-xs mb-6 uppercase tracking-widest">Version 7.0 (Stable)</p>
             <div class="space-y-4 text-sm text-slate-400 mb-8 text-left"><p>Based on "Letting Go" by Dr. David R. Hawkins.</p><p>This app is constantly updated.</p></div>
             <div class="mt-4 pt-4 border-t border-slate-800" id="auth-container">
                 <div id="logged-out-view">
@@ -334,17 +340,23 @@
     </div>
 
     <script>
+        // SHARED VARS (accessible by module)
+        var currentProcessEmotion = "";
+        var processSeconds = 0;
+        var currentSelectedEmotion = "";
+        var currentTimerSessionLength = 600;
+        var globalLogData = [];
+
         // --- DATA ---
         const INTRO_QUOTES = [ "To be surrendered means to have no strong emotion about a thing: 'It's okay if it happens, and it's okay if it doesn't.'", "We change the world not by what we say or do, but as a consequence of what we have become.", "The more we let go, the more loving we become.", "Peace is the natural state of the Self.", "Everything you see happening is the consequence of that which you are.", "Surrender is a constant process of not resisting or clinging to the moment.", "Love is misunderstood to be an emotion; actually, it is a state of awareness.", "The letting go technique is a system of eliminating the ego.", "When you give up the resistance to the feeling, the energy behind it runs out.", "You are the context in which the content of your life is unfolding.", "The goal of letting go is the elimination of the ego.", "All we have to do is hand it over to God.", "You are not the feeling; you are the witness of the feeling.", "What you resist, persists.", "The energy of the suppressed feeling is the cause of the thought.", "We are all doing the best we can with what we have at the moment.", "There is no 'out there'. It is all 'in here'.", "Love promotes healing. When we hold it for others, we are healing ourselves.", "The only thing that stands between you and God is a thought.", "Desire is the energy of 'I want'. Surrender is the energy of 'I have'.", "Humility is the doorway to the truth." ];
         const HAWKINS_SCALE = [ { name: "Shame", val: 20 }, { name: "Guilt", val: 30 }, { name: "Apathy", val: 50 }, { name: "Grief", val: 75 }, { name: "Fear", val: 100 }, { name: "Desire", val: 125 }, { name: "Anger", val: 150 }, { name: "Pride", val: 175 }, { name: "Courage", val: 200 }, { name: "Neutrality", val: 250 }, { name: "Willingness", val: 310 }, { name: "Acceptance", val: 350 }, { name: "Reason", val: 400 }, { name: "Love", val: 500 }, { name: "Joy", val: 540 }, { name: "Peace", val: 600 } ];
         const QA_DATA = [ { category: "Beginner / Skeptic", q: "Why aren't I sensing my feelings inside my body?", a: "This numbness is due to ingrained, conditioned resistance. Because the feeling was unpleasant, the mind automatically pushed it out of awareness. It has been repressed for so long that you have lost touch with the physical sensation. Be patient; simply intending to look is the first step." }, { category: "Beginner / Skeptic", q: "Is this just suppressing feelings?", a: "No. Suppression is pushing a feeling down to avoid it. Letting go is the opposite: it is allowing the feeling to come up, acknowledging it, and letting the energy escape." }, { category: "Beginner / Skeptic", q: "Why should I ignore my thoughts?", a: "Thoughts are rationalizations created by the mind to explain the presence of a feeling. They are often repetitive. Focusing on the physical sensation cuts the fuel supply to thoughts." }, { category: "Beginner / Skeptic", q: "What if the feeling is too strong?", a: "If overwhelmed, surrender to the fear of the feeling first. Acknowledge you are afraid. Let go of resistance to the fear." }, { category: "Beginner / Skeptic", q: "Is there scientific proof for this?", a: "Dr. Hawkins' work correlates vibrational states with muscle testing (kinesiology). While the subjective experience is internal, the physiological benefits of stress reduction are well-documented." }, { category: "Beginner / Skeptic", q: "How is this different from relaxation?", a: "Relaxation often targets the body directly. Letting go targets the emotional energy *causing* the tension. It is a permanent release rather than a temporary respite." }, { category: "Beginner / Skeptic", q: "Can I surrender to physical pain?", a: "Yes. Much pain is held in place by resistance. If you stop resisting the sensation and just experience it as pure energy, it often shifts or diminishes." }, { category: "Novice", q: "Nothing seems to be changing in my life?", a: "Letting Go can be subtle or dramatic, both inwardly and outwardly. Often it is others in our life who notice our change before we do. Like shoveling coal from a pile, we're unaware of the amount we've handled because our focus is on what is at hand." }, { category: "Novice", q: "I feel stuck. Nothing is happening.", a: "You may be 'wanting' it to change. Wanting is resistance. Can you let go of the desire to change it? Can you allow it to just be?" }, { category: "Novice", q: "Can I do this in public?", a: "Yes. It's internal. Notice the tension, drop resistance, and let it pass through while walking or in a meeting." }, { category: "Novice", q: "How do I know if I've let go?", a: "You feel lighter, relieved, or clear. Thoughts stop returning, or lack emotional charge." }, { category: "Novice", q: "Why do I feel worse sometimes?", a: "This is the 'healing crisis.' As you open the doors, suppressed energy rushes up to be released. It feels intense, but it is actually leaving. Stay with it." }, { category: "Novice", q: "Is crying okay?", a: "Absolutely. Crying is a natural mechanism of release, especially for Grief. Do not suppress the tears; let them flow until they stop on their own." }, { category: "Adept", q: "Spiritual Pride", a: "Watch out for the ego claiming credit for your progress. 'Look how spiritual I am' is just another feeling (Pride) to be surrendered." }, { category: "Adept", q: "Running out of things to surrender?", a: "You may reach periods of peace, but deeper layers often emerge later. Remain vigilant for subtle attachments to comfort or even to the practice itself." }, { category: "Adept", q: "Handling major crises", a: "In a crisis, the volume of emotion is high. This is actually a golden opportunity. A massive amount of karma can be discharged quickly if you can stay present with the raw energy without resisting." }, { category: "Adept", q: "Attachment to outcomes", a: "Surrender doesn't mean you don't act; it means you surrender your attachment to the result. You do your best and let go of the rest." }, { category: "Adept", q: "The dark night of the soul?", a: "This often occurs before a major transition. It feels like abandonment or total despair. It is the ego facing its own demise. Surrender to the despair itself." }, { category: "Pro", q: "Who is the one letting go?", a: "Eventually, you realize the 'I' trying to let go is also a thought. Surrendering the 'doer' leads to realization that everything happens spontaneously." }, { category: "Pro", q: "Surrender vs. Apathy", a: "Apathy is 'I can't do anything'. Surrender is 'I don't need to control anything'. Apathy feels heavy and dark. Surrender feels light and expansive. If you feel drained, it is apathy. If you feel lighter, it is surrender." }, { category: "Pro", q: "The Final Door", a: "The ultimate surrender is to God/Truth itself. It is the letting go of the illusion of a separate self." }, { category: "Pro", q: "Surrendering the desire for enlightenment?", a: "Even the desire for God or Truth can be an obstruction if it is filled with 'wanting'. Surrender the wanting, and what you seek is revealed to have been there all along." } ];
 
-        // GLOBAL STATE
+        // STATE
         let activeTab = 'guide';
-        let timerInterval, timerDuration = 600, defaultDuration = 600, timerEndTime = 0, isTimerRunning = false, currentTimerSessionLength = 600;
+        let timerInterval, timerDuration = 600, defaultDuration = 600, timerEndTime = 0, isTimerRunning = false;
         let bellInterval = 0, currentAmbience = 'none', audioContext, mainGain, noiseNode, modOsc, modGain, birdInterval, chimeInterval;
-        let processInterval, processSeconds = 0, processStartTime = 0, currentSelectedEmotion = "", pickerCallback, progressChart;
-        let globalLogData = [];
+        let processInterval, processStartTime = 0, pickerCallback, progressChart;
 
         window.onload = function() {
             initIntro();
@@ -352,7 +364,7 @@
             initQA();
             initEmotionPicker();
             updateTimerDisplay();
-            // loadJournal triggered by auth listener
+            loadJournal();
             initSwipe();
         };
 
@@ -385,164 +397,55 @@
             }
             if(audioContext.state === 'suspended') audioContext.resume();
         }
-        function createPinkNoise() {
-            const bs = audioContext.sampleRate * 2, buffer = audioContext.createBuffer(1, bs, audioContext.sampleRate), data = buffer.getChannelData(0);
-            let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
-            for(let i=0; i<bs; i++) {
-                let white = Math.random()*2-1;
-                b0 = 0.99886*b0 + white*0.0555179; b1 = 0.99332*b1 + white*0.0750759; b2 = 0.96900*b2 + white*0.1538520;
-                b3 = 0.86650*b3 + white*0.3104856; b4 = 0.55000*b4 + white*0.5329522; b5 = -0.7616*b5 - white*0.0168980;
-                data[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white*0.5362) * 0.11; b6 = white*0.115926;
-            }
-            return buffer;
-        }
-        function createBrownNoise() {
-            const bs = audioContext.sampleRate * 2, buffer = audioContext.createBuffer(1, bs, audioContext.sampleRate), data = buffer.getChannelData(0);
-            let lastOut = 0;
-            for(let i=0; i<bs; i++) {
-                let white = Math.random()*2-1;
-                data[i] = (lastOut + (0.02*white)) / 1.02;
-                lastOut = data[i];
-                data[i] *= 3.5;
-            }
-            return buffer;
-        }
-        function playSingleChime() {
-            if(!audioContext) return;
-            const osc = audioContext.createOscillator(), osc2 = audioContext.createOscillator(), gain = audioContext.createGain(), modGain = audioContext.createGain();
-            const freq = [523.25, 587.33, 659.25, 783.99, 880.00][Math.floor(Math.random()*5)];
-            osc.frequency.value = freq; osc2.frequency.value = freq * 2.5; modGain.gain.value = 500;
-            osc2.connect(modGain); modGain.connect(osc.frequency); osc.connect(gain); gain.connect(audioContext.destination);
-            const now = audioContext.currentTime;
-            gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.1, now+0.02); gain.gain.exponentialRampToValueAtTime(0.001, now+4);
-            osc.start(now); osc2.start(now); osc.stop(now+4.5); osc2.stop(now+4.5);
-        }
-        function playSingleBird() {
-            if(!audioContext) return;
-            const osc = audioContext.createOscillator(), gain = audioContext.createGain();
-            osc.connect(gain); gain.connect(audioContext.destination);
-            const now = audioContext.currentTime, freq = 2000 + Math.random()*1500;
-            osc.frequency.setValueAtTime(freq, now); osc.frequency.linearRampToValueAtTime(freq+500, now+0.1); osc.frequency.linearRampToValueAtTime(freq-200, now+0.2);
-            gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.05, now+0.02); gain.gain.linearRampToValueAtTime(0, now+0.25);
-            osc.start(now); osc.stop(now+0.3);
-        }
-        function playBell() {
-            if(!audioContext) return;
-            const osc = audioContext.createOscillator(), gain = audioContext.createGain();
-            osc.connect(gain); gain.connect(audioContext.destination);
-            osc.frequency.setValueAtTime(440, audioContext.currentTime);
-            gain.gain.setValueAtTime(0, audioContext.currentTime); gain.gain.linearRampToValueAtTime(0.3, audioContext.currentTime+0.05); gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime+6);
-            osc.start(audioContext.currentTime); osc.stop(audioContext.currentTime+6);
-        }
-        function stopAmbience() {
-            if(noiseNode) { try{noiseNode.stop()}catch(e){}; noiseNode.disconnect(); noiseNode=null; }
-            if(modOsc) { try{modOsc.stop()}catch(e){}; modOsc.disconnect(); modOsc=null; }
-            if(birdInterval) { clearInterval(birdInterval); birdInterval=null; }
-            if(chimeInterval) { clearInterval(chimeInterval); chimeInterval=null; }
-        }
+        // ... (Audio synthesis functions) ...
+        function createPinkNoise() { const bs = audioContext.sampleRate * 2, buffer = audioContext.createBuffer(1, bs, audioContext.sampleRate), data = buffer.getChannelData(0); let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0; for(let i=0; i<bs; i++) { let white = Math.random()*2-1; b0 = 0.99886*b0 + white*0.0555179; b1 = 0.99332*b1 + white*0.0750759; b2 = 0.96900*b2 + white*0.1538520; b3 = 0.86650*b3 + white*0.3104856; b4 = 0.55000*b4 + white*0.5329522; b5 = -0.7616*b5 - white*0.0168980; data[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white*0.5362) * 0.11; b6 = white*0.115926; } return buffer; }
+        function createBrownNoise() { const bs = audioContext.sampleRate * 2, buffer = audioContext.createBuffer(1, bs, audioContext.sampleRate), data = buffer.getChannelData(0); let lastOut = 0; for(let i=0; i<bs; i++) { let white = Math.random()*2-1; data[i] = (lastOut + (0.02*white)) / 1.02; lastOut = data[i]; data[i] *= 3.5; } return buffer; }
+        function playSingleChime() { if(!audioContext) return; const osc = audioContext.createOscillator(), osc2 = audioContext.createOscillator(), gain = audioContext.createGain(), modGain = audioContext.createGain(); const freq = [523.25, 587.33, 659.25, 783.99, 880.00][Math.floor(Math.random()*5)]; osc.frequency.value = freq; osc2.frequency.value = freq * 2.5; modGain.gain.value = 500; osc2.connect(modGain); modGain.connect(osc.frequency); osc.connect(gain); gain.connect(audioContext.destination); const now = audioContext.currentTime; gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.1, now+0.02); gain.gain.exponentialRampToValueAtTime(0.001, now+4); osc.start(now); osc2.start(now); osc.stop(now+4.5); osc2.stop(now+4.5); }
+        function playSingleBird() { if(!audioContext) return; const osc = audioContext.createOscillator(), gain = audioContext.createGain(); osc.connect(gain); gain.connect(audioContext.destination); const now = audioContext.currentTime, freq = 2000 + Math.random()*1500; osc.frequency.setValueAtTime(freq, now); osc.frequency.linearRampToValueAtTime(freq+500, now+0.1); osc.frequency.linearRampToValueAtTime(freq-200, now+0.2); gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.05, now+0.02); gain.gain.linearRampToValueAtTime(0, now+0.25); osc.start(now); osc.stop(now+0.3); }
+        function playBell() { if(!audioContext) return; const osc = audioContext.createOscillator(), gain = audioContext.createGain(); osc.connect(gain); gain.connect(audioContext.destination); osc.frequency.setValueAtTime(440, audioContext.currentTime); gain.gain.setValueAtTime(0, audioContext.currentTime); gain.gain.linearRampToValueAtTime(0.3, audioContext.currentTime+0.05); gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime+6); osc.start(audioContext.currentTime); osc.stop(audioContext.currentTime+6); }
+        function stopAmbience() { if(noiseNode) { try{noiseNode.stop()}catch(e){}; noiseNode.disconnect(); noiseNode=null; } if(modOsc) { try{modOsc.stop()}catch(e){}; modOsc.disconnect(); modOsc=null; } if(birdInterval) { clearInterval(birdInterval); birdInterval=null; } if(chimeInterval) { clearInterval(chimeInterval); chimeInterval=null; } }
         function playAmbience(type) {
             stopAmbience(); initAudio();
             const gain = audioContext.createGain();
-            if(type === 'rain') {
-                noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createPinkNoise(); noiseNode.loop = true;
-                gain.gain.value = 0.15; noiseNode.connect(gain); gain.connect(audioContext.destination); noiseNode.start();
-            } else if(type === 'river') {
-                noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createBrownNoise(); noiseNode.loop = true;
-                const f = audioContext.createBiquadFilter(); f.type='lowpass'; f.frequency.value=600; gain.gain.value=0.3;
-                noiseNode.connect(f); f.connect(gain); gain.connect(audioContext.destination); noiseNode.start();
-            } else if(type === 'wind') {
-                noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createPinkNoise(); noiseNode.loop = true;
-                const f = audioContext.createBiquadFilter(); f.type='lowpass'; f.Q.value=1;
-                modOsc = audioContext.createOscillator(); modOsc.frequency.value=0.15;
-                const mg = audioContext.createGain(); mg.gain.value=400;
-                modOsc.connect(mg); mg.connect(f.frequency); f.frequency.value=500;
-                noiseNode.connect(f); f.connect(gain); gain.connect(audioContext.destination); gain.gain.value=0.3;
-                noiseNode.start(); modOsc.start();
-            } else if(type === 'birds') {
-                const gain = audioContext.createGain();
-                noiseNode = audioContext.createBufferSource();
-                noiseNode.buffer = createPinkNoise();
-                noiseNode.loop = true;
-                const f = audioContext.createBiquadFilter(); f.type='highpass'; f.frequency.value=2000; gain.gain.value=0.02;
-                noiseNode.connect(f); f.connect(gain); gain.connect(audioContext.destination); noiseNode.start();
-                birdInterval = setInterval(() => { if(Math.random()>0.6) playSingleBird(); }, 1500);
-            } else if(type === 'chimes') {
-                chimeInterval = setInterval(() => { if(Math.random()>0.5) playSingleChime(); }, 2500); playSingleChime();
-            }
+            if(type === 'rain') { noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createPinkNoise(); noiseNode.loop = true; gain.gain.value = 0.15; noiseNode.connect(gain); gain.connect(audioContext.destination); noiseNode.start(); }
+            else if(type === 'river') { noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createBrownNoise(); noiseNode.loop = true; const f = audioContext.createBiquadFilter(); f.type='lowpass'; f.frequency.value=600; gain.gain.value=0.3; noiseNode.connect(f); f.connect(gain); gain.connect(audioContext.destination); noiseNode.start(); }
+            else if(type === 'wind') { noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createPinkNoise(); noiseNode.loop = true; const f = audioContext.createBiquadFilter(); f.type='lowpass'; f.Q.value=1; modOsc = audioContext.createOscillator(); modOsc.frequency.value=0.15; const mg = audioContext.createGain(); mg.gain.value=400; modOsc.connect(mg); mg.connect(f.frequency); f.frequency.value=500; noiseNode.connect(f); f.connect(gain); gain.connect(audioContext.destination); gain.gain.value=0.3; noiseNode.start(); modOsc.start(); }
+            else if(type === 'birds') { const gain = audioContext.createGain(); noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createPinkNoise(); noiseNode.loop = true; const f = audioContext.createBiquadFilter(); f.type='highpass'; f.frequency.value=2000; gain.gain.value=0.02; noiseNode.connect(f); f.connect(gain); gain.connect(audioContext.destination); noiseNode.start(); birdInterval = setInterval(() => { if(Math.random()>0.6) playSingleBird(); }, 1500); }
+            else if(type === 'chimes') { chimeInterval = setInterval(() => { if(Math.random()>0.5) playSingleChime(); }, 2500); playSingleChime(); }
         }
 
-        // TIMER + AUDIO WAKEUP
+        // TIMER Logic
         function toggleTimer() {
             initAudio();
-            const btn = document.getElementById('timer-toggle');
-            const emotionBtn = document.getElementById('timer-emotion-btn');
-            
-            if (!currentSelectedEmotion && !isTimerRunning) {
-                emotionBtn.classList.add('shake-error');
-                setTimeout(() => { emotionBtn.classList.remove('shake-error'); }, 500);
-                return; 
-            }
-            
+            const btn = document.getElementById('timer-toggle'), emotionBtn = document.getElementById('timer-emotion-btn');
+            if (!currentSelectedEmotion && !isTimerRunning) { emotionBtn.classList.add('shake-error'); setTimeout(() => { emotionBtn.classList.remove('shake-error'); }, 500); return; }
             const bc = document.getElementById('breath-circle'), d = document.getElementById('timer-display');
             if (isTimerRunning) {
-                const now = Date.now(), rem = Math.ceil((timerEndTime - now)/1000);
-                timerDuration = rem > 0 ? rem : 0; isTimerRunning = false; clearInterval(timerInterval); stopAmbience();
-                btn.innerHTML = '<i data-lucide="play" class="w-8 h-8 fill-current ml-1"></i>';
-                bc.classList.remove('animate-breathe'); bc.style.transform='scale(1)'; d.disabled = false; updateTimerDisplay();
+                const now = Date.now(), rem = Math.ceil((timerEndTime - now)/1000); timerDuration = rem > 0 ? rem : 0; isTimerRunning = false; clearInterval(timerInterval); stopAmbience();
+                btn.innerHTML = '<i data-lucide="play" class="w-8 h-8 fill-current ml-1"></i>'; bc.classList.remove('animate-breathe'); bc.style.transform='scale(1)'; d.disabled = false; updateTimerDisplay();
             } else {
                 if (timerDuration <= 0) timerDuration = defaultDuration;
                 currentTimerSessionLength = timerDuration; isTimerRunning = true; timerEndTime = Date.now() + (timerDuration*1000);
                 initAudio(); if(currentAmbience !== 'none') playAmbience(currentAmbience);
-                btn.innerHTML = '<i data-lucide="pause" class="w-8 h-8 fill-current"></i>';
-                bc.classList.add('animate-breathe'); d.disabled = true; updateTimerDisplay();
+                btn.innerHTML = '<i data-lucide="pause" class="w-8 h-8 fill-current"></i>'; bc.classList.add('animate-breathe'); d.disabled = true; updateTimerDisplay();
                 timerInterval = setInterval(() => {
                     const now = Date.now(), rem = Math.ceil((timerEndTime - now)/1000);
-                    if (bellInterval !== 0 && rem > 0) {
-                        const elapsed = currentTimerSessionLength - rem;
-                        if (bellInterval === 'half') { if (el === Math.floor(currentTimerSessionLength/2)) playBell(); }
-                        else if (typeof bellInterval === 'number' && el > 0 && el % (bellInterval*60) === 0) playBell();
-                    }
-                    if (rem <= 0) {
-                        timerDuration = 0; isTimerRunning = false; clearInterval(timerInterval); stopAmbience(); playBell();
-                        btn.innerHTML = '<i data-lucide="play" class="w-8 h-8 fill-current ml-1"></i>';
-                        bc.classList.remove('animate-breathe'); bc.style.transform='scale(1)'; d.value="00:00"; d.disabled=false;
-                        document.getElementById('complete-modal').classList.remove('hidden'); document.getElementById('complete-modal').classList.add('flex');
-                    } else updateTimerDisplay();
+                    if (bellInterval !== 0 && rem > 0) { const el = currentTimerSessionLength - rem; if (bellInterval === 'half') { if (el === Math.floor(currentTimerSessionLength/2)) playBell(); } else if (typeof bellInterval === 'number' && el > 0 && el % (bellInterval*60) === 0) playBell(); }
+                    if (rem <= 0) { timerDuration = 0; isTimerRunning = false; clearInterval(timerInterval); stopAmbience(); playBell(); btn.innerHTML = '<i data-lucide="play" class="w-8 h-8 fill-current ml-1"></i>'; bc.classList.remove('animate-breathe'); bc.style.transform='scale(1)'; d.value="00:00"; d.disabled=false; document.getElementById('complete-modal').classList.remove('hidden'); document.getElementById('complete-modal').classList.add('flex'); } else updateTimerDisplay();
                 }, 1000);
             }
             lucide.createIcons();
         }
-        function formatTime(sec) {
-            if (sec < 0) sec = 0;
-            const m = Math.floor(sec/60).toString().padStart(2,'0'), s = (sec%60).toString().padStart(2,'0');
-            return `${m}:${s}`;
-        }
-        function updateTimerDisplay() {
-            let sec = timerDuration;
-            if(isTimerRunning) { const now = Date.now(), rem = Math.ceil((timerEndTime - now)/1000); sec = rem > 0 ? rem : 0; }
-            document.getElementById('timer-display').value = formatTime(sec);
-        }
-        function handleTimerInput(input) {
-            let val = input.value.replace(/\D/g, '');
-            if (val.length > 4) val = val.slice(-4);
-            val = val.padStart(4, '0');
-            const m = parseInt(val.slice(0, 2), 10);
-            const s = parseInt(val.slice(2, 4), 10);
-            timerDuration = (m * 60) + s; defaultDuration = timerDuration;
-            input.value = `${val.slice(0,2)}:${val.slice(2,4)}`;
-        }
+        function formatTime(sec) { if (sec < 0) sec = 0; const m = Math.floor(sec/60).toString().padStart(2,'0'), s = (sec%60).toString().padStart(2,'0'); return `${m}:${s}`; }
+        function updateTimerDisplay() { let sec = timerDuration; if(isTimerRunning) { const now = Date.now(), rem = Math.ceil((timerEndTime - now)/1000); sec = rem > 0 ? rem : 0; } document.getElementById('timer-display').value = formatTime(sec); }
+        function handleTimerInput(input) { let val = input.value.replace(/\D/g, ''); if (val.length > 4) val = val.slice(-4); val = val.padStart(4, '0'); const m = parseInt(val.slice(0, 2), 10); const s = parseInt(val.slice(2, 4), 10); timerDuration = (m * 60) + s; defaultDuration = timerDuration; input.value = `${val.slice(0,2)}:${val.slice(2,4)}`; }
         function formatInputTime(input) { updateTimerDisplay(); }
         function adjustTimer(amt) { initAudio(); if(isTimerRunning) return; if(timerDuration+amt > 0) { timerDuration+=amt; defaultDuration=timerDuration; updateTimerDisplay(); } }
-        function resetTimer() { 
-            initAudio(); isTimerRunning = false; clearInterval(timerInterval); stopAmbience(); timerDuration = defaultDuration; 
-            const btn = document.getElementById('timer-toggle'), bc = document.getElementById('breath-circle'), d = document.getElementById('timer-display');
-            if(btn) btn.innerHTML = '<i data-lucide="play" class="w-8 h-8 fill-current ml-1"></i>';
-            if(bc) { bc.classList.remove('animate-breathe'); bc.style.transform='scale(1)'; }
-            if(d) d.disabled = false;
-            lucide.createIcons(); updateTimerDisplay(); 
-        }
+        function resetTimer() { initAudio(); isTimerRunning = false; clearInterval(timerInterval); stopAmbience(); timerDuration = defaultDuration; const btn = document.getElementById('timer-toggle'), bc = document.getElementById('breath-circle'), d = document.getElementById('timer-display'); if(btn) btn.innerHTML = '<i data-lucide="play" class="w-8 h-8 fill-current ml-1"></i>'; if(bc) { bc.classList.remove('animate-breathe'); bc.style.transform='scale(1)'; } if(d) d.disabled = false; lucide.createIcons(); updateTimerDisplay(); }
+
+        // UI HELPERS
         function toggleSettings() { const m = document.getElementById('info-modal'); m.classList.toggle('hidden'); m.classList.toggle('flex'); }
-        function toggleModal(id) { if(id==='emotion-picker' && !document.getElementById(id).classList.contains('hidden')) pickerCallback=null; const el=document.getElementById(id); el.classList.toggle('hidden'); el.classList.toggle('flex'); }
+        function toggleModal(id) { if(id === 'emotion-picker' && !document.getElementById(id).classList.contains('hidden')) pickerCallback = null; const el = document.getElementById(id); el.classList.toggle('hidden'); el.classList.toggle('flex'); }
         function setBellInterval(val) { initAudio(); bellInterval=val; ['0','1','5','half'].forEach(v => document.getElementById(`bell-check-${v}`).classList.add('hidden')); document.getElementById(`bell-check-${val}`).classList.remove('hidden'); document.getElementById('bell-status').classList.toggle('hidden', val===0); toggleModal('bell-modal'); }
         function setAmbience(val) { initAudio(); currentAmbience=val; ['none','rain','wind','river','birds','chimes'].forEach(v => document.getElementById(`amb-check-${v}`).classList.add('hidden')); document.getElementById(`amb-check-${val}`).classList.remove('hidden'); document.getElementById('ambience-status').classList.toggle('hidden', val==='none'); if(isTimerRunning) playAmbience(val); toggleModal('ambience-modal'); }
         function initQA() { const c=document.getElementById('qa-container'); if(!c) return; let html="", cat=""; QA_DATA.forEach((item,i)=>{ if(item.category!==cat){ cat=item.category; html+=`<h3 class="text-gold-500 text-xs uppercase tracking-widest mt-6 mb-2 font-medium pl-1">${cat}</h3>`; } html+=`<div class="glass-panel rounded-xl overflow-hidden mb-3"><button onclick="toggleFAQ(${i})" class="w-full px-5 py-4 text-left flex justify-between items-center hover:bg-slate-800/50 transition focus:outline-none select-none"><span class="text-slate-200 font-medium pr-4 text-sm">${item.q}</span><i data-lucide="chevron-down" id="faq-icon-${i}" class="faq-icon w-4 h-4 text-slate-500 shrink-0"></i></button><div id="faq-ans-${i}" class="faq-answer bg-slate-900/30 border-t border-slate-800/50"><p class="p-5 text-slate-400 text-sm leading-relaxed font-light">${item.a}</p></div></div>`; }); c.innerHTML=html; lucide.createIcons(); }
@@ -550,22 +453,19 @@
         function initEmotionPicker() { const c=document.getElementById('emotion-list-container'); if(c) c.innerHTML = HAWKINS_SCALE.map(e => `<button onclick="selectEmotion('${e.name}')" class="w-full text-left px-6 py-4 border-b border-slate-800 text-slate-300 hover:bg-slate-800 transition flex justify-between items-center group"><span class="font-medium text-lg">${e.name}</span><span class="text-xs text-slate-600 font-mono group-hover:text-gold-500">${e.val}</span></button>`).join(''); }
         function selectEmotion(n) { currentSelectedEmotion=n; toggleModal('emotion-picker'); if(pickerCallback) { pickerCallback(n); pickerCallback=null; } else { const d1=document.getElementById('process-emotion-display'), d2=document.getElementById('timer-emotion-display'), d3=document.getElementById('chart-emotion-display'); if(d1) { d1.textContent=n; d1.classList.add('text-white'); } if(d2) { d2.textContent=n; d2.classList.add('text-gold-500'); } if(d3) { d3.textContent=n; loadChart(n); } } }
         function openPickerFor(ctx) { toggleModal('emotion-picker'); if(ctx==='process') pickerCallback=n=>{ const el=document.getElementById('process-emotion-display'); el.textContent=n; el.classList.remove('text-slate-400'); el.classList.add('text-white'); }; else if(ctx==='timer') pickerCallback=n=>{ const el=document.getElementById('timer-emotion-display'); el.textContent=n; el.classList.add('text-gold-500'); }; else if(ctx==='chart') pickerCallback=n=>{ document.getElementById('chart-emotion-display').textContent=n; loadChart(n); }; }
-        function switchTab(id) { activeTab=id; document.querySelectorAll('.view-section').forEach(e=>e.classList.add('hidden')); const t=document.getElementById(`view-${id}`); if(t) { t.classList.remove('hidden'); t.classList.remove('animate-fade-in'); void t.offsetWidth; t.classList.add('animate-fade-in'); } document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active')); const b=document.getElementById(`nav-${id}`); if(b) b.classList.add('active'); if(id==='qa') initQA(); if(id==='journal') loadJournal(); if(id==='charts') document.getElementById('chart-emotion-btn').onclick=()=>openPickerFor('chart'); if(id==='process') document.getElementById('process-emotion-btn').onclick=()=>openPickerFor('process'); }
+        function switchTab(id) { activeTab=id; document.querySelectorAll('.view-section').forEach(e=>e.classList.add('hidden')); const t=document.getElementById(`view-${id}`); if(t) { t.classList.remove('hidden'); t.classList.remove('animate-fade-in'); void t.offsetWidth; t.classList.add('animate-fade-in'); } document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active')); document.getElementById(`nav-${id}`).classList.add('active'); if(id==='qa') initQA(); if(id==='journal') loadJournal(); if(id==='charts') document.getElementById('chart-emotion-btn').onclick=()=>openPickerFor('chart'); if(id==='process') document.getElementById('process-emotion-btn').onclick=()=>openPickerFor('process'); }
 
-        // BRIDGE FUNCTIONS
-        window.saveTimerSession = () => {};
-        window.saveAndClose = () => {};
-        window.deleteEntry = () => {};
-        window.renameEntry = () => {};
-        window.clearJournal = () => {};
-        window.loadJournal = () => {};
+        // BRIDGE FUNCTIONS (Overwritten by Module)
+        window.saveTimerSession = () => {}; window.saveAndClose = () => {}; window.deleteEntry = () => {}; window.renameEntry = () => {}; window.clearJournal = () => {}; window.loadJournal = () => {};
         window.startProcess = () => { if(!currentSelectedEmotion) { alert("Please select an emotion first."); return; } currentProcessEmotion = currentSelectedEmotion; document.querySelectorAll('.current-emotion').forEach(el=>el.textContent=currentProcessEmotion); processSeconds=0; nextStep(1); document.getElementById('process-reset-btn').classList.remove('hidden'); };
         window.nextStep = (s) => { document.querySelectorAll('.process-step').forEach(e=>e.classList.add('hidden')); const t=document.getElementById(`process-step-${s}`); t.classList.remove('hidden'); t.classList.add('animate-fade-in'); if(s===4) startProcessTimer(); else stopProcessTimer(); if(s===5) document.getElementById('process-reset-btn').classList.add('hidden'); };
         window.startProcessTimer = () => { const d=document.getElementById('process-timer'); processSeconds=0; d.textContent="00:00"; if(processInterval) clearInterval(processInterval); processStartTime=Date.now(); processInterval=setInterval(()=>{ const now=Date.now(); processSeconds=Math.floor((now-processStartTime)/1000); const m=Math.floor(processSeconds/60).toString().padStart(2,'0'), s=(processSeconds%60).toString().padStart(2,'0'); d.textContent=`${m}:${s}`; },1000); };
         window.stopProcessTimer = () => { if(processInterval) clearInterval(processInterval); };
         window.finishProcess = () => { stopProcessTimer(); nextStep(5); };
         window.resetProcess = () => { stopProcessTimer(); document.querySelectorAll('.process-step').forEach(e=>e.classList.add('hidden')); document.getElementById('process-step-0').classList.remove('hidden'); document.getElementById('process-reset-btn').classList.add('hidden'); };
+        window.saveAndClose = () => { const int = document.getElementById('process-intensity-slider').value; const rel = JSON.parse(localStorage.getItem('releases') || '[]'); rel.unshift({ emotion: currentProcessEmotion, date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}), time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), duration: processSeconds, intensity: int }); localStorage.setItem('releases', JSON.stringify(rel)); resetProcess(); switchTab('journal'); }
         window.loadChart = (em) => { const ctx = document.getElementById('progressChart'); if(!ctx) return; document.getElementById('chart-placeholder').classList.add('hidden'); let data = globalLogData.filter(r => r.emotion === em && r.intensity).reverse(); if(data.length===0) { if(progressChart) progressChart.destroy(); document.getElementById('chart-placeholder').classList.remove('hidden'); document.getElementById('chart-placeholder').textContent = `No data yet for "${em}"`; return; } const lbl = data.map(x => x.date), val = data.map(x => parseInt(x.intensity)); if(progressChart) progressChart.destroy(); progressChart = new Chart(ctx, { type: 'line', data: { labels: lbl, datasets: [{ label: 'Intensity', data: val, borderColor: '#d4af37', backgroundColor: 'rgba(212, 175, 55, 0.1)', tension: 0.4, fill: true, pointBackgroundColor: '#d4af37' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 10, grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } }, x: { grid: { display: false }, ticks: { color: '#94a3b8' } } }, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#0f172a', borderColor: '#334155', borderWidth: 1 } } } }); };
+        window.closeCompleteModal = () => { document.getElementById('complete-modal').classList.add('hidden'); document.getElementById('complete-modal').classList.remove('flex'); resetTimer(); };
     </script>
 
     <script type="module">
@@ -609,7 +509,7 @@
                     if(lOut) lOut.classList.remove('hidden');
                     if(lIn) lIn.classList.add('hidden');
                     if(unsubscribeJournal) unsubscribeJournal();
-                    renderJournal(); // Load local
+                    renderJournal(); 
                 }
             });
         } catch (e) { console.error("Firebase Init Error:", e); }
@@ -619,8 +519,8 @@
 
         function renderJournal(logs) {
             if (!isLoggedIn || !logs) { logs = JSON.parse(localStorage.getItem('releases') || '[]'); }
-            // Update Global Data Store
-            window.globalLogData = logs; // Expose to Chart
+            // Update Global Data Store for Charts
+            window.globalLogData = logs; 
             
             const list = document.getElementById('journal-list');
             if (!list) return;
@@ -644,12 +544,12 @@
             });
         }
 
-        // Override window functions to use module scope variables
+        // Override window functions
         window.loadJournal = () => { if(!isLoggedIn) renderJournal(); };
         
         window.saveTimerSession = async () => {
             const intensity = document.getElementById('timer-intensity-slider').value;
-            const emotion = window.currentSelectedEmotion || "Meditation"; // Access global window var
+            const emotion = window.currentSelectedEmotion || "Meditation"; 
             const entry = { emotion: emotion, date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}), time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), duration: window.currentTimerSessionLength, intensity: intensity, timestamp: serverTimestamp() };
             
             if (isLoggedIn && currentUser) { try { await addDoc(collection(db, 'users', currentUser.uid, 'logs'), entry); } catch (e) { alert("Error saving: " + e.message); } }
