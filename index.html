@@ -34,6 +34,7 @@
                         'fade-in': 'fadeIn 0.8s ease-out forwards',
                         'fade-out': 'fadeOut 0.8s ease-in forwards',
                         'slide-up': 'slideUp 0.3s ease-out forwards',
+                        'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
                     },
                     keyframes: {
                         breathe: {
@@ -51,6 +52,12 @@
                         slideUp: {
                             '0%': { opacity: '0', transform: 'translateY(100%)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        shake: {
+                            '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
+                            '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
+                            '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
+                            '40%, 60%': { transform: 'translate3d(4px, 0, 0)' }
                         }
                     },
                     padding: { 'safe': 'env(safe-area-inset-bottom)' }
@@ -65,6 +72,7 @@
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
         .glass-panel { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .intro-overlay { background: #020617; }
         .btn-primary { transition: all 0.2s ease; }
         .btn-primary:active { transform: scale(0.96); }
         .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
@@ -82,6 +90,14 @@
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%; background: #d4af37; cursor: pointer; margin-top: -8px; box-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #334155; border-radius: 2px; }
+        
+        /* STRICT NAVIGATION ACTIVE STATE */
+        .nav-btn.active { color: #d4af37 !important; }
+        .nav-btn.active i, .nav-btn.active span { color: #d4af37 !important; }
+        .nav-btn:not(.active) { color: #64748b; }
+        
+        /* Shake Error State */
+        .shake-error { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; border-color: #ef4444 !important; color: #ef4444 !important; }
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden selection:bg-gold-500 selection:text-white pt-safe relative">
@@ -104,7 +120,7 @@
     </div>
 
     <!-- Header -->
-    <header class="flex-none px-6 py-4 border-b border-slate-800/50 bg-slate-950/90 backdrop-blur z-20 flex justify-between items-center">
+    <header class="flex-none px-6 py-4 border-b border-slate-800/50 bg-slate-950/90 backdrop-blur relative z-50 flex justify-between items-center">
         <div><h1 class="text-xl font-serif italic text-gold-500 tracking-wide">The Pathway</h1><p class="text-[10px] text-slate-500 uppercase tracking-[0.2em] mt-0.5">Mechanism of Surrender</p></div>
         <button onclick="toggleSettings()" class="text-slate-400 hover:text-white transition p-2"><i data-lucide="info" class="w-5 h-5"></i></button>
     </header>
@@ -176,24 +192,30 @@
         <!-- TIMER -->
         <section id="view-timer" class="view-section hidden animate-fade-in h-full flex flex-col justify-center pt-16">
             <div class="text-center w-full">
-                <div class="mb-8 max-w-[240px] mx-auto mt-8">
-                    <button onclick="toggleModal('emotion-picker')" class="w-full flex items-center justify-between bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-2 text-slate-300 text-sm hover:border-gold-500 transition">
+                <!-- Dropdown Container with High Z-Index -->
+                <div class="mb-8 max-w-[240px] mx-auto mt-8 relative z-30">
+                    <button onclick="toggleModal('emotion-picker')" id="timer-emotion-btn" class="w-full flex items-center justify-between bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-2 text-slate-300 text-sm hover:border-gold-500 transition">
                         <span id="timer-emotion-display">Select Emotion...</span><i data-lucide="chevron-down" class="w-4 h-4 opacity-50"></i>
                     </button>
                 </div>
-                <div class="relative w-64 h-64 mx-auto mb-10 flex items-center justify-center">
+                
+                <!-- Breath Circle Container with Lower Z-Index -->
+                <div class="relative w-64 h-64 mx-auto mb-10 flex items-center justify-center z-10">
                     <div id="breath-circle" class="absolute inset-0 bg-slate-800 rounded-full opacity-50 scale-100 transition-transform duration-1000"></div>
                     <div id="breath-circle-inner" class="absolute w-40 h-40 bg-slate-700/50 rounded-full blur-2xl"></div>
-                    <input type="text" inputmode="numeric" id="timer-display" class="relative z-10 text-6xl font-extralight text-white font-serif tabular-nums tracking-tight bg-transparent text-center w-full focus:outline-none border-none p-0 m-0" value="10:00" onfocus="this.select()" onchange="updateCustomTime(this.value)" onblur="formatInputTime(this)">
+                    <input type="text" inputmode="numeric" id="timer-display" class="relative z-10 text-6xl font-extralight text-white font-serif tabular-nums tracking-tight bg-transparent text-center w-full focus:outline-none border-none p-0 m-0" value="10:00" onclick="this.select()" oninput="handleTimerInput(this)">
                 </div>
+
                 <div class="flex justify-center gap-8 mb-8">
                     <button onclick="adjustTimer(-60)" class="text-slate-600 hover:text-slate-300 transition p-4 bg-slate-900 rounded-full"><i data-lucide="minus" class="w-6 h-6"></i></button>
                     <button onclick="adjustTimer(60)" class="text-slate-600 hover:text-slate-300 transition p-4 bg-slate-900 rounded-full"><i data-lucide="plus" class="w-6 h-6"></i></button>
                 </div>
+
                 <div class="flex justify-center gap-6 items-center mb-10">
                     <button onclick="resetTimer()" class="w-14 h-14 rounded-full bg-slate-900 border border-slate-800 text-slate-400 flex items-center justify-center transition hover:bg-slate-800"><i data-lucide="rotate-ccw" class="w-5 h-5"></i></button>
                     <button id="timer-toggle" onclick="toggleTimer()" class="w-20 h-20 rounded-full bg-gold-600 hover:bg-gold-500 text-white flex items-center justify-center shadow-xl shadow-gold-900/30 transition btn-primary"><i data-lucide="play" class="w-8 h-8 fill-current ml-1"></i></button>
                 </div>
+
                 <div class="flex justify-center gap-4">
                     <button onclick="toggleModal('bell-modal')" class="flex items-center gap-2 px-4 py-2 bg-slate-900/80 border border-slate-800 rounded-full text-xs text-slate-400 hover:text-gold-500 transition"><i data-lucide="bell" class="w-4 h-4"></i> <span>Interval</span><div id="bell-status" class="w-1.5 h-1.5 bg-gold-500 rounded-full hidden ml-1"></div></button>
                     <button onclick="toggleModal('ambience-modal')" class="flex items-center gap-2 px-4 py-2 bg-slate-900/80 border border-slate-800 rounded-full text-xs text-slate-400 hover:text-emerald-500 transition"><i data-lucide="waves" class="w-4 h-4"></i> <span>Sound</span><div id="ambience-status" class="w-1.5 h-1.5 bg-emerald-500 rounded-full hidden ml-1"></div></button>
@@ -234,12 +256,12 @@
     <!-- NAV -->
     <nav class="flex-none bg-slate-950/90 backdrop-blur-md border-t border-slate-800 pb-safe z-30">
         <div class="flex justify-around items-center max-w-md mx-auto px-1">
-            <button onclick="switchTab('guide')" class="nav-btn active p-2 py-3 flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 w-full transition active:scale-95"><i data-lucide="book" class="w-5 h-5"></i><span class="text-[9px] uppercase tracking-widest font-medium">Guide</span></button>
-            <button onclick="switchTab('process')" class="nav-btn p-2 py-3 flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 w-full transition active:scale-95"><i data-lucide="layers" class="w-5 h-5"></i><span class="text-[9px] uppercase tracking-widest font-medium">Work</span></button>
-            <button onclick="switchTab('timer')" class="nav-btn p-2 py-3 flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 w-full transition active:scale-95"><i data-lucide="clock" class="w-5 h-5"></i><span class="text-[9px] uppercase tracking-widest font-medium">Timer</span></button>
-            <button onclick="switchTab('charts')" class="nav-btn p-2 py-3 flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 w-full transition active:scale-95"><i data-lucide="bar-chart-2" class="w-5 h-5"></i><span class="text-[9px] uppercase tracking-widest font-medium">Charts</span></button>
-            <button onclick="switchTab('qa')" class="nav-btn p-2 py-3 flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 w-full transition active:scale-95"><i data-lucide="help-circle" class="w-5 h-5"></i><span class="text-[9px] uppercase tracking-widest font-medium">Q&A</span></button>
-            <button onclick="switchTab('journal')" class="nav-btn p-2 py-3 flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 w-full transition active:scale-95"><i data-lucide="archive" class="w-5 h-5"></i><span class="text-[9px] uppercase tracking-widest font-medium">Log</span></button>
+            <button id="nav-guide" onclick="switchTab('guide')" class="nav-btn active p-2 py-3 flex flex-col items-center gap-1 text-slate-500 transition active:scale-95"><i data-lucide="book" class="w-5 h-5"></i><span class="text-[9px] uppercase tracking-widest font-medium">Guide</span></button>
+            <button id="nav-process" onclick="switchTab('process')" class="nav-btn p-2 py-3 flex flex-col items-center gap-1 text-slate-500 transition active:scale-95"><i data-lucide="layers" class="w-5 h-5"></i><span class="text-[9px] uppercase tracking-widest font-medium">Work</span></button>
+            <button id="nav-timer" onclick="switchTab('timer')" class="nav-btn p-2 py-3 flex flex-col items-center gap-1 text-slate-500 transition active:scale-95"><i data-lucide="clock" class="w-5 h-5"></i><span class="text-[9px] uppercase tracking-widest font-medium">Timer</span></button>
+            <button id="nav-charts" onclick="switchTab('charts')" class="nav-btn p-2 py-3 flex flex-col items-center gap-1 text-slate-500 transition active:scale-95"><i data-lucide="bar-chart-2" class="w-5 h-5"></i><span class="text-[9px] uppercase tracking-widest font-medium">Charts</span></button>
+            <button id="nav-qa" onclick="switchTab('qa')" class="nav-btn p-2 py-3 flex flex-col items-center gap-1 text-slate-500 transition active:scale-95"><i data-lucide="help-circle" class="w-5 h-5"></i><span class="text-[9px] uppercase tracking-widest font-medium">Q&A</span></button>
+            <button id="nav-journal" onclick="switchTab('journal')" class="nav-btn p-2 py-3 flex flex-col items-center gap-1 text-slate-500 transition active:scale-95"><i data-lucide="archive" class="w-5 h-5"></i><span class="text-[9px] uppercase tracking-widest font-medium">Log</span></button>
         </div>
     </nav>
 
@@ -247,7 +269,7 @@
     <div id="info-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60] hidden items-center justify-center p-6 animate-fade-in">
         <div class="bg-slate-900 border border-slate-700 p-8 rounded-3xl max-w-xs w-full shadow-2xl text-center">
             <h3 class="text-xl text-white mb-2 font-serif italic">The Pathway</h3>
-            <p class="text-slate-500 text-xs mb-6 uppercase tracking-widest">Version 4.5 (Stable)</p>
+            <p class="text-slate-500 text-xs mb-6 uppercase tracking-widest">Version 4.9 (Microwave Timer)</p>
             <div class="space-y-4 text-sm text-slate-400 mb-8 text-left"><p>Based on "Letting Go" by Dr. David R. Hawkins.</p><p>This app is constantly updated.</p></div>
             <button onclick="toggleSettings()" class="w-full py-3 bg-slate-800 text-white rounded-xl hover:bg-slate-700 transition font-medium">Close</button>
         </div>
@@ -494,7 +516,17 @@
             }
         }
         function toggleTimer() {
-            const btn = document.getElementById('timer-toggle'), bc = document.getElementById('breath-circle'), d = document.getElementById('timer-display');
+            const btn = document.getElementById('timer-toggle');
+            const emotionBtn = document.getElementById('timer-emotion-btn');
+            
+            // Safety Check: Ensure Emotion Selected
+            if (!currentSelectedEmotion && !isTimerRunning) {
+                emotionBtn.classList.add('shake-error');
+                setTimeout(() => { emotionBtn.classList.remove('shake-error'); }, 500);
+                return; 
+            }
+            
+            const bc = document.getElementById('breath-circle'), d = document.getElementById('timer-display');
             if (isTimerRunning) {
                 const now = Date.now(), rem = Math.ceil((timerEndTime - now)/1000);
                 timerDuration = rem > 0 ? rem : 0; isTimerRunning = false; clearInterval(timerInterval); stopAmbience();
@@ -509,9 +541,12 @@
                 timerInterval = setInterval(() => {
                     const now = Date.now(), rem = Math.ceil((timerEndTime - now)/1000);
                     if (bellInterval !== 0 && rem > 0) {
-                        const el = currentTimerSessionLength - rem;
-                        if (bellInterval === 'half' && el === Math.floor(currentTimerSessionLength/2)) playBell();
-                        else if (typeof bellInterval === 'number' && el > 0 && el % (bellInterval*60) === 0) playBell();
+                        const elapsed = currentTimerSessionLength - rem;
+                        if (bellInterval === 'half') {
+                            if (elapsed === Math.floor(currentTimerSessionLength / 2)) playBell();
+                        } else {
+                            if (elapsed > 0 && elapsed % (bellInterval * 60) === 0) playBell();
+                        }
                     }
                     if (rem <= 0) {
                         timerDuration = 0; isTimerRunning = false; clearInterval(timerInterval); stopAmbience(); playBell();
@@ -533,17 +568,40 @@
             if(isTimerRunning) { const now = Date.now(), rem = Math.ceil((timerEndTime - now)/1000); sec = rem > 0 ? rem : 0; }
             document.getElementById('timer-display').value = formatTime(sec);
         }
-        function updateCustomTime(val) {
-            if(!val) return;
-            let m=0, s=0;
-            if(val.includes(':')) { const p = val.split(':'); m = parseInt(p[0])||0; s = parseInt(p[1])||0; }
-            else { m = parseInt(val)||0; }
-            const t = (m*60)+s;
-            if(t > 0) { timerDuration = t; defaultDuration = t; updateTimerDisplay(); }
+        function handleTimerInput(input) {
+            let val = input.value.replace(/\D/g, '');
+            if (val.length > 4) val = val.slice(-4);
+            val = val.padStart(4, '0');
+            const m = parseInt(val.slice(0, 2), 10);
+            const s = parseInt(val.slice(2, 4), 10);
+            
+            // Cap seconds at 59 visually for clarity if desired, but 99 seconds is technically valid input that converts to 1m 39s.
+            // For standard timer input logic, we usually allow it and then normalize, or just treat as raw seconds.
+            // Let's stick to pure total seconds conversion.
+            const totalSec = (m * 60) + s;
+            
+            timerDuration = totalSec;
+            defaultDuration = totalSec;
+            
+            // Update display immediately to formatted M:S
+            // However, while typing, user expects to see digits shift.
+            // val (0030) -> "00:30"
+            input.value = `${val.slice(0,2)}:${val.slice(2,4)}`;
         }
-        function formatInputTime(input) { updateTimerDisplay(); }
+        function updateCustomTime(val) {
+            // Handled by handleTimerInput
+        }
+        function formatInputTime(input) {
+            // On blur, ensure strict M:S format from model
+            updateTimerDisplay();
+        }
         function adjustTimer(amt) { if(isTimerRunning) return; if(timerDuration+amt > 0) { timerDuration+=amt; defaultDuration=timerDuration; updateTimerDisplay(); } }
         function resetTimer() { if(isTimerRunning) toggleTimer(); timerDuration = defaultDuration; stopAmbience(); updateTimerDisplay(); }
+        function toggleSettings() {
+            const modal = document.getElementById('info-modal');
+            if (modal.classList.contains('hidden')) { modal.classList.remove('hidden'); modal.classList.add('flex'); }
+            else { modal.classList.add('hidden'); modal.classList.remove('flex'); }
+        }
         function toggleModal(id) {
             if(id === 'emotion-picker' && !document.getElementById(id).classList.contains('hidden')) pickerCallback = null;
             const el = document.getElementById(id);
@@ -672,9 +730,9 @@
             document.querySelectorAll('.view-section').forEach(e => e.classList.add('hidden'));
             const t = document.getElementById(`view-${id}`);
             if(t) { t.classList.remove('hidden'); t.classList.remove('animate-fade-in'); void t.offsetWidth; t.classList.add('animate-fade-in'); }
-            document.querySelectorAll('.nav-btn').forEach(b => { b.classList.remove('text-gold-500', 'text-white'); b.classList.add('text-slate-500'); });
-            const b = document.querySelector(`button[onclick="switchTab('${id}')"]`);
-            if(b) { b.classList.remove('text-slate-500'); b.classList.add('text-gold-500'); }
+            document.querySelectorAll('.nav-btn').forEach(b => { b.classList.remove('active'); });
+            const b = document.getElementById(`nav-${id}`);
+            if(b) { b.classList.add('active'); }
             if(id === 'qa') initQA(); if(id === 'journal') loadJournal();
             if(id === 'charts') document.getElementById('chart-emotion-btn').onclick = () => openPickerFor('chart');
             if(id === 'process') document.getElementById('process-emotion-btn').onclick = () => openPickerFor('process');
