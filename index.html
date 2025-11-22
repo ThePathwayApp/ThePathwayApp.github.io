@@ -67,10 +67,30 @@
     </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Merriweather:ital,wght@0,300;0,400;1,300&display=swap');
-        body { background-color: #020617; color: #e2e8f0; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; overflow: hidden; }
+        
+        /* FIXED BOUNCE ISSUE */
+        html, body { 
+            height: 100%; 
+            width: 100%;
+            overflow: hidden; 
+            position: fixed; /* Locks body in place */
+            overscroll-behavior: none; /* Prevents bounce chain */
+            background-color: #020617; 
+            color: #e2e8f0; 
+            -webkit-font-smoothing: antialiased; 
+            -webkit-tap-highlight-color: transparent; 
+        }
+
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
+        
+        /* Specific scroll container behavior */
+        #app-content {
+            overscroll-behavior-y: contain; /* Contains scroll to this element */
+            -webkit-overflow-scrolling: touch;
+        }
+
         .glass-panel { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
         .intro-overlay { background: #020617; }
         .btn-primary { transition: all 0.2s ease; }
@@ -96,7 +116,8 @@
         .shake-error { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; border-color: #ef4444 !important; color: #ef4444 !important; }
     </style>
 </head>
-<body class="h-screen flex flex-col overflow-hidden selection:bg-gold-500 selection:text-white pt-safe relative">
+<!-- Use 100dvh for better mobile height handling -->
+<body class="h-[100dvh] flex flex-col selection:bg-gold-500 selection:text-white pt-safe relative">
 
     <!-- INTRO -->
     <div id="intro-screen" onclick="dismissIntro()" class="fixed inset-0 z-[100] bg-slate-950 flex flex-col items-center justify-center p-8 text-center cursor-pointer transition-opacity duration-1000">
@@ -366,10 +387,20 @@
             updateTimerDisplay();
             loadJournal();
             initSwipe();
+            
+            // Check if we should skip intro
+            if (sessionStorage.getItem('intro_dismissed')) {
+               document.getElementById('intro-screen').style.display = 'none';
+            }
         };
 
         function initIntro() { const el = document.getElementById('intro-quote'); if(el) el.textContent = INTRO_QUOTES[Math.floor(Math.random()*INTRO_QUOTES.length)]; }
-        function dismissIntro() { document.getElementById('intro-screen').style.opacity='0'; setTimeout(()=>{ document.getElementById('intro-screen').style.display='none'; },1000); initAudio(); }
+        function dismissIntro() { 
+            document.getElementById('intro-screen').style.opacity='0'; 
+            sessionStorage.setItem('intro_dismissed', 'true');
+            setTimeout(()=>{ document.getElementById('intro-screen').style.display='none'; },1000); 
+            initAudio(); 
+        }
         
         function initSwipe() {
             const content = document.getElementById('app-content');
@@ -498,6 +529,9 @@
                 const uName = document.getElementById('user-name'), uEmail = document.getElementById('user-email');
 
                 if (user) {
+                    // FIX: Force Intro to dismiss if logged in
+                    dismissIntro(); 
+                    
                     isLoggedIn = true; currentUser = user;
                     if(lOut) lOut.classList.add('hidden');
                     if(lIn) lIn.classList.remove('hidden');
