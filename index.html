@@ -1,6 +1,3 @@
-The issue is that relying on Flexbox (flex-col + flex-1) to push the footer down can sometimes result in the footer "floating" if the viewport height calculation (100dvh) behaves unexpectedly on certain mobile browsers or if the content is short.
-To force the navigation bar to the absolute bottom of the screen regardless of content height, we need to switch the <nav> from a flex item to position: fixed with bottom: 0.
-Here is your corrected code. I have updated the <nav> tag (near the bottom of the HTML) to use fixed bottom-0 w-full and adjusted the z-index.
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
