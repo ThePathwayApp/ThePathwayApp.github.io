@@ -60,198 +60,84 @@
     </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Merriweather:ital,wght@0,300;0,400;1,300&display=swap');
-        
-        body {
-            background-color: #020617;
-            color: #e2e8f0;
-            -webkit-font-smoothing: antialiased;
-            -webkit-tap-highlight-color: transparent;
-            overscroll-behavior-y: none;
-        }
-
+        body { background-color: #020617; color: #e2e8f0; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
-
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .intro-overlay { background: #020617; }
+        .glass-panel { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
         .btn-primary { transition: all 0.2s ease; }
         .btn-primary:active { transform: scale(0.96); }
         .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
         .pt-safe { padding-top: env(safe-area-inset-top, 20px); }
-        
-        /* Accordion Styles */
         .faq-answer { display: none; }
         .faq-answer.active { display: block; animation: slideUp 0.3s ease-out forwards; }
         .faq-icon { transition: transform 0.3s ease; }
         .faq-icon.active { transform: rotate(180deg); }
-        
-        /* Quote Positioning */
-        .quote-wrapper {
-            position: relative;
-            display: inline-block;
-            padding: 2rem 3rem; 
-        }
-        .quote-mark {
-            position: absolute;
-            width: 2.5rem;
-            height: 2.5rem;
-            color: rgba(212, 175, 55, 0.4);
-        }
+        .quote-wrapper { position: relative; display: inline-block; padding: 2rem 3rem; }
+        .quote-mark { position: absolute; width: 2.5rem; height: 2.5rem; color: rgba(212, 175, 55, 0.4); }
         .quote-mark.start { top: 0; left: 0; }
         .quote-mark.end { bottom: 0; right: 0; transform: rotate(180deg); }
-
-        /* Swipe Action */
-        .swipe-item {
-            transition: transform 0.2s ease-out;
-            position: relative;
-            z-index: 10;
-            background: rgba(15, 23, 42, 0.9); /* Ensure opacity for covering delete btn */
-        }
-        .delete-action {
-            position: absolute;
-            right: 0;
-            top: 0;
-            bottom: 0;
-            width: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 0;
-        }
-
-        /* Range Slider */
-        input[type=range] {
-            -webkit-appearance: none;
-            width: 100%;
-            background: transparent;
-        }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 20px;
-            width: 20px;
-            border-radius: 50%;
-            background: #d4af37;
-            cursor: pointer;
-            margin-top: -8px;
-            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
-        }
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 4px;
-            cursor: pointer;
-            background: #334155;
-            border-radius: 2px;
-        }
+        .swipe-item { transition: transform 0.2s ease-out; position: relative; z-index: 10; background: rgba(15, 23, 42, 0.9); }
+        .delete-action { position: absolute; right: 0; top: 0; bottom: 0; width: 80px; display: flex; align-items: center; justify-content: center; z-index: 0; }
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%; background: #d4af37; cursor: pointer; margin-top: -8px; box-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #334155; border-radius: 2px; }
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden selection:bg-gold-500 selection:text-white pt-safe relative">
 
-    <!-- INTRO SPLASH SCREEN -->
+    <!-- INTRO -->
     <div id="intro-screen" onclick="dismissIntro()" class="fixed inset-0 z-[100] bg-slate-950 flex flex-col items-center justify-center p-8 text-center cursor-pointer transition-opacity duration-1000">
         <div class="animate-fade-in max-w-lg mx-auto flex flex-col h-full justify-center relative w-full">
-            <div class="mb-8 text-gold-500/30 mx-auto">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-            </div>
-            <h1 class="text-5xl md:text-6xl font-serif italic text-gold-500 mb-16 tracking-wider drop-shadow-[0_0_25px_rgba(212,175,55,0.2)]">
-                The Pathway
-            </h1>
+            <div class="mb-8 text-gold-500/30 mx-auto"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+            <h1 class="text-5xl md:text-6xl font-serif italic text-gold-500 mb-16 tracking-wider drop-shadow-[0_0_25px_rgba(212,175,55,0.2)]">The Pathway</h1>
             <div class="flex justify-center">
                 <div class="quote-wrapper max-w-md">
                     <svg class="quote-mark start" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21L14.017 18C14.017 16.896 14.321 15.923 14.929 15.081C15.537 14.239 16.357 13.459 17.389 12.741L16.731 10.561C15.039 11.623 14.069 12.878 13.821 14.326C13.821 14.326 13.821 14.326 13.821 14.326C13.545 13.714 13.407 13.052 13.407 12.34C13.407 10.284 14.147 8.528 15.627 7.072C17.107 5.616 18.867 4.888 20.907 4.888C21.787 4.888 22.467 5.568 22.947 6.928C23.427 8.288 23.667 9.528 23.667 10.648C23.667 14.304 22.397 17.754 19.857 21L14.017 21ZM6.007 21L6.007 18C6.007 16.896 6.311 15.923 6.919 15.081C7.527 14.239 8.347 13.459 9.379 12.741L8.721 10.561C7.029 11.623 6.059 12.878 5.811 14.326C5.811 14.326 5.811 14.326 5.811 14.326C5.535 13.714 5.397 13.052 5.397 12.34C5.397 10.284 6.137 8.528 7.617 7.072C9.097 5.616 10.857 4.888 12.897 4.888C13.777 4.888 14.457 5.568 14.937 6.928C15.417 8.288 15.657 9.528 15.657 10.648C15.657 14.304 14.387 17.754 11.847 21L6.007 21Z" /></svg>
-                    <p id="intro-quote" class="text-xl md:text-2xl font-light text-slate-200 leading-relaxed font-serif italic text-center">
-                        <!-- Content injected via JS -->
-                    </p>
+                    <p id="intro-quote" class="text-xl md:text-2xl font-light text-slate-200 leading-relaxed font-serif italic text-center"></p>
                     <svg class="quote-mark end" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21L14.017 18C14.017 16.896 14.321 15.923 14.929 15.081C15.537 14.239 16.357 13.459 17.389 12.741L16.731 10.561C15.039 11.623 14.069 12.878 13.821 14.326C13.821 14.326 13.821 14.326 13.821 14.326C13.545 13.714 13.407 13.052 13.407 12.34C13.407 10.284 14.147 8.528 15.627 7.072C17.107 5.616 18.867 4.888 20.907 4.888C21.787 4.888 22.467 5.568 22.947 6.928C23.427 8.288 23.667 9.528 23.667 10.648C23.667 14.304 22.397 17.754 19.857 21L14.017 21ZM6.007 21L6.007 18C6.007 16.896 6.311 15.923 6.919 15.081C7.527 14.239 8.347 13.459 9.379 12.741L8.721 10.561C7.029 11.623 6.059 12.878 5.811 14.326C5.811 14.326 5.811 14.326 5.811 14.326C5.535 13.714 5.397 13.052 5.397 12.34C5.397 10.284 6.137 8.528 7.617 7.072C9.097 5.616 10.857 4.888 12.897 4.888C13.777 4.888 14.457 5.568 14.937 6.928C15.417 8.288 15.657 9.528 15.657 10.648C15.657 14.304 14.387 17.754 11.847 21L6.007 21Z" /></svg>
                 </div>
             </div>
             <p class="text-xs text-gold-500 uppercase tracking-[0.25em] font-sans text-center opacity-80 mt-8">— David R. Hawkins</p>
-            <div class="mt-16 animate-pulse opacity-50">
-                <span class="text-[10px] text-slate-400 uppercase tracking-[0.4em]">Tap to Begin</span>
-            </div>
+            <div class="mt-16 animate-pulse opacity-50"><span class="text-[10px] text-slate-400 uppercase tracking-[0.4em]">Tap to Begin</span></div>
         </div>
     </div>
 
     <!-- Header -->
     <header class="flex-none px-6 py-4 border-b border-slate-800/50 bg-slate-950/90 backdrop-blur z-20 flex justify-between items-center">
-        <div>
-            <h1 class="text-xl font-serif italic text-gold-500 tracking-wide">The Pathway</h1>
-            <p class="text-[10px] text-slate-500 uppercase tracking-[0.2em] mt-0.5">Mechanism of Surrender</p>
-        </div>
-        <button onclick="toggleSettings()" class="text-slate-400 hover:text-white transition p-2">
-            <i data-lucide="info" class="w-5 h-5"></i>
-        </button>
+        <div><h1 class="text-xl font-serif italic text-gold-500 tracking-wide">The Pathway</h1><p class="text-[10px] text-slate-500 uppercase tracking-[0.2em] mt-0.5">Mechanism of Surrender</p></div>
+        <button onclick="toggleSettings()" class="text-slate-400 hover:text-white transition p-2"><i data-lucide="info" class="w-5 h-5"></i></button>
     </header>
 
     <!-- Main Content -->
     <main id="app-content" class="flex-1 overflow-y-auto relative p-4 pb-24 max-w-md mx-auto w-full no-scrollbar">
         
-        <!-- View: Guide -->
+        <!-- GUIDE -->
         <section id="view-guide" class="view-section animate-fade-in space-y-6 pb-20">
             <div class="glass-panel p-6 rounded-2xl shadow-lg">
                 <h2 class="text-2xl font-light mb-4 text-white">The Mechanism</h2>
-                <p class="text-slate-300 leading-relaxed mb-4">
-                    Letting go involves being aware of a feeling, letting it come up, staying with it, and letting it run its course without wanting to make it different or do anything about it.
-                </p>
-                <div class="bg-slate-800/50 p-4 rounded-lg border-l-2 border-gold-500 my-6">
-                    <p class="italic text-slate-400 text-sm">"It means to simply let the feeling be there and to focus on letting out the energy behind it."</p>
-                    <p class="text-right text-xs text-slate-500 mt-2">— David R. Hawkins</p>
-                </div>
-                
+                <p class="text-slate-300 leading-relaxed mb-4">Letting go involves being aware of a feeling, letting it come up, staying with it, and letting it run its course without wanting to make it different or do anything about it.</p>
+                <div class="bg-slate-800/50 p-4 rounded-lg border-l-2 border-gold-500 my-6"><p class="italic text-slate-400 text-sm">"It means to simply let the feeling be there and to focus on letting out the energy behind it."</p><p class="text-right text-xs text-slate-500 mt-2">— David R. Hawkins</p></div>
                 <div class="space-y-4">
-                    <div class="flex gap-4 items-start">
-                        <div class="bg-slate-800 p-2 rounded-full text-gold-500 shrink-0"><i data-lucide="eye" class="w-5 h-5"></i></div>
-                        <div>
-                            <h3 class="font-medium text-white">1. Acknowledge</h3>
-                            <p class="text-sm text-slate-400 mt-1">Notice the feeling. Allow it to surface. Do not push it down.</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-4 items-start">
-                        <div class="bg-slate-800 p-2 rounded-full text-gold-500 shrink-0"><i data-lucide="brain-circuit" class="w-5 h-5"></i></div>
-                        <div>
-                            <h3 class="font-medium text-white">2. Ignore Thoughts</h3>
-                            <p class="text-sm text-slate-400 mt-1">Thoughts are rationalizations created by the mind. Ignore the "why." Focus only on the "what" (the sensation).</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-4 items-start">
-                        <div class="bg-slate-800 p-2 rounded-full text-gold-500 shrink-0"><i data-lucide="waves" class="w-5 h-5"></i></div>
-                        <div>
-                            <h3 class="font-medium text-white">3. No Resistance</h3>
-                            <p class="text-sm text-slate-400 mt-1">Drop the resistance to the feeling. It is the resistance that keeps it going. Ask: "Can I welcome this feeling?"</p>
-                        </div>
-                    </div>
+                    <div class="flex gap-4 items-start"><div class="bg-slate-800 p-2 rounded-full text-gold-500 shrink-0"><i data-lucide="eye" class="w-5 h-5"></i></div><div><h3 class="font-medium text-white">1. Acknowledge</h3><p class="text-sm text-slate-400 mt-1">Notice the feeling. Allow it to surface. Do not push it down.</p></div></div>
+                    <div class="flex gap-4 items-start"><div class="bg-slate-800 p-2 rounded-full text-gold-500 shrink-0"><i data-lucide="brain-circuit" class="w-5 h-5"></i></div><div><h3 class="font-medium text-white">2. Ignore Thoughts</h3><p class="text-sm text-slate-400 mt-1">Thoughts are rationalizations created by the mind. Ignore the "why." Focus only on the "what" (the sensation).</p></div></div>
+                    <div class="flex gap-4 items-start"><div class="bg-slate-800 p-2 rounded-full text-gold-500 shrink-0"><i data-lucide="waves" class="w-5 h-5"></i></div><div><h3 class="font-medium text-white">3. No Resistance</h3><p class="text-sm text-slate-400 mt-1">Drop the resistance to the feeling. It is the resistance that keeps it going. Ask: "Can I welcome this feeling?"</p></div></div>
                 </div>
-                <button onclick="switchTab('process')" class="w-full mt-8 py-4 bg-gradient-to-r from-slate-800 to-slate-700 hover:from-slate-700 hover:to-slate-600 text-white rounded-xl transition shadow-lg flex items-center justify-center gap-2 font-medium">
-                    Start Practice <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                </button>
+                <button onclick="switchTab('process')" class="w-full mt-8 py-4 bg-gradient-to-r from-slate-800 to-slate-700 hover:from-slate-700 hover:to-slate-600 text-white rounded-xl transition shadow-lg flex items-center justify-center gap-2 font-medium">Start Practice <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
             </div>
         </section>
 
-        <!-- View: Process -->
+        <!-- PROCESS -->
         <section id="view-process" class="view-section hidden animate-fade-in h-full flex flex-col">
             <div class="glass-panel p-6 rounded-2xl shadow-lg flex-1 flex flex-col justify-center items-center text-center relative overflow-hidden min-h-[400px]">
-                
                 <div id="process-step-0" class="process-step w-full">
                     <h2 class="text-3xl font-light mb-2 text-white">Identify Emotion</h2>
                     <p class="text-slate-400 mb-8 text-sm">Select the emotion on the scale.</p>
-                    
                     <button onclick="toggleModal('emotion-picker')" id="process-emotion-btn" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-6 py-4 text-lg text-white flex justify-between items-center hover:border-gold-500 transition mb-6">
-                        <span id="process-emotion-display" class="text-slate-400">Select Emotion...</span>
-                        <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500"></i>
+                        <span id="process-emotion-display" class="text-slate-400">Select Emotion...</span><i data-lucide="chevron-down" class="w-5 h-5 text-slate-500"></i>
                     </button>
-
-                    <button onclick="startProcess()" class="w-full py-4 bg-gold-600 hover:bg-gold-500 text-white font-medium rounded-xl transition shadow-lg shadow-gold-900/20 btn-primary text-lg">
-                        Begin Surrender
-                    </button>
+                    <button onclick="startProcess()" class="w-full py-4 bg-gold-600 hover:bg-gold-500 text-white font-medium rounded-xl transition shadow-lg shadow-gold-900/20 btn-primary text-lg">Begin Surrender</button>
                 </div>
-
-                <!-- Steps 1-4 same as before -->
                 <div id="process-step-1" class="process-step hidden w-full">
                     <div class="mb-8 text-gold-500 bg-gold-500/10 p-4 rounded-full inline-block"><i data-lucide="map-pin" class="w-10 h-10"></i></div>
                     <h2 class="text-2xl font-light mb-4 text-white">Locate it</h2>
@@ -276,111 +162,76 @@
                     <div class="text-6xl font-extralight text-white mb-10 font-serif tabular-nums tracking-tight" id="process-timer">00:00</div>
                     <button onclick="finishProcess()" class="w-full py-4 bg-emerald-900/40 hover:bg-emerald-900/60 text-emerald-100 border border-emerald-800/50 rounded-xl transition backdrop-blur-sm btn-primary">Feeling has Shifted</button>
                 </div>
-
-                <!-- Step 5: Rate Intensity & Save -->
                 <div id="process-step-5" class="process-step hidden w-full">
                     <div class="mb-6 text-gold-500 animate-fade-in"><i data-lucide="check-circle-2" class="w-20 h-20 mx-auto"></i></div>
                     <h2 class="text-3xl font-light mb-2 text-white">Released</h2>
                     <p class="text-slate-300 mb-8 font-light">You have surrendered a layer of "<span class="current-emotion font-normal text-white"></span>".</p>
-                    
-                    <div class="mb-8">
-                        <p class="text-sm text-slate-400 mb-3">Intensity Released (1-10)</p>
-                        <input type="range" min="1" max="10" value="5" class="w-full" id="process-intensity-slider" oninput="document.getElementById('process-intensity-val').textContent = this.value">
-                        <div class="text-center text-gold-500 font-mono mt-2 text-xl" id="process-intensity-val">5</div>
-                    </div>
-
+                    <div class="mb-8"><p class="text-sm text-slate-400 mb-3">Intensity Released (1-10)</p><input type="range" min="1" max="10" value="5" class="w-full" id="process-intensity-slider" oninput="document.getElementById('process-intensity-val').textContent = this.value"><div class="text-center text-gold-500 font-mono mt-2 text-xl" id="process-intensity-val">5</div></div>
                     <button onclick="saveAndClose()" class="w-full py-4 bg-slate-100 hover:bg-white text-slate-900 font-medium rounded-xl transition btn-primary shadow-lg shadow-white/5">Save to Log</button>
                 </div>
                 <button onclick="resetProcess()" class="absolute top-0 right-0 p-4 text-slate-600 hover:text-slate-400 hidden" id="process-reset-btn"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
         </section>
 
-        <!-- View: Timer -->
-        <section id="view-timer" class="view-section hidden animate-fade-in h-full flex flex-col justify-center pt-8">
+        <!-- TIMER -->
+        <section id="view-timer" class="view-section hidden animate-fade-in h-full flex flex-col justify-center pt-16">
             <div class="text-center w-full">
-                
-                <!-- Emotion Picker Trigger -->
                 <div class="mb-8 max-w-[240px] mx-auto mt-8">
                     <button onclick="toggleModal('emotion-picker')" class="w-full flex items-center justify-between bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-2 text-slate-300 text-sm hover:border-gold-500 transition">
-                        <span id="timer-emotion-display">Select Emotion...</span>
-                        <i data-lucide="chevron-down" class="w-4 h-4 opacity-50"></i>
+                        <span id="timer-emotion-display">Select Emotion...</span><i data-lucide="chevron-down" class="w-4 h-4 opacity-50"></i>
                     </button>
                 </div>
-
                 <div class="relative w-64 h-64 mx-auto mb-10 flex items-center justify-center">
                     <div id="breath-circle" class="absolute inset-0 bg-slate-800 rounded-full opacity-50 scale-100 transition-transform duration-1000"></div>
                     <div id="breath-circle-inner" class="absolute w-40 h-40 bg-slate-700/50 rounded-full blur-2xl"></div>
-                    <div id="timer-display" class="relative z-10 text-6xl font-extralight text-white font-serif tabular-nums tracking-tight">10:00</div>
+                    <input type="text" inputmode="numeric" id="timer-display" class="relative z-10 text-6xl font-extralight text-white font-serif tabular-nums tracking-tight bg-transparent text-center w-full focus:outline-none border-none p-0 m-0" value="10:00" onfocus="this.select()" onchange="updateCustomTime(this.value)" onblur="formatInputTime(this)">
                 </div>
-
                 <div class="flex justify-center gap-8 mb-8">
                     <button onclick="adjustTimer(-60)" class="text-slate-600 hover:text-slate-300 transition p-4 bg-slate-900 rounded-full"><i data-lucide="minus" class="w-6 h-6"></i></button>
                     <button onclick="adjustTimer(60)" class="text-slate-600 hover:text-slate-300 transition p-4 bg-slate-900 rounded-full"><i data-lucide="plus" class="w-6 h-6"></i></button>
                 </div>
-
                 <div class="flex justify-center gap-6 items-center mb-10">
                     <button onclick="resetTimer()" class="w-14 h-14 rounded-full bg-slate-900 border border-slate-800 text-slate-400 flex items-center justify-center transition hover:bg-slate-800"><i data-lucide="rotate-ccw" class="w-5 h-5"></i></button>
                     <button id="timer-toggle" onclick="toggleTimer()" class="w-20 h-20 rounded-full bg-gold-600 hover:bg-gold-500 text-white flex items-center justify-center shadow-xl shadow-gold-900/30 transition btn-primary"><i data-lucide="play" class="w-8 h-8 fill-current ml-1"></i></button>
                 </div>
-
                 <div class="flex justify-center gap-4">
-                    <button onclick="toggleModal('bell-modal')" class="flex items-center gap-2 px-4 py-2 bg-slate-900/80 border border-slate-800 rounded-full text-xs text-slate-400 hover:text-gold-500 transition">
-                        <i data-lucide="bell" class="w-4 h-4"></i> <span>Interval</span>
-                        <div id="bell-status" class="w-1.5 h-1.5 bg-gold-500 rounded-full hidden ml-1"></div>
-                    </button>
-                    <button onclick="toggleModal('ambience-modal')" class="flex items-center gap-2 px-4 py-2 bg-slate-900/80 border border-slate-800 rounded-full text-xs text-slate-400 hover:text-emerald-500 transition">
-                        <i data-lucide="waves" class="w-4 h-4"></i> <span>Sound</span>
-                        <div id="ambience-status" class="w-1.5 h-1.5 bg-emerald-500 rounded-full hidden ml-1"></div>
-                    </button>
+                    <button onclick="toggleModal('bell-modal')" class="flex items-center gap-2 px-4 py-2 bg-slate-900/80 border border-slate-800 rounded-full text-xs text-slate-400 hover:text-gold-500 transition"><i data-lucide="bell" class="w-4 h-4"></i> <span>Interval</span><div id="bell-status" class="w-1.5 h-1.5 bg-gold-500 rounded-full hidden ml-1"></div></button>
+                    <button onclick="toggleModal('ambience-modal')" class="flex items-center gap-2 px-4 py-2 bg-slate-900/80 border border-slate-800 rounded-full text-xs text-slate-400 hover:text-emerald-500 transition"><i data-lucide="waves" class="w-4 h-4"></i> <span>Sound</span><div id="ambience-status" class="w-1.5 h-1.5 bg-emerald-500 rounded-full hidden ml-1"></div></button>
                 </div>
-                
                 <p class="mt-8 text-slate-600 text-xs max-w-[200px] mx-auto leading-relaxed">Let the energy behind the thoughts run out.</p>
             </div>
         </section>
 
-        <!-- View: Charts (New) -->
+        <!-- CHARTS -->
         <section id="view-charts" class="view-section hidden animate-fade-in pb-20 h-full flex flex-col">
-            <div class="px-4 mb-4 flex justify-between items-end">
-                <h2 class="text-2xl font-light text-white">Progress</h2>
-            </div>
-            
+            <div class="px-4 mb-4 flex justify-between items-end"><h2 class="text-2xl font-light text-white">Progress</h2></div>
             <div class="px-4 mb-6">
                 <label class="text-xs text-slate-500 uppercase tracking-wider mb-2 block">Select Emotion</label>
                 <button onclick="toggleModal('emotion-picker')" id="chart-emotion-btn" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-white flex justify-between items-center hover:border-gold-500 transition">
-                    <span id="chart-emotion-display">Select to view...</span>
-                    <i data-lucide="chevron-down" class="w-4 h-4 text-slate-500"></i>
+                    <span id="chart-emotion-display">Select to view...</span><i data-lucide="chevron-down" class="w-4 h-4 text-slate-500"></i>
                 </button>
             </div>
-
             <div class="flex-1 px-4 min-h-[300px] relative">
                 <canvas id="progressChart"></canvas>
-                <div id="chart-placeholder" class="absolute inset-0 flex items-center justify-center text-slate-600 text-sm">
-                    Select an emotion to view progress
-                </div>
+                <div id="chart-placeholder" class="absolute inset-0 flex items-center justify-center text-slate-600 text-sm">Select an emotion to view progress</div>
             </div>
         </section>
 
-        <!-- View: Q&A -->
+        <!-- Q&A -->
         <section id="view-qa" class="view-section hidden animate-fade-in pb-20">
             <h2 class="text-2xl font-light text-white mb-6 px-2">Q & A</h2>
-            <div id="qa-container" class="space-y-3">
-                <div class="text-center text-slate-500 mt-10 text-sm">Loading Q&A...</div>
-            </div>
+            <div id="qa-container" class="space-y-3"></div>
             <div class="h-12"></div>
         </section>
 
-        <!-- View: Journal -->
+        <!-- JOURNAL -->
         <section id="view-journal" class="view-section hidden animate-fade-in space-y-6 pb-20">
-            <div class="flex justify-between items-end px-2">
-                <h2 class="text-2xl font-light text-white">History</h2>
-                <button onclick="clearJournal()" class="text-xs text-red-400/60 hover:text-red-400 uppercase tracking-wider p-2">Clear All</button>
-            </div>
+            <div class="flex justify-between items-end px-2"><h2 class="text-2xl font-light text-white">History</h2><button onclick="clearJournal()" class="text-xs text-red-400/60 hover:text-red-400 uppercase tracking-wider p-2">Clear All</button></div>
             <div id="journal-list" class="space-y-3 pb-8 overflow-x-hidden"></div>
         </section>
-
     </main>
 
-    <!-- Bottom Navigation -->
+    <!-- NAV -->
     <nav class="flex-none bg-slate-950/90 backdrop-blur-md border-t border-slate-800 pb-safe z-30">
         <div class="flex justify-around items-center max-w-md mx-auto px-1">
             <button onclick="switchTab('guide')" class="nav-btn active p-2 py-3 flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 w-full transition active:scale-95"><i data-lucide="book" class="w-5 h-5"></i><span class="text-[9px] uppercase tracking-widest font-medium">Guide</span></button>
@@ -393,43 +244,35 @@
     </nav>
 
     <!-- MODALS -->
-    
-    <!-- Info Modal -->
     <div id="info-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60] hidden items-center justify-center p-6 animate-fade-in">
         <div class="bg-slate-900 border border-slate-700 p-8 rounded-3xl max-w-xs w-full shadow-2xl text-center">
             <h3 class="text-xl text-white mb-2 font-serif italic">The Pathway</h3>
-            <p class="text-slate-500 text-xs mb-6 uppercase tracking-widest">Version 4.2 (Q&A + Swipe)</p>
-            <div class="space-y-4 text-sm text-slate-400 mb-8 text-left"><p>Based on "Letting Go" by Dr. David R. Hawkins.</p><p>This app functions offline.</p></div>
+            <p class="text-slate-500 text-xs mb-6 uppercase tracking-widest">Version 4.5 (Stable)</p>
+            <div class="space-y-4 text-sm text-slate-400 mb-8 text-left"><p>Based on "Letting Go" by Dr. David R. Hawkins.</p><p>This app is constantly updated.</p></div>
             <button onclick="toggleSettings()" class="w-full py-3 bg-slate-800 text-white rounded-xl hover:bg-slate-700 transition font-medium">Close</button>
         </div>
     </div>
 
-    <!-- Emotion Picker Modal -->
-    <div id="emotion-picker" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[70] hidden flex-col justify-end animate-fade-in">
+    <div id="emotion-picker" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] hidden flex-col justify-end animate-fade-in">
         <div class="bg-slate-900 border-t border-slate-700 rounded-t-3xl w-full max-w-md mx-auto max-h-[70vh] flex flex-col shadow-2xl">
             <div class="flex justify-between items-center p-6 border-b border-slate-800">
                 <h3 class="text-lg text-white font-medium">Select Emotion</h3>
                 <button onclick="toggleModal('emotion-picker')" class="text-slate-500"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <div class="overflow-y-auto p-2" id="emotion-list-container">
-                <!-- Injected via JS -->
-            </div>
+            <div class="overflow-y-auto p-2" id="emotion-list-container"></div>
         </div>
     </div>
 
-    <!-- Session Complete Modal (Timer) -->
     <div id="complete-modal" class="fixed inset-0 bg-black/95 z-[70] hidden items-center justify-center p-6 animate-fade-in">
         <div class="bg-slate-900 border border-slate-700 p-8 rounded-3xl max-w-sm w-full shadow-2xl text-center">
             <div class="mb-4 text-gold-500 mx-auto bg-gold-500/10 p-3 rounded-full inline-block"><i data-lucide="check" class="w-6 h-6"></i></div>
             <h3 class="text-xl text-white mb-2">Session Complete</h3>
             <p class="text-slate-400 text-xs mb-6">Rate the intensity of the feeling released.</p>
-            
             <div class="mb-8 text-left">
                 <div class="flex justify-between text-xs text-slate-500 mb-2"><span>Low</span><span>High</span></div>
                 <input type="range" min="1" max="10" value="5" class="w-full" id="timer-intensity-slider" oninput="document.getElementById('timer-intensity-val').textContent = this.value">
                 <div class="text-center text-gold-500 font-mono mt-2 text-xl" id="timer-intensity-val">5</div>
             </div>
-
             <div class="space-y-3">
                 <button onclick="saveTimerSession()" class="w-full py-3 bg-gold-600 hover:bg-gold-500 text-white rounded-xl transition font-medium">Add to Log</button>
                 <button onclick="closeCompleteModal()" class="w-full py-3 border border-slate-700 text-slate-400 hover:text-white rounded-xl transition">Discard</button>
@@ -437,7 +280,6 @@
         </div>
     </div>
 
-    <!-- Bell/Ambience Modals (Same as before) -->
     <div id="bell-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60] hidden items-end sm:items-center justify-center p-4 animate-fade-in">
         <div class="bg-slate-900 border border-slate-700 p-6 rounded-2xl max-w-xs w-full shadow-2xl mb-safe sm:mb-0">
             <div class="flex justify-between items-center mb-4"><h3 class="text-lg text-white font-medium">Interval Bell</h3><button onclick="toggleModal('bell-modal')" class="text-slate-500"><i data-lucide="x" class="w-5 h-5"></i></button></div>
@@ -464,7 +306,6 @@
     </div>
 
     <script>
-        // --- DATA ---
         const INTRO_QUOTES = [
             "To be surrendered means to have no strong emotion about a thing: 'It's okay if it happens, and it's okay if it doesn't.'",
             "We change the world not by what we say or do, but as a consequence of what we have become.",
@@ -475,39 +316,14 @@
             "Love is misunderstood to be an emotion; actually, it is a state of awareness.",
             "The letting go technique is a system of eliminating the ego.",
             "When you give up the resistance to the feeling, the energy behind it runs out.",
-            "You are the context in which the content of your life is unfolding.",
-            "The goal of letting go is the elimination of the ego.",
-            "All we have to do is hand it over to God.",
-            "You are not the feeling; you are the witness of the feeling.",
-            "What you resist, persists.",
-            "The energy of the suppressed feeling is the cause of the thought.",
-            "We are all doing the best we can with what we have at the moment.",
-            "There is no 'out there'. It is all 'in here'.",
-            "Love promotes healing. When we hold it for others, we are healing ourselves.",
-            "The only thing that stands between you and God is a thought.",
-            "Desire is the energy of 'I want'. Surrender is the energy of 'I have'.",
-            "Humility is the doorway to the truth."
+            "You are the context in which the content of your life is unfolding."
         ];
-
         const HAWKINS_SCALE = [
-            { name: "Shame", val: 20 },
-            { name: "Guilt", val: 30 },
-            { name: "Apathy", val: 50 },
-            { name: "Grief", val: 75 },
-            { name: "Fear", val: 100 },
-            { name: "Desire", val: 125 },
-            { name: "Anger", val: 150 },
-            { name: "Pride", val: 175 },
-            { name: "Courage", val: 200 },
-            { name: "Neutrality", val: 250 },
-            { name: "Willingness", val: 310 },
-            { name: "Acceptance", val: 350 },
-            { name: "Reason", val: 400 },
-            { name: "Love", val: 500 },
-            { name: "Joy", val: 540 },
-            { name: "Peace", val: 600 }
+            { name: "Shame", val: 20 }, { name: "Guilt", val: 30 }, { name: "Apathy", val: 50 }, { name: "Grief", val: 75 },
+            { name: "Fear", val: 100 }, { name: "Desire", val: 125 }, { name: "Anger", val: 150 }, { name: "Pride", val: 175 },
+            { name: "Courage", val: 200 }, { name: "Neutrality", val: 250 }, { name: "Willingness", val: 310 }, { name: "Acceptance", val: 350 },
+            { name: "Reason", val: 400 }, { name: "Love", val: 500 }, { name: "Joy", val: 540 }, { name: "Peace", val: 600 }
         ];
-
         const QA_DATA = [
             { category: "Beginner / Skeptic", q: "Why aren't I sensing my feelings inside my body?", a: "This numbness is due to ingrained, conditioned resistance. Because the feeling was unpleasant, the mind automatically pushed it out of awareness. It has been repressed for so long that you have lost touch with the physical sensation. Be patient; simply intending to look is the first step." },
             { category: "Beginner / Skeptic", q: "Is this just suppressing feelings?", a: "No. Suppression is pushing a feeling down to avoid it. Letting go is the opposite: it is allowing the feeling to come up, acknowledging it, and letting the energy escape." },
@@ -516,57 +332,27 @@
             { category: "Beginner / Skeptic", q: "Is there scientific proof for this?", a: "Dr. Hawkins' work correlates vibrational states with muscle testing (kinesiology). While the subjective experience is internal, the physiological benefits of stress reduction are well-documented." },
             { category: "Beginner / Skeptic", q: "How is this different from relaxation?", a: "Relaxation often targets the body directly. Letting go targets the emotional energy *causing* the tension. It is a permanent release rather than a temporary respite." },
             { category: "Beginner / Skeptic", q: "Can I surrender to physical pain?", a: "Yes. Much pain is held in place by resistance. If you stop resisting the sensation and just experience it as pure energy, it often shifts or diminishes." },
-            
             { category: "Novice", q: "Nothing seems to be changing in my life?", a: "Letting Go can be subtle or dramatic, both inwardly and outwardly. Often it is others in our life who notice our change before we do. Like shoveling coal from a pile, we're unaware of the amount we've handled because our focus is on what is at hand." },
             { category: "Novice", q: "I feel stuck. Nothing is happening.", a: "You may be 'wanting' it to change. Wanting is resistance. Can you let go of the desire to change it? Can you allow it to just be?" },
             { category: "Novice", q: "Can I do this in public?", a: "Yes. It's internal. Notice the tension, drop resistance, and let it pass through while walking or in a meeting." },
             { category: "Novice", q: "How do I know if I've let go?", a: "You feel lighter, relieved, or clear. Thoughts stop returning, or lack emotional charge." },
             { category: "Novice", q: "Why do I feel worse sometimes?", a: "This is the 'healing crisis.' As you open the doors, suppressed energy rushes up to be released. It feels intense, but it is actually leaving. Stay with it." },
             { category: "Novice", q: "Is crying okay?", a: "Absolutely. Crying is a natural mechanism of release, especially for Grief. Do not suppress the tears; let them flow until they stop on their own." },
-
             { category: "Adept", q: "Spiritual Pride", a: "Watch out for the ego claiming credit for your progress. 'Look how spiritual I am' is just another feeling (Pride) to be surrendered." },
             { category: "Adept", q: "Running out of things to surrender?", a: "You may reach periods of peace, but deeper layers often emerge later. Remain vigilant for subtle attachments to comfort or even to the practice itself." },
             { category: "Adept", q: "Handling major crises", a: "In a crisis, the volume of emotion is high. This is actually a golden opportunity. A massive amount of karma can be discharged quickly if you can stay present with the raw energy without resisting." },
             { category: "Adept", q: "Attachment to outcomes", a: "Surrender doesn't mean you don't act; it means you surrender your attachment to the result. You do your best and let go of the rest." },
             { category: "Adept", q: "The dark night of the soul?", a: "This often occurs before a major transition. It feels like abandonment or total despair. It is the ego facing its own demise. Surrender to the despair itself." },
-
             { category: "Pro", q: "Who is the one letting go?", a: "Eventually, you realize the 'I' trying to let go is also a thought. Surrendering the 'doer' leads to realization that everything happens spontaneously." },
             { category: "Pro", q: "Surrender vs. Apathy", a: "Apathy is 'I can't do anything'. Surrender is 'I don't need to control anything'. Apathy feels heavy and dark. Surrender feels light and expansive. If you feel drained, it is apathy. If you feel lighter, it is surrender." },
             { category: "Pro", q: "The Final Door", a: "The ultimate surrender is to God/Truth itself. It is the letting go of the illusion of a separate self." },
             { category: "Pro", q: "Surrendering the desire for enlightenment?", a: "Even the desire for God or Truth can be an obstruction if it is filled with 'wanting'. Surrender the wanting, and what you seek is revealed to have been there all along." }
         ];
 
-        // --- STATE ---
         let activeTab = 'guide';
-        
-        // Timer
-        let timerInterval = null;
-        let timerDuration = 600; 
-        let defaultDuration = 600;
-        let timerEndTime = 0;
-        let isTimerRunning = false;
-        let currentTimerSessionLength = 600; 
-        let bellInterval = 0; 
-        let currentAmbience = 'none';
-        let audioContext = null;
-        let mainGain = null;
-        
-        // Audio Nodes
-        let noiseNode = null; 
-        let modOsc = null; 
-        let modGain = null;
-        let birdInterval = null;
-        let chimeInterval = null;
-
-        // Process
-        let processInterval = null;
-        let processSeconds = 0;
-        let processStartTime = 0;
-        let currentSelectedEmotion = "";
-        let pickerCallback = null; // Function to call when emotion selected
-
-        // Chart
-        let progressChart = null;
+        let timerInterval, timerDuration = 600, defaultDuration = 600, timerEndTime = 0, isTimerRunning = false, currentTimerSessionLength = 600;
+        let bellInterval = 0, currentAmbience = 'none', audioContext, mainGain, noiseNode, modOsc, modGain, birdInterval, chimeInterval;
+        let processInterval, processSeconds = 0, processStartTime = 0, currentSelectedEmotion = "", pickerCallback, progressChart;
 
         window.onload = function() {
             initIntro();
@@ -578,13 +364,9 @@
             initSwipe();
         };
 
-        // --- INTRO ---
         function initIntro() {
             const quoteEl = document.getElementById('intro-quote');
-            if(quoteEl) {
-                const randomQuote = INTRO_QUOTES[Math.floor(Math.random() * INTRO_QUOTES.length)];
-                quoteEl.textContent = randomQuote;
-            }
+            if(quoteEl) quoteEl.textContent = INTRO_QUOTES[Math.floor(Math.random() * INTRO_QUOTES.length)];
         }
         function dismissIntro() {
             const screen = document.getElementById('intro-screen');
@@ -592,472 +374,231 @@
             setTimeout(() => { screen.style.display = 'none'; }, 1000);
             if(!audioContext) initAudio();
         }
-
-        // --- SWIPE NAVIGATION ---
         function initSwipe() {
             const content = document.getElementById('app-content');
-            let touchStartX = 0;
-            let touchStartY = 0;
-            
-            content.addEventListener('touchstart', e => {
-                touchStartX = e.changedTouches[0].screenX;
-                touchStartY = e.changedTouches[0].screenY;
-            });
-
+            let touchStartX = 0, touchStartY = 0;
+            content.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; touchStartY = e.changedTouches[0].screenY; });
             content.addEventListener('touchend', e => {
-                const touchEndX = e.changedTouches[0].screenX;
-                const touchEndY = e.changedTouches[0].screenY;
-                
-                const xDiff = touchEndX - touchStartX;
-                const yDiff = touchEndY - touchStartY;
-                
-                // Require mostly horizontal swipe (ignore vertical scrolls)
+                const xDiff = e.changedTouches[0].screenX - touchStartX;
+                const yDiff = e.changedTouches[0].screenY - touchStartY;
                 if (Math.abs(xDiff) > 60 && Math.abs(yDiff) < 50) {
                     const tabs = ['guide', 'process', 'timer', 'charts', 'qa', 'journal'];
-                    const currentIndex = tabs.indexOf(activeTab);
-                    
-                    if (xDiff < 0) { 
-                        // Swipe Left -> Next Tab
-                        const nextIndex = (currentIndex + 1) % tabs.length;
-                        switchTab(tabs[nextIndex]);
-                    } else { 
-                        // Swipe Right -> Prev Tab
-                        const prevIndex = (currentIndex - 1 + tabs.length) % tabs.length;
-                        switchTab(tabs[prevIndex]);
-                    }
+                    const idx = tabs.indexOf(activeTab);
+                    if (xDiff < 0 && idx < tabs.length - 1) switchTab(tabs[idx + 1]);
+                    else if (xDiff > 0 && idx > 0) switchTab(tabs[idx - 1]);
                 }
             });
         }
-
-        // --- EMOTION PICKER ---
         function initEmotionPicker() {
             const container = document.getElementById('emotion-list-container');
-            if(!container) return;
-            container.innerHTML = HAWKINS_SCALE.map(e => `
-                <button onclick="selectEmotion('${e.name}')" class="w-full text-left px-6 py-4 border-b border-slate-800 text-slate-300 hover:bg-slate-800 transition flex justify-between items-center group">
-                    <span class="font-medium text-lg">${e.name}</span>
-                    <span class="text-xs text-slate-600 font-mono group-hover:text-gold-500">${e.val}</span>
-                </button>
-            `).join('');
+            if(container) container.innerHTML = HAWKINS_SCALE.map(e => `<button onclick="selectEmotion('${e.name}')" class="w-full text-left px-6 py-4 border-b border-slate-800 text-slate-300 hover:bg-slate-800 transition flex justify-between items-center group"><span class="font-medium text-lg">${e.name}</span><span class="text-xs text-slate-600 font-mono group-hover:text-gold-500">${e.val}</span></button>`).join('');
         }
-
         function selectEmotion(name) {
             currentSelectedEmotion = name;
             toggleModal('emotion-picker');
-            
-            // Update displays based on where we opened it
-            if(pickerCallback) {
-                pickerCallback(name);
-                pickerCallback = null;
-            } else {
-                // Default behavior if just updating state
-                const disp1 = document.getElementById('process-emotion-display');
-                const disp2 = document.getElementById('timer-emotion-display');
-                const disp3 = document.getElementById('chart-emotion-display');
-                if(disp1) { disp1.textContent = name; disp1.classList.add('text-white'); }
-                if(disp2) { disp2.textContent = name; disp2.classList.add('text-gold-500'); }
-                if(disp3) { 
-                    disp3.textContent = name; 
-                    loadChart(name); 
-                }
+            if(pickerCallback) { pickerCallback(name); pickerCallback = null; }
+            else {
+                const d1 = document.getElementById('process-emotion-display'), d2 = document.getElementById('timer-emotion-display'), d3 = document.getElementById('chart-emotion-display');
+                if(d1) { d1.textContent = name; d1.classList.add('text-white'); }
+                if(d2) { d2.textContent = name; d2.classList.add('text-gold-500'); }
+                if(d3) { d3.textContent = name; loadChart(name); }
             }
         }
-
-        function openPickerFor(context) {
+        function openPickerFor(ctx) {
             toggleModal('emotion-picker');
-            if (context === 'process') {
-                pickerCallback = (name) => {
-                    const el = document.getElementById('process-emotion-display');
-                    el.textContent = name;
-                    el.classList.remove('text-slate-400');
-                    el.classList.add('text-white');
-                };
-            } else if (context === 'timer') {
-                pickerCallback = (name) => {
-                    const el = document.getElementById('timer-emotion-display');
-                    el.textContent = name;
-                    el.classList.add('text-gold-500');
-                };
-            } else if (context === 'chart') {
-                pickerCallback = (name) => {
-                    const el = document.getElementById('chart-emotion-display');
-                    el.textContent = name;
-                    loadChart(name);
-                }
-            }
+            if (ctx === 'process') pickerCallback = n => { const el=document.getElementById('process-emotion-display'); el.textContent=n; el.classList.remove('text-slate-400'); el.classList.add('text-white'); };
+            else if (ctx === 'timer') pickerCallback = n => { const el=document.getElementById('timer-emotion-display'); el.textContent=n; el.classList.add('text-gold-500'); };
+            else if (ctx === 'chart') pickerCallback = n => { document.getElementById('chart-emotion-display').textContent=n; loadChart(n); };
         }
-
-        // --- AUDIO ENGINE (Pure Synth) ---
-        function initAudio() {
-            if(!audioContext) {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                audioContext = new AudioContext();
-                mainGain = audioContext.createGain();
-                mainGain.connect(audioContext.destination);
-            }
-            if(audioContext.state === 'suspended') audioContext.resume();
-        }
-
+        function initAudio() { if(!audioContext) { const AC = window.AudioContext || window.webkitAudioContext; audioContext = new AC(); mainGain = audioContext.createGain(); mainGain.connect(audioContext.destination); } if(audioContext.state === 'suspended') audioContext.resume(); }
         function createPinkNoise() {
-            const bs = audioContext.sampleRate * 2;
-            const buffer = audioContext.createBuffer(1, bs, audioContext.sampleRate);
-            const data = buffer.getChannelData(0);
+            const bs = audioContext.sampleRate * 2, buffer = audioContext.createBuffer(1, bs, audioContext.sampleRate), data = buffer.getChannelData(0);
             let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
             for(let i=0; i<bs; i++) {
                 let white = Math.random()*2-1;
-                b0 = 0.99886 * b0 + white * 0.0555179;
-                b1 = 0.99332 * b1 + white * 0.0750759;
-                b2 = 0.96900 * b2 + white * 0.1538520;
-                b3 = 0.86650 * b3 + white * 0.3104856;
-                b4 = 0.55000 * b4 + white * 0.5329522;
-                b5 = -0.7616 * b5 - white * 0.0168980;
-                data[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
-                data[i] *= 0.11; 
-                b6 = white * 0.115926;
+                b0 = 0.99886*b0 + white*0.0555179; b1 = 0.99332*b1 + white*0.0750759; b2 = 0.96900*b2 + white*0.1538520;
+                b3 = 0.86650*b3 + white*0.3104856; b4 = 0.55000*b4 + white*0.5329522; b5 = -0.7616*b5 - white*0.0168980;
+                data[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white*0.5362) * 0.11; b6 = white*0.115926;
             }
             return buffer;
         }
-
         function createBrownNoise() {
-            const bs = audioContext.sampleRate * 2;
-            const buffer = audioContext.createBuffer(1, bs, audioContext.sampleRate);
-            const data = buffer.getChannelData(0);
+            const bs = audioContext.sampleRate * 2, buffer = audioContext.createBuffer(1, bs, audioContext.sampleRate), data = buffer.getChannelData(0);
             let lastOut = 0;
             for(let i=0; i<bs; i++) {
                 let white = Math.random()*2-1;
-                data[i] = (lastOut + (0.02 * white)) / 1.02;
+                data[i] = (lastOut + (0.02*white)) / 1.02;
                 lastOut = data[i];
-                data[i] *= 3.5; 
+                data[i] *= 3.5;
             }
             return buffer;
         }
-
         function playSingleChime() {
             if(!audioContext) return;
-            const osc = audioContext.createOscillator();
-            const osc2 = audioContext.createOscillator();
-            const gain = audioContext.createGain();
-            const modGain = audioContext.createGain();
-            const freqs = [523.25, 587.33, 659.25, 783.99, 880.00]; 
-            const freq = freqs[Math.floor(Math.random() * freqs.length)];
-            osc.frequency.value = freq;
-            osc2.frequency.value = freq * 2.5; 
-            modGain.gain.value = 500;
-            osc2.connect(modGain);
-            modGain.connect(osc.frequency);
-            osc.connect(gain);
-            gain.connect(audioContext.destination);
+            const osc = audioContext.createOscillator(), osc2 = audioContext.createOscillator(), gain = audioContext.createGain(), modGain = audioContext.createGain();
+            const freq = [523.25, 587.33, 659.25, 783.99, 880.00][Math.floor(Math.random()*5)];
+            osc.frequency.value = freq; osc2.frequency.value = freq * 2.5; modGain.gain.value = 500;
+            osc2.connect(modGain); modGain.connect(osc.frequency); osc.connect(gain); gain.connect(audioContext.destination);
             const now = audioContext.currentTime;
-            gain.gain.setValueAtTime(0, now);
-            gain.gain.linearRampToValueAtTime(0.1, now + 0.02);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 4);
-            osc.start(now);
-            osc2.start(now);
-            osc.stop(now + 4.5);
-            osc2.stop(now + 4.5);
+            gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.1, now+0.02); gain.gain.exponentialRampToValueAtTime(0.001, now+4);
+            osc.start(now); osc2.start(now); osc.stop(now+4.5); osc2.stop(now+4.5);
         }
-
         function playSingleBird() {
             if(!audioContext) return;
-            const osc = audioContext.createOscillator();
-            const gain = audioContext.createGain();
-            osc.connect(gain);
-            gain.connect(audioContext.destination);
-            const now = audioContext.currentTime;
-            const freq = 2000 + Math.random() * 1500;
-            osc.frequency.setValueAtTime(freq, now);
-            osc.frequency.linearRampToValueAtTime(freq + 500, now + 0.1);
-            osc.frequency.linearRampToValueAtTime(freq - 200, now + 0.2);
-            gain.gain.setValueAtTime(0, now);
-            gain.gain.linearRampToValueAtTime(0.05, now + 0.02);
-            gain.gain.linearRampToValueAtTime(0, now + 0.25);
-            osc.start(now);
-            osc.stop(now + 0.3);
+            const osc = audioContext.createOscillator(), gain = audioContext.createGain();
+            osc.connect(gain); gain.connect(audioContext.destination);
+            const now = audioContext.currentTime, freq = 2000 + Math.random()*1500;
+            osc.frequency.setValueAtTime(freq, now); osc.frequency.linearRampToValueAtTime(freq+500, now+0.1); osc.frequency.linearRampToValueAtTime(freq-200, now+0.2);
+            gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.05, now+0.02); gain.gain.linearRampToValueAtTime(0, now+0.25);
+            osc.start(now); osc.stop(now+0.3);
         }
-
         function playBell() {
             if(!audioContext) return;
-            const osc = audioContext.createOscillator();
-            const gain = audioContext.createGain();
-            osc.connect(gain);
-            gain.connect(audioContext.destination);
+            const osc = audioContext.createOscillator(), gain = audioContext.createGain();
+            osc.connect(gain); gain.connect(audioContext.destination);
             osc.frequency.setValueAtTime(440, audioContext.currentTime);
-            gain.gain.setValueAtTime(0, audioContext.currentTime);
-            gain.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.05);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 6);
-            osc.start(audioContext.currentTime);
-            osc.stop(audioContext.currentTime + 6);
+            gain.gain.setValueAtTime(0, audioContext.currentTime); gain.gain.linearRampToValueAtTime(0.3, audioContext.currentTime+0.05); gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime+6);
+            osc.start(audioContext.currentTime); osc.stop(audioContext.currentTime+6);
         }
-
         function stopAmbience() {
             if(noiseNode) { try{noiseNode.stop()}catch(e){}; noiseNode.disconnect(); noiseNode=null; }
             if(modOsc) { try{modOsc.stop()}catch(e){}; modOsc.disconnect(); modOsc=null; }
-            if(birdInterval) { clearInterval(birdInterval); birdInterval = null; }
-            if(chimeInterval) { clearInterval(chimeInterval); chimeInterval = null; }
+            if(birdInterval) { clearInterval(birdInterval); birdInterval=null; }
+            if(chimeInterval) { clearInterval(chimeInterval); chimeInterval=null; }
         }
-
         function playAmbience(type) {
-            stopAmbience();
-            initAudio();
-            
+            stopAmbience(); initAudio();
+            const gain = audioContext.createGain();
             if(type === 'rain') {
-                const gain = audioContext.createGain();
-                noiseNode = audioContext.createBufferSource();
-                noiseNode.buffer = createPinkNoise();
-                noiseNode.loop = true;
-                gain.gain.value = 0.15;
-                noiseNode.connect(gain);
-                gain.connect(audioContext.destination);
-                noiseNode.start();
-            }
-            else if(type === 'river') {
-                const gain = audioContext.createGain();
-                noiseNode = audioContext.createBufferSource();
-                noiseNode.buffer = createBrownNoise();
-                noiseNode.loop = true;
-                const filter = audioContext.createBiquadFilter();
-                filter.type = 'lowpass';
-                filter.frequency.value = 600;
-                gain.gain.value = 0.3;
-                noiseNode.connect(filter);
-                filter.connect(gain);
-                gain.connect(audioContext.destination);
-                noiseNode.start();
-            }
-            else if(type === 'wind') {
-                const gain = audioContext.createGain();
-                noiseNode = audioContext.createBufferSource();
-                noiseNode.buffer = createPinkNoise();
-                noiseNode.loop = true;
-                const filter = audioContext.createBiquadFilter();
-                filter.type = 'lowpass';
-                filter.Q.value = 1;
-                modOsc = audioContext.createOscillator();
-                modOsc.frequency.value = 0.15;
-                const modGainNode = audioContext.createGain();
-                modGainNode.gain.value = 400;
-                modOsc.connect(modGainNode);
-                modGainNode.connect(filter.frequency);
-                filter.frequency.value = 500;
-                noiseNode.connect(filter);
-                filter.connect(gain);
-                gain.connect(audioContext.destination);
-                gain.gain.value = 0.3;
-                noiseNode.start();
-                modOsc.start();
-            }
-            else if(type === 'birds') {
-                const gain = audioContext.createGain();
-                noiseNode = audioContext.createBufferSource();
-                noiseNode.buffer = createPinkNoise();
-                noiseNode.loop = true;
-                const filter = audioContext.createBiquadFilter();
-                filter.type = 'highpass';
-                filter.frequency.value = 2000; 
-                gain.gain.value = 0.02;
-                noiseNode.connect(filter);
-                filter.connect(gain);
-                gain.connect(audioContext.destination);
-                noiseNode.start();
-                birdInterval = setInterval(() => { if(Math.random() > 0.6) playSingleBird(); }, 1500);
-            }
-            else if(type === 'chimes') {
-                chimeInterval = setInterval(() => { if(Math.random() > 0.5) playSingleChime(); }, 2500);
-                playSingleChime();
+                noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createPinkNoise(); noiseNode.loop = true;
+                gain.gain.value = 0.15; noiseNode.connect(gain); gain.connect(audioContext.destination); noiseNode.start();
+            } else if(type === 'river') {
+                noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createBrownNoise(); noiseNode.loop = true;
+                const f = audioContext.createBiquadFilter(); f.type='lowpass'; f.frequency.value=600; gain.gain.value=0.3;
+                noiseNode.connect(f); f.connect(gain); gain.connect(audioContext.destination); noiseNode.start();
+            } else if(type === 'wind') {
+                noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createPinkNoise(); noiseNode.loop = true;
+                const f = audioContext.createBiquadFilter(); f.type='lowpass'; f.Q.value=1;
+                modOsc = audioContext.createOscillator(); modOsc.frequency.value=0.15;
+                const mg = audioContext.createGain(); mg.gain.value=400;
+                modOsc.connect(mg); mg.connect(f.frequency); f.frequency.value=500;
+                noiseNode.connect(f); f.connect(gain); gain.connect(audioContext.destination); gain.gain.value=0.3;
+                noiseNode.start(); modOsc.start();
+            } else if(type === 'birds') {
+                noiseNode = audioContext.createBufferSource(); noiseNode.buffer = createPinkNoise(); noiseNode.loop = true;
+                const f = audioContext.createBiquadFilter(); f.type='highpass'; f.frequency.value=2000; gain.gain.value=0.02;
+                noiseNode.connect(f); f.connect(gain); gain.connect(audioContext.destination); noiseNode.start();
+                birdInterval = setInterval(() => { if(Math.random()>0.6) playSingleBird(); }, 1500);
+            } else if(type === 'chimes') {
+                chimeInterval = setInterval(() => { if(Math.random()>0.5) playSingleChime(); }, 2500); playSingleChime();
             }
         }
-
-        // --- TIMER LOGIC ---
         function toggleTimer() {
-            const btn = document.getElementById('timer-toggle');
-            const breathCircle = document.getElementById('breath-circle');
-
+            const btn = document.getElementById('timer-toggle'), bc = document.getElementById('breath-circle'), d = document.getElementById('timer-display');
             if (isTimerRunning) {
-                const now = Date.now();
-                const remaining = Math.ceil((timerEndTime - now) / 1000);
-                timerDuration = remaining > 0 ? remaining : 0;
-                isTimerRunning = false;
-                clearInterval(timerInterval);
-                stopAmbience();
+                const now = Date.now(), rem = Math.ceil((timerEndTime - now)/1000);
+                timerDuration = rem > 0 ? rem : 0; isTimerRunning = false; clearInterval(timerInterval); stopAmbience();
                 btn.innerHTML = '<i data-lucide="play" class="w-8 h-8 fill-current ml-1"></i>';
-                breathCircle.classList.remove('animate-breathe');
-                breathCircle.style.transform = 'scale(1)';
-                updateTimerDisplay();
+                bc.classList.remove('animate-breathe'); bc.style.transform='scale(1)'; d.disabled = false; updateTimerDisplay();
             } else {
                 if (timerDuration <= 0) timerDuration = defaultDuration;
-                currentTimerSessionLength = timerDuration; 
-                isTimerRunning = true;
-                timerEndTime = Date.now() + (timerDuration * 1000);
-                initAudio(); 
-                if(currentAmbience !== 'none') playAmbience(currentAmbience);
+                currentTimerSessionLength = timerDuration; isTimerRunning = true; timerEndTime = Date.now() + (timerDuration*1000);
+                initAudio(); if(currentAmbience !== 'none') playAmbience(currentAmbience);
                 btn.innerHTML = '<i data-lucide="pause" class="w-8 h-8 fill-current"></i>';
-                breathCircle.classList.add('animate-breathe');
-                updateTimerDisplay();
+                bc.classList.add('animate-breathe'); d.disabled = true; updateTimerDisplay();
                 timerInterval = setInterval(() => {
-                    const now = Date.now();
-                    const remaining = Math.ceil((timerEndTime - now) / 1000);
-                    if (bellInterval !== 0 && remaining > 0) {
-                        const elapsed = currentTimerSessionLength - remaining;
-                        if (bellInterval === 'half') {
-                            if (elapsed === Math.floor(currentTimerSessionLength / 2)) playBell();
-                        } else {
-                            if (elapsed > 0 && elapsed % (bellInterval * 60) === 0) playBell();
-                        }
+                    const now = Date.now(), rem = Math.ceil((timerEndTime - now)/1000);
+                    if (bellInterval !== 0 && rem > 0) {
+                        const el = currentTimerSessionLength - rem;
+                        if (bellInterval === 'half' && el === Math.floor(currentTimerSessionLength/2)) playBell();
+                        else if (typeof bellInterval === 'number' && el > 0 && el % (bellInterval*60) === 0) playBell();
                     }
-                    if (remaining <= 0) {
-                        timerDuration = 0;
-                        isTimerRunning = false;
-                        clearInterval(timerInterval);
-                        stopAmbience();
-                        playBell(); 
+                    if (rem <= 0) {
+                        timerDuration = 0; isTimerRunning = false; clearInterval(timerInterval); stopAmbience(); playBell();
                         btn.innerHTML = '<i data-lucide="play" class="w-8 h-8 fill-current ml-1"></i>';
-                        breathCircle.classList.remove('animate-breathe');
-                        breathCircle.style.transform = 'scale(1)';
-                        document.getElementById('timer-display').textContent = "00:00";
-                        document.getElementById('complete-modal').classList.remove('hidden');
-                        document.getElementById('complete-modal').classList.add('flex');
-                    } else {
-                        updateTimerDisplay();
-                    }
-                }, 1000); 
+                        bc.classList.remove('animate-breathe'); bc.style.transform='scale(1)'; d.value="00:00"; d.disabled=false;
+                        document.getElementById('complete-modal').classList.remove('hidden'); document.getElementById('complete-modal').classList.add('flex');
+                    } else updateTimerDisplay();
+                }, 1000);
             }
             lucide.createIcons();
         }
-
         function formatTime(sec) {
             if (sec < 0) sec = 0;
-            const m = Math.floor(sec / 60).toString().padStart(2, '0');
-            const s = (sec % 60).toString().padStart(2, '0');
+            const m = Math.floor(sec/60).toString().padStart(2,'0'), s = (sec%60).toString().padStart(2,'0');
             return `${m}:${s}`;
         }
-
         function updateTimerDisplay() {
             let sec = timerDuration;
-            if(isTimerRunning) {
-                const now = Date.now();
-                const remaining = Math.ceil((timerEndTime - now) / 1000);
-                sec = remaining > 0 ? remaining : 0;
-            }
-            document.getElementById('timer-display').textContent = formatTime(sec);
+            if(isTimerRunning) { const now = Date.now(), rem = Math.ceil((timerEndTime - now)/1000); sec = rem > 0 ? rem : 0; }
+            document.getElementById('timer-display').value = formatTime(sec);
         }
-
-        function adjustTimer(amount) {
-            if (isTimerRunning) return;
-            if (timerDuration + amount > 0) {
-                timerDuration += amount;
-                defaultDuration = timerDuration;
-                updateTimerDisplay();
-            }
+        function updateCustomTime(val) {
+            if(!val) return;
+            let m=0, s=0;
+            if(val.includes(':')) { const p = val.split(':'); m = parseInt(p[0])||0; s = parseInt(p[1])||0; }
+            else { m = parseInt(val)||0; }
+            const t = (m*60)+s;
+            if(t > 0) { timerDuration = t; defaultDuration = t; updateTimerDisplay(); }
         }
-
-        function resetTimer() {
-            if (isTimerRunning) toggleTimer();
-            timerDuration = defaultDuration;
-            stopAmbience();
-            updateTimerDisplay();
-        }
-
-        // --- MODALS ---
+        function formatInputTime(input) { updateTimerDisplay(); }
+        function adjustTimer(amt) { if(isTimerRunning) return; if(timerDuration+amt > 0) { timerDuration+=amt; defaultDuration=timerDuration; updateTimerDisplay(); } }
+        function resetTimer() { if(isTimerRunning) toggleTimer(); timerDuration = defaultDuration; stopAmbience(); updateTimerDisplay(); }
         function toggleModal(id) {
-            if(id === 'emotion-picker' && !document.getElementById(id).classList.contains('hidden')) {
-                // Closing emotion picker? Clear callback just in case
-                pickerCallback = null;
-            }
-            
+            if(id === 'emotion-picker' && !document.getElementById(id).classList.contains('hidden')) pickerCallback = null;
             const el = document.getElementById(id);
-            if(el.classList.contains('hidden')) {
-                el.classList.remove('hidden');
-                el.classList.add('flex');
-                // If opening emotion picker for specific context
-                if(id === 'emotion-picker') {
-                    // Context is set by button call
-                }
-            } else {
-                el.classList.add('hidden');
-                el.classList.remove('flex');
-            }
+            if(el.classList.contains('hidden')) { el.classList.remove('hidden'); el.classList.add('flex'); }
+            else { el.classList.add('hidden'); el.classList.remove('flex'); }
         }
-
         function setBellInterval(val) {
             bellInterval = val;
             ['0','1','5','half'].forEach(v => document.getElementById(`bell-check-${v}`).classList.add('hidden'));
             document.getElementById(`bell-check-${val}`).classList.remove('hidden');
-            if(val !== 0) document.getElementById('bell-status').classList.remove('hidden');
-            else document.getElementById('bell-status').classList.add('hidden');
+            if(val!==0) document.getElementById('bell-status').classList.remove('hidden'); else document.getElementById('bell-status').classList.add('hidden');
             toggleModal('bell-modal');
         }
-
         function setAmbience(val) {
             currentAmbience = val;
             ['none','rain','wind','river','birds','chimes'].forEach(v => document.getElementById(`amb-check-${v}`).classList.add('hidden'));
             document.getElementById(`amb-check-${val}`).classList.remove('hidden');
-            if(val !== 'none') document.getElementById('ambience-status').classList.remove('hidden');
-            else document.getElementById('ambience-status').classList.add('hidden');
+            if(val!=='none') document.getElementById('ambience-status').classList.remove('hidden'); else document.getElementById('ambience-status').classList.add('hidden');
             if(isTimerRunning) playAmbience(val);
             toggleModal('ambience-modal');
         }
-
         function saveTimerSession() {
-            const intensity = document.getElementById('timer-intensity-slider').value;
-            // currentSelectedEmotion must be set via picker
-            const emotion = currentSelectedEmotion || "Meditation";
-            
-            const releases = JSON.parse(localStorage.getItem('releases') || '[]');
-            releases.unshift({
-                emotion: emotion,
-                date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}),
-                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-                duration: currentTimerSessionLength,
-                intensity: intensity
-            });
-            localStorage.setItem('releases', JSON.stringify(releases));
-            
-            closeCompleteModal();
-            resetTimer();
-            switchTab('journal');
+            const int = document.getElementById('timer-intensity-slider').value;
+            const em = currentSelectedEmotion || "Meditation";
+            const rel = JSON.parse(localStorage.getItem('releases') || '[]');
+            rel.unshift({ emotion: em, date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}), time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), duration: currentTimerSessionLength, intensity: int });
+            localStorage.setItem('releases', JSON.stringify(rel));
+            closeCompleteModal(); resetTimer(); switchTab('journal');
         }
-
         function closeCompleteModal() {
-            document.getElementById('complete-modal').classList.add('hidden');
-            document.getElementById('complete-modal').classList.remove('flex');
-            resetTimer();
+            document.getElementById('complete-modal').classList.add('hidden'); document.getElementById('complete-modal').classList.remove('flex'); resetTimer();
         }
-
-        // --- PROCESS ---
         function startProcess() {
-            if(!currentSelectedEmotion) {
-                alert("Please select an emotion first.");
-                return;
-            }
+            if(!currentSelectedEmotion) { alert("Please select an emotion first."); return; }
             currentProcessEmotion = currentSelectedEmotion;
             document.querySelectorAll('.current-emotion').forEach(el => el.textContent = currentProcessEmotion);
-            processSeconds = 0;
-            nextStep(1);
-            document.getElementById('process-reset-btn').classList.remove('hidden');
+            processSeconds = 0; nextStep(1); document.getElementById('process-reset-btn').classList.remove('hidden');
         }
         function nextStep(step) {
             document.querySelectorAll('.process-step').forEach(el => el.classList.add('hidden'));
-            const target = document.getElementById(`process-step-${step}`);
-            target.classList.remove('hidden');
-            target.classList.add('animate-fade-in');
-            if (step === 4) startProcessTimer(); else stopProcessTimer();
-            if (step === 5) document.getElementById('process-reset-btn').classList.add('hidden');
+            const t = document.getElementById(`process-step-${step}`); t.classList.remove('hidden'); t.classList.add('animate-fade-in');
+            if(step===4) startProcessTimer(); else stopProcessTimer();
+            if(step===5) document.getElementById('process-reset-btn').classList.add('hidden');
         }
         function startProcessTimer() {
-            const display = document.getElementById('process-timer');
-            processSeconds = 0;
-            display.textContent = "00:00";
-            if (processInterval) clearInterval(processInterval);
+            const d = document.getElementById('process-timer'); processSeconds = 0; d.textContent = "00:00";
+            if(processInterval) clearInterval(processInterval);
             processStartTime = Date.now();
             processInterval = setInterval(() => {
-                const now = Date.now();
-                processSeconds = Math.floor((now - processStartTime) / 1000);
-                const m = Math.floor(processSeconds / 60).toString().padStart(2, '0');
-                const s = (processSeconds % 60).toString().padStart(2, '0');
-                display.textContent = `${m}:${s}`;
+                const now = Date.now(); processSeconds = Math.floor((now - processStartTime)/1000);
+                const m = Math.floor(processSeconds/60).toString().padStart(2,'0'), s = (processSeconds%60).toString().padStart(2,'0');
+                d.textContent = `${m}:${s}`;
             }, 1000);
         }
-        function stopProcessTimer() { if (processInterval) clearInterval(processInterval); }
+        function stopProcessTimer() { if(processInterval) clearInterval(processInterval); }
         function finishProcess() { stopProcessTimer(); nextStep(5); }
         function resetProcess() {
             stopProcessTimer();
@@ -1066,197 +607,42 @@
             document.getElementById('process-reset-btn').classList.add('hidden');
         }
         function saveAndClose() {
-            const intensity = document.getElementById('process-intensity-slider').value;
-            const releases = JSON.parse(localStorage.getItem('releases') || '[]');
-            releases.unshift({
-                emotion: currentProcessEmotion,
-                date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}),
-                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-                duration: processSeconds,
-                intensity: intensity
-            });
-            localStorage.setItem('releases', JSON.stringify(releases));
-            resetProcess();
-            switchTab('journal');
+            const int = document.getElementById('process-intensity-slider').value;
+            const rel = JSON.parse(localStorage.getItem('releases') || '[]');
+            rel.unshift({ emotion: currentProcessEmotion, date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}), time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), duration: processSeconds, intensity: int });
+            localStorage.setItem('releases', JSON.stringify(rel));
+            resetProcess(); switchTab('journal');
         }
-
-        // --- Q&A & NAV ---
-        function initQA() {
-            const container = document.getElementById('qa-container');
-            if (!container) return;
-            let html = "";
-            let currentCat = "";
-            QA_DATA.forEach((item, index) => {
-                if (item.category !== currentCat) {
-                    currentCat = item.category;
-                    html += `<h3 class="text-gold-500 text-xs uppercase tracking-widest mt-6 mb-2 font-medium pl-1">${currentCat}</h3>`;
-                }
-                html += `
-                    <div class="glass-panel rounded-xl overflow-hidden mb-3">
-                        <button onclick="toggleFAQ(${index})" class="w-full px-5 py-4 text-left flex justify-between items-center hover:bg-slate-800/50 transition focus:outline-none select-none">
-                            <span class="text-slate-200 font-medium pr-4 text-sm">${item.q}</span>
-                            <i data-lucide="chevron-down" id="faq-icon-${index}" class="faq-icon w-4 h-4 text-slate-500 shrink-0"></i>
-                        </button>
-                        <div id="faq-ans-${index}" class="faq-answer bg-slate-900/30 border-t border-slate-800/50">
-                            <p class="p-5 text-slate-400 text-sm leading-relaxed font-light">${item.a}</p>
-                        </div>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-            lucide.createIcons();
-        }
-        function toggleFAQ(index) {
-            const ans = document.getElementById(`faq-ans-${index}`);
-            const icon = document.getElementById(`faq-icon-${index}`);
-            if (ans.classList.contains('active')) {
-                ans.classList.remove('active');
-                icon.classList.remove('active');
-            } else {
-                ans.classList.add('active');
-                icon.classList.add('active');
-            }
-        }
-
-        function switchTab(tabId) {
-            activeTab = tabId;
-            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
-            const target = document.getElementById(`view-${tabId}`);
-            if(target) {
-                target.classList.remove('hidden');
-                target.classList.remove('animate-fade-in');
-                void target.offsetWidth;
-                target.classList.add('animate-fade-in');
-            }
-            
-            // Open emotion picker automatically when chart tab clicked
-            if(tabId === 'charts') {
-                // Ensure button listener is set for this context
-                document.getElementById('chart-emotion-btn').onclick = () => openPickerFor('chart');
-            }
-            if(tabId === 'process') {
-                document.getElementById('process-emotion-btn').onclick = () => openPickerFor('process');
-            }
-            
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('text-gold-500', 'text-white');
-                btn.classList.add('text-slate-500');
-            });
-            const activeBtn = document.querySelector(`button[onclick="switchTab('${tabId}')"]`);
-            if(activeBtn) {
-                activeBtn.classList.remove('text-slate-500');
-                activeBtn.classList.add('text-gold-500');
-            }
-            if (tabId === 'qa') {
-                const container = document.getElementById('qa-container');
-                if (!container || container.innerHTML.includes("Loading")) initQA();
-            }
-            if (tabId === 'journal') loadJournal();
-        }
-
-        function toggleSettings() {
-            const modal = document.getElementById('info-modal');
-            if (modal.classList.contains('hidden')) {
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-            } else {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }
-        }
-
-        // --- CHARTS ---
-        function loadChart(emotion) {
-            const ctx = document.getElementById('progressChart');
-            if(!ctx) return;
-            
-            // Hide placeholder
+        function loadChart(em) {
+            const ctx = document.getElementById('progressChart'); if(!ctx) return;
             document.getElementById('chart-placeholder').classList.add('hidden');
-            
-            const releases = JSON.parse(localStorage.getItem('releases') || '[]');
-            // Filter by emotion, then sort by date (oldest first for graph)
-            const data = releases
-                .filter(r => r.emotion === emotion && r.intensity)
-                .reverse(); // Reverse to get chronological order
-                
-            if(data.length === 0) {
-                // Show placeholder or empty state
-                if(progressChart) progressChart.destroy();
-                document.getElementById('chart-placeholder').classList.remove('hidden');
-                document.getElementById('chart-placeholder').textContent = `No data yet for "${emotion}"`;
-                return;
-            }
-
-            const labels = data.map(d => d.date); // X-Axis
-            const values = data.map(d => parseInt(d.intensity)); // Y-Axis
-
+            const rel = JSON.parse(localStorage.getItem('releases') || '[]');
+            const d = rel.filter(r => r.emotion === em && r.intensity).reverse();
+            if(d.length === 0) { if(progressChart) progressChart.destroy(); document.getElementById('chart-placeholder').classList.remove('hidden'); document.getElementById('chart-placeholder').textContent = `No data yet for "${em}"`; return; }
+            const lbl = d.map(x => x.date), val = d.map(x => parseInt(x.intensity));
             if(progressChart) progressChart.destroy();
-
             progressChart = new Chart(ctx, {
                 type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Intensity',
-                        data: values,
-                        borderColor: '#d4af37',
-                        backgroundColor: 'rgba(212, 175, 55, 0.1)',
-                        tension: 0.4,
-                        fill: true,
-                        pointBackgroundColor: '#d4af37'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 10,
-                            grid: { color: '#1e293b' },
-                            ticks: { color: '#94a3b8' }
-                        },
-                        x: {
-                            grid: { display: false },
-                            ticks: { color: '#94a3b8' }
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: '#0f172a',
-                            borderColor: '#334155',
-                            borderWidth: 1
-                        }
-                    }
-                }
+                data: { labels: lbl, datasets: [{ label: 'Intensity', data: val, borderColor: '#d4af37', backgroundColor: 'rgba(212, 175, 55, 0.1)', tension: 0.4, fill: true, pointBackgroundColor: '#d4af37' }] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 10, grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } }, x: { grid: { display: false }, ticks: { color: '#94a3b8' } } }, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#0f172a', borderColor: '#334155', borderWidth: 1 } } }
             });
         }
-
-        // --- JOURNAL ---
         function loadJournal() {
-            const list = document.getElementById('journal-list');
-            if (!list) return;
-            const releases = JSON.parse(localStorage.getItem('releases') || '[]');
-            if (releases.length === 0) {
-                list.innerHTML = `<div class="text-center py-16 animate-fade-in"><div class="text-slate-800 mb-4"><i data-lucide="book-open" class="w-16 h-16 mx-auto"></i></div><p class="text-slate-600 text-sm">No releases recorded yet.</p></div>`;
-            } else {
-                list.innerHTML = releases.map((entry, index) => `
-                    <div class="relative overflow-hidden rounded-xl mb-3 animate-fade-in" style="animation-delay: ${index * 50}ms">
-                        <div class="delete-action bg-red-600 text-white" onclick="deleteEntry(${index})">
-                            <i data-lucide="trash-2" class="w-5 h-5"></i>
-                        </div>
-                        <div class="glass-panel p-5 flex justify-between items-center swipe-item" 
-                             ontouchstart="handleTouchStart(event, this)" 
-                             ontouchmove="handleTouchMove(event, this)" 
-                             ontouchend="handleTouchEnd(event, this)">
-                            <div class="flex-1 pr-4" onclick="renameEntry(${index})">
-                                <h3 class="text-white font-medium capitalize text-lg truncate">${entry.emotion} <i data-lucide="edit-2" class="inline-block w-3 h-3 text-slate-600 ml-1"></i></h3>
-                                <p class="text-xs text-slate-500 mt-1">${entry.date} • ${entry.time}</p>
+            const list = document.getElementById('journal-list'); if(!list) return;
+            const rel = JSON.parse(localStorage.getItem('releases') || '[]');
+            if(rel.length === 0) { list.innerHTML = `<div class="text-center py-16 animate-fade-in"><div class="text-slate-800 mb-4"><i data-lucide="book-open" class="w-16 h-16 mx-auto"></i></div><p class="text-slate-600 text-sm">No releases recorded yet.</p></div>`; }
+            else {
+                list.innerHTML = rel.map((e, i) => `
+                    <div class="relative overflow-hidden rounded-xl mb-3 animate-fade-in" style="animation-delay: ${i*50}ms">
+                        <div class="delete-action bg-red-600 text-white" onclick="deleteEntry(${i})"><i data-lucide="trash-2" class="w-5 h-5"></i></div>
+                        <div class="glass-panel p-5 flex justify-between items-center swipe-item" ontouchstart="handleTouchStart(event, this)" ontouchmove="handleTouchMove(event, this)" ontouchend="handleTouchEnd(event, this)">
+                            <div class="flex-1 pr-4" onclick="renameEntry(${i})">
+                                <h3 class="text-white font-medium capitalize text-lg truncate">${e.emotion} <i data-lucide="edit-2" class="inline-block w-3 h-3 text-slate-600 ml-1"></i></h3>
+                                <p class="text-xs text-slate-500 mt-1">${e.date} • ${e.time}</p>
                             </div>
                             <div class="text-right shrink-0">
-                                <div class="text-xs font-mono text-gold-500">${entry.duration > 60 ? Math.floor(entry.duration/60) + 'm' : entry.duration + 's'}</div>
-                                ${entry.intensity ? `<div class="text-[10px] text-slate-500 mt-1">Int: ${entry.intensity}</div>` : ''}
+                                <div class="text-xs font-mono text-gold-500">${e.duration > 60 ? Math.floor(e.duration/60) + 'm' : e.duration + 's'}</div>
+                                ${e.intensity ? `<div class="text-[10px] text-slate-500 mt-1">Int: ${e.intensity}</div>` : ''}
                             </div>
                         </div>
                     </div>
@@ -1264,64 +650,34 @@
             }
             lucide.createIcons();
         }
-
-        let xDown = null;
-        let activeSwipeItem = null;
-
-        function handleTouchStart(evt, el) {
-            xDown = evt.touches[0].clientX;
-            activeSwipeItem = el;
+        let xDown = null, activeSwipeItem = null;
+        function handleTouchStart(evt, el) { xDown = evt.touches[0].clientX; activeSwipeItem = el; }
+        function handleTouchMove(evt, el) { if(!xDown || !activeSwipeItem) return; let xUp = evt.touches[0].clientX; let xDiff = xDown - xUp; if(xDiff > 0) { if(xDiff > 80) xDiff = 80; el.style.transform = `translateX(-${xDiff}px)`; } }
+        function handleTouchEnd(evt, el) { if(!xDown || !activeSwipeItem) return; let xUp = evt.changedTouches[0].clientX; let xDiff = xDown - xUp; if(xDiff > 40) el.style.transform = `translateX(-80px)`; else el.style.transform = `translateX(0px)`; xDown = null; activeSwipeItem = null; }
+        function deleteEntry(i) { if(confirm("Delete this entry?")) { const rel = JSON.parse(localStorage.getItem('releases') || '[]'); rel.splice(i, 1); localStorage.setItem('releases', JSON.stringify(rel)); loadJournal(); } else loadJournal(); }
+        function renameEntry(i) { const rel = JSON.parse(localStorage.getItem('releases') || '[]'); const n = prompt("Rename entry:", rel[i].emotion); if(n && n.trim()!=="") { rel[i].emotion = n.trim(); localStorage.setItem('releases', JSON.stringify(rel)); loadJournal(); } }
+        function clearJournal() { if(confirm("Clear all entries?")) { localStorage.removeItem('releases'); loadJournal(); } }
+        function initQA() {
+            const c = document.getElementById('qa-container'); if(!c) return;
+            let html = "", cat = "";
+            QA_DATA.forEach((item, i) => {
+                if (item.category !== cat) { cat = item.category; html += `<h3 class="text-gold-500 text-xs uppercase tracking-widest mt-6 mb-2 font-medium pl-1">${cat}</h3>`; }
+                html += `<div class="glass-panel rounded-xl overflow-hidden mb-3"><button onclick="toggleFAQ(${i})" class="w-full px-5 py-4 text-left flex justify-between items-center hover:bg-slate-800/50 transition focus:outline-none select-none"><span class="text-slate-200 font-medium pr-4 text-sm">${item.q}</span><i data-lucide="chevron-down" id="faq-icon-${i}" class="faq-icon w-4 h-4 text-slate-500 shrink-0"></i></button><div id="faq-ans-${i}" class="faq-answer bg-slate-900/30 border-t border-slate-800/50"><p class="p-5 text-slate-400 text-sm leading-relaxed font-light">${item.a}</p></div></div>`;
+            });
+            c.innerHTML = html; lucide.createIcons();
         }
-
-        function handleTouchMove(evt, el) {
-            if (!xDown || !activeSwipeItem) return;
-            let xUp = evt.touches[0].clientX;
-            let xDiff = xDown - xUp;
-            if (xDiff > 0) {
-                if(xDiff > 80) xDiff = 80;
-                el.style.transform = `translateX(-${xDiff}px)`;
-            }
-        }
-
-        function handleTouchEnd(evt, el) {
-            if (!xDown || !activeSwipeItem) return;
-            let xUp = evt.changedTouches[0].clientX;
-            let xDiff = xDown - xUp;
-            if (xDiff > 40) { 
-                el.style.transform = `translateX(-80px)`;
-            } else {
-                el.style.transform = `translateX(0px)`;
-            }
-            xDown = null;
-            activeSwipeItem = null;
-        }
-
-        function deleteEntry(index) {
-            if(confirm("Delete this entry?")) {
-                const releases = JSON.parse(localStorage.getItem('releases') || '[]');
-                releases.splice(index, 1);
-                localStorage.setItem('releases', JSON.stringify(releases));
-                loadJournal();
-            } else {
-                loadJournal(); 
-            }
-        }
-
-        function renameEntry(index) {
-            const releases = JSON.parse(localStorage.getItem('releases') || '[]');
-            const newName = prompt("Rename entry:", releases[index].emotion);
-            if(newName && newName.trim() !== "") {
-                releases[index].emotion = newName.trim();
-                localStorage.setItem('releases', JSON.stringify(releases));
-                loadJournal();
-            }
-        }
-
-        function clearJournal() {
-            if (confirm("Clear all journal entries? This cannot be undone.")) { 
-                localStorage.removeItem('releases'); 
-                loadJournal(); 
-            }
+        function toggleFAQ(i) { const a = document.getElementById(`faq-ans-${i}`), ic = document.getElementById(`faq-icon-${i}`); if(a.classList.contains('active')) { a.classList.remove('active'); ic.classList.remove('active'); } else { a.classList.add('active'); ic.classList.add('active'); } }
+        function switchTab(id) {
+            activeTab = id;
+            document.querySelectorAll('.view-section').forEach(e => e.classList.add('hidden'));
+            const t = document.getElementById(`view-${id}`);
+            if(t) { t.classList.remove('hidden'); t.classList.remove('animate-fade-in'); void t.offsetWidth; t.classList.add('animate-fade-in'); }
+            document.querySelectorAll('.nav-btn').forEach(b => { b.classList.remove('text-gold-500', 'text-white'); b.classList.add('text-slate-500'); });
+            const b = document.querySelector(`button[onclick="switchTab('${id}')"]`);
+            if(b) { b.classList.remove('text-slate-500'); b.classList.add('text-gold-500'); }
+            if(id === 'qa') initQA(); if(id === 'journal') loadJournal();
+            if(id === 'charts') document.getElementById('chart-emotion-btn').onclick = () => openPickerFor('chart');
+            if(id === 'process') document.getElementById('process-emotion-btn').onclick = () => openPickerFor('process');
         }
     </script>
 </body>
