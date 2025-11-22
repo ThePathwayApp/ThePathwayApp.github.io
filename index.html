@@ -41,61 +41,67 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Merriweather:ital,wght@0,300;0,400;1,300&display=swap');
         
-        /* --- STRICT FLEX LAYOUT ENGINE (More Robust than Grid for Mobile) --- */
+        /* --- NATIVE APP LOCK (Fixes Bounce & Spacing) --- */
         html {
             height: 100%;
             width: 100%;
             background-color: #020617;
-            overflow: hidden; /* Prevent html scroll */
+            overflow: hidden; /* No root scroll */
+            overscroll-behavior: none; /* Kills bounce on html */
         }
         
         body { 
-            /* Flex column forces the middle to stretch and footer to stick */
-            display: flex;
-            flex-direction: column;
-            
-            /* Dual height definition for fallback */
-            min-height: 100vh;
-            height: 100%;
-            height: 100dvh; /* Dynamic Viewport Height for iOS */
-            
+            position: fixed; /* Locks body in place, preventing bounce */
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 100dvh; /* Exact viewport height */
             width: 100%;
-            margin: 0;
-            padding: 0;
-            overflow: hidden; /* Prevent body scroll, only main scrolls */
+            overflow: hidden; /* No body scroll */
+            overscroll-behavior: none; /* Kills bounce on body */
             background-color: #020617; 
             color: #e2e8f0; 
             -webkit-font-smoothing: antialiased; 
             -webkit-tap-highlight-color: transparent; 
+            
+            /* Flex layout for internal structure */
+            display: flex;
+            flex-direction: column;
         }
 
-        /* Header: Fixed height, no shrink */
+        /* Header: Extra padding for Status Bar */
         header { 
-            flex: none; /* Do not grow or shrink */
+            flex: none;
             z-index: 40; 
-            padding-top: env(safe-area-inset-top);
-            background: rgba(2, 6, 23, 0.95);
+            /* Safe area + 16px buffer to clear the time/notch */
+            padding-top: calc(env(safe-area-inset-top) + 16px);
+            background: rgba(2, 6, 23, 0.98); /* Slightly more opaque */
+            border-bottom: 1px solid rgba(30, 41, 59, 0.5);
         }
 
-        /* Content: Grows to fill all available space */
+        /* Content: The ONLY thing that scrolls */
         #app-content {
-            flex: 1; /* Takes all remaining height */
-            overflow-y: auto; /* Internal scroll */
-            overscroll-behavior-y: contain;
+            flex: 1;
+            overflow-y: auto;
+            overscroll-behavior-y: contain; /* Allows bounce INSIDE content only, not whole page */
             -webkit-overflow-scrolling: touch;
             position: relative;
             width: 100%;
+            padding-bottom: 20px; /* Slight buffer at bottom of content */
         }
 
-        /* Nav: Fixed height, no shrink, pinned bottom by Flex structure */
+        /* Nav: Pinned bottom, accounting for Home Bar */
         #bottom-nav {
-            flex: none; /* Do not grow or shrink */
+            flex: none;
             z-index: 50;
-            background: rgba(2, 6, 23, 0.95);
+            background: rgba(2, 6, 23, 0.98);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-top: 1px solid rgba(30, 41, 59, 0.5);
-            padding-bottom: env(safe-area-inset-bottom);
+            /* Safe area + padding ensures it sits right */
+            padding-bottom: calc(env(safe-area-inset-bottom) + 8px);
+            padding-top: 12px;
         }
 
         /* Scrollbar styling */
@@ -136,7 +142,7 @@
     </div>
 
     <!-- HEADER -->
-    <header class="px-6 py-4 border-b border-slate-800/50 bg-slate-950/90 flex justify-between items-center">
+    <header class="px-6 pb-4 flex justify-between items-center shadow-lg shadow-slate-900/20">
         <div><h1 class="text-xl font-serif italic text-gold-500 tracking-wide">The Pathway</h1><p class="text-[10px] text-slate-500 uppercase tracking-[0.2em] mt-0.5">Mechanism of Surrender</p></div>
         <button onclick="toggleSettings()" class="text-slate-400 hover:text-white transition p-2"><i data-lucide="info" class="w-5 h-5"></i></button>
     </header>
@@ -150,7 +156,7 @@
                 <h2 class="text-2xl font-light mb-4 text-white">The Mechanism</h2>
                 <p class="text-slate-300 leading-relaxed mb-6">Letting go involves being aware of a feeling, letting it come up, staying with it, and letting it run its course without wanting to make it different or do anything about it.</p>
                 <div class="space-y-6">
-                    <!-- Added mt-1 to icons to fix "floating high" issue -->
+                    <!-- Icons aligned with text baseline -->
                     <div class="flex gap-4 items-start">
                         <div class="bg-slate-800 p-2 rounded-full text-gold-500 shrink-0 mt-1">
                             <i data-lucide="eye" class="w-5 h-5"></i>
@@ -293,7 +299,7 @@
 
     <!-- NAV -->
     <nav id="bottom-nav">
-        <div class="flex justify-around items-center max-w-md mx-auto px-1 pt-3 pb-2">
+        <div class="flex justify-around items-center max-w-md mx-auto px-1">
             <button id="nav-guide" onclick="switchTab('guide')" class="nav-btn active p-2 flex flex-col items-center gap-1 text-slate-500 transition active:scale-95"><i data-lucide="book" class="w-5 h-5"></i><span class="text-[9px] uppercase tracking-widest font-medium">Guide</span></button>
             <button id="nav-process" onclick="switchTab('process')" class="nav-btn p-2 flex flex-col items-center gap-1 text-slate-500 transition active:scale-95"><i data-lucide="layers" class="w-5 h-5"></i><span class="text-[9px] uppercase tracking-widest font-medium">Work</span></button>
             <button id="nav-timer" onclick="switchTab('timer')" class="nav-btn p-2 flex flex-col items-center gap-1 text-slate-500 transition active:scale-95"><i data-lucide="clock" class="w-5 h-5"></i><span class="text-[9px] uppercase tracking-widest font-medium">Timer</span></button>
@@ -307,7 +313,7 @@
     <div id="info-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60] hidden items-center justify-center p-6 animate-fade-in">
         <div class="bg-slate-900 border border-slate-700 p-8 rounded-3xl max-w-xs w-full shadow-2xl text-center">
             <h3 class="text-xl text-white mb-2 font-serif italic">The Pathway</h3>
-            <p class="text-slate-500 text-xs mb-6 uppercase tracking-widest">Version 7.6 (Flex Fix)</p>
+            <p class="text-slate-500 text-xs mb-6 uppercase tracking-widest">Version 8.0 (Native Lock)</p>
             <div class="space-y-4 text-sm text-slate-400 mb-8 text-left"><p>Based on "Letting Go" by Dr. David R. Hawkins.</p><p>This app is constantly updated.</p></div>
             <div class="mt-4 pt-4 border-t border-slate-800" id="auth-container">
                 <div id="logged-out-view">
@@ -634,4 +640,5 @@
     </script>
 </body>
 </html>
+
 
