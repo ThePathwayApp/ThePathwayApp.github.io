@@ -29,7 +29,7 @@
                     },
                     animation: {
                         'breathe': 'breathe 8s infinite ease-in-out',
-                        'fade-in': 'fadeIn 0.3s ease-out forwards', /* Speed up UI transition */
+                        'fade-in': 'fadeIn 0.3s ease-out forwards', 
                         'fade-out': 'fadeOut 0.2s ease-in forwards', 
                         'slide-up': 'slideUp 0.3s ease-out forwards',
                         'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
@@ -66,9 +66,9 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Merriweather:ital,wght@0,300;0,400;1,300&display=swap');
         
-        /* LOCKED VIEWPORT */
+        /* LOCKED VIEWPORT - Updated to 100dvh for iOS PWA */
         html, body {
-            height: 100vh;
+            height: 100dvh;
             width: 100%;
             overflow: hidden;
             background-color: #020617; 
@@ -77,13 +77,6 @@
             -webkit-tap-highlight-color: transparent;
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-        }
-
-        /* Modern viewport height on supported browsers (helps kill iOS PWA ghost bar) */
-        @supports (height: 100dvh) {
-            html, body {
-                height: 100dvh;
-            }
         }
 
         body {
@@ -101,14 +94,15 @@
         .btn-primary:active { transform: scale(0.96); }
         
         /* SAFE AREA UTILS */
-        .pb-safe { padding-bottom: 0; } /* Remove bottom safe-area padding to avoid ghost bar */
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
         .pt-safe { padding-top: env(safe-area-inset-top, 20px); }
-        .mb-safe { margin-bottom: 0; }
-
-        /* SMOOTH TRANSITIONS - Slightly faster */
+        
+        /* SMOOTH TRANSITIONS - Speed up to 0.2s */
         .view-section {
             opacity: 0;
-            transition: opacity 0.25s ease-in-out; 
+            transition: opacity 0.2s ease-in-out; 
+            /* Important: Ensure content scrolls clear of the home bar */
+            padding-bottom: calc(env(safe-area-inset-bottom) + 3rem); 
         }
         .view-section.active-view {
             opacity: 1;
@@ -139,9 +133,9 @@
 </head>
 <body class="selection:bg-gold-500 selection:text-white">
 
-    <div id="side-menu-backdrop" onclick="toggleMenu()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90] hidden opacity-0 transition-opacity duration-800"></div>
+    <div id="side-menu-backdrop" onclick="toggleMenu()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90] hidden opacity-0 transition-opacity duration-[850ms]"></div>
 
-    <aside id="side-menu" class="fixed top-0 bottom-0 right-0 w-3/4 max-w-xs bg-slate-900/95 backdrop-blur-xl border-l border-slate-800 z-[100] transform translate-x-full transition-transform duration-[800ms] ease-out flex flex-col shadow-2xl pt-safe pb-safe">
+    <aside id="side-menu" class="fixed top-0 bottom-0 right-0 w-3/4 max-w-xs bg-slate-900/95 backdrop-blur-xl border-l border-slate-800 z-[100] transform translate-x-full transition-transform duration-[850ms] ease-out flex flex-col shadow-2xl pt-safe pb-safe">
         
         <div class="px-6 pb-6 border-b border-slate-800 flex flex-col relative" style="padding-top: env(safe-area-inset-top);">
             <button onclick="toggleMenu()" class="absolute top-0 right-6 text-slate-400 hover:text-white transition" style="margin-top: env(safe-area-inset-top);"><i data-lucide="x" class="w-6 h-6"></i></button>
@@ -181,15 +175,14 @@
         </nav>
 
         <div class="px-6 pt-6 pb-4 text-center border-t border-slate-800/50 mt-auto">
-            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 8.8</p>
+            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 8.9</p>
         </div>
     </aside>
 
     <div id="intro-screen" onclick="dismissIntro()" class="fixed inset-0 z-[80] bg-slate-950 flex flex-col items-center justify-center p-8 text-center cursor-pointer transition-opacity duration-1000">
         <div class="animate-fade-in max-w-lg mx-auto flex flex-col h-full justify-center relative w-full">
             <div class="mb-8 text-gold-500/30 mx-auto"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
-            <!-- Main intro logo - slightly larger -->
-            <h1 class="text-6xl md:text-7xl font-serif italic text-gold-500 mb-16 tracking-wider drop-shadow-[0_0_25px_rgba(212,175,55,0.2)]">The Pathway</h1>
+            <h1 class="text-5xl md:text-6xl font-serif italic text-gold-500 mb-16 tracking-wider drop-shadow-[0_0_25px_rgba(212,175,55,0.2)]">The Pathway</h1>
             <div class="flex justify-center">
                 <div class="quote-wrapper max-w-md">
                     <svg class="quote-mark start" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21L14.017 18C14.017 16.896 14.321 15.923 14.929 15.081C15.537 14.239 16.357 13.459 17.389 12.741L16.731 10.561C15.039 11.623 14.069 12.878 13.821 14.326C13.821 14.326 13.821 14.326 13.821 14.326C13.545 13.714 13.407 13.052 13.407 12.34C13.407 10.284 14.147 8.528 15.627 7.072C17.107 5.616 18.867 4.888 20.907 4.888C21.787 4.888 22.467 5.568 22.947 6.928C23.427 8.288 23.667 9.528 23.667 10.648C23.667 14.304 22.397 17.754 19.857 21L14.017 21ZM6.007 21L6.007 18C6.007 16.896 6.311 15.923 6.919 15.081C7.527 14.239 8.347 13.459 9.379 12.741L8.721 10.561C7.029 11.623 6.059 12.878 5.811 14.326C5.811 14.326 5.811 14.326 5.811 14.326C5.535 13.714 5.397 13.052 5.397 12.34C5.397 10.284 6.137 8.528 7.617 7.072C9.097 5.616 10.857 4.888 12.897 4.888C13.777 4.888 14.457 5.568 14.937 6.928C15.417 8.288 15.657 9.528 15.657 10.648C15.657 14.304 14.387 17.754 11.847 21L6.007 21Z" /></svg>
@@ -201,13 +194,13 @@
     </div>
 
     <header class="flex-none w-full px-6 pb-4 border-b border-slate-800/50 bg-slate-950/90 backdrop-blur z-50 flex justify-between items-center relative" style="padding-top: max(2.5rem, calc(env(safe-area-inset-top) + 1rem));">
-        <div><h1 class="text-2xl font-serif italic text-gold-500 tracking-wide">The Pathway</h1><p class="text-[10px] text-slate-500 uppercase tracking-[0.2em] mt-0.5">Mechanism of Surrender</p></div>
+        <div><h1 class="text-3xl font-serif italic text-gold-500 tracking-wide">The Pathway</h1><p class="text-[10px] text-slate-500 uppercase tracking-[0.2em] mt-0.5">Mechanism of Surrender</p></div>
         <button onclick="toggleMenu()" class="text-slate-400 hover:text-white transition p-2"><i data-lucide="menu" class="w-6 h-6"></i></button>
     </header>
 
     <main id="app-content" class="flex-1 relative w-full overflow-hidden">
         
-        <section id="view-guide" class="view-section active-view h-full overflow-y-auto p-4 pb-8">
+        <section id="view-guide" class="view-section active-view h-full overflow-y-auto p-4">
             <div class="glass-panel p-6 rounded-2xl shadow-lg mb-8">
                 <h2 class="text-2xl font-light mb-4 text-white">The Mechanism</h2>
                 <p class="text-slate-300 leading-relaxed mb-4">Letting go involves being aware of a feeling, letting it come up, staying with it, and letting it run its course without wanting to make it different or do anything about it.</p>
@@ -221,7 +214,7 @@
             </div>
         </section>
 
-        <section id="view-process" class="view-section hidden h-full overflow-hidden flex flex-col p-4 pb-8">
+        <section id="view-process" class="view-section hidden h-full overflow-hidden flex flex-col p-4">
             <div class="glass-panel p-6 rounded-2xl shadow-lg flex-1 flex flex-col justify-center items-center text-center relative overflow-hidden">
                 <div id="process-step-0" class="process-step w-full">
                     <h2 class="text-3xl font-light mb-2 text-white">Identify Emotion</h2>
@@ -266,14 +259,14 @@
             </div>
         </section>
 
-        <section id="view-timer" class="view-section hidden h-full overflow-hidden flex flex-col justify-center p-4 pb-8">
+        <section id="view-timer" class="view-section hidden h-full overflow-hidden flex flex-col justify-center p-4">
             <div class="text-center w-full">
                 <div class="mb-8 max-w-[240px] mx-auto mt-8 relative z-30">
                     <button onclick="toggleModal('emotion-picker')" id="timer-emotion-btn" class="w-full flex items-center justify-between bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-2 text-slate-300 text-sm hover:border-gold-500 transition">
                         <span id="timer-emotion-display">Select Emotion...</span><i data-lucide="chevron-down" class="w-4 h-4 opacity-50"></i>
                     </button>
                 </div>
-                
+               
                 <div class="relative w-64 h-64 mx-auto mb-10 flex items-center justify-center z-10">
                     <div id="breath-circle" class="absolute inset-0 bg-slate-800 rounded-full opacity-50 scale-100 transition-transform duration-1000"></div>
                     <div id="breath-circle-inner" class="absolute w-40 h-40 bg-slate-700/50 rounded-full blur-2xl"></div>
@@ -298,7 +291,7 @@
             </div>
         </section>
 
-        <section id="view-charts" class="view-section hidden h-full overflow-hidden flex flex-col p-4 pb-8">
+        <section id="view-charts" class="view-section hidden h-full overflow-hidden flex flex-col p-4">
             <div class="mb-4 flex justify-between items-end"><h2 class="text-2xl font-light text-white">Progress</h2></div>
             <div class="mb-6">
                 <label class="text-xs text-slate-500 uppercase tracking-wider mb-2 block">Select Emotion</label>
@@ -312,12 +305,12 @@
             </div>
         </section>
 
-        <section id="view-journal" class="view-section hidden h-full overflow-y-auto p-4 pb-8">
+        <section id="view-journal" class="view-section hidden h-full overflow-y-auto p-4">
             <div class="flex justify-between items-end mb-6"><h2 class="text-2xl font-light text-white">History</h2><button onclick="clearJournal()" class="text-xs text-red-400/60 hover:text-red-400 uppercase tracking-wider p-2">Clear All</button></div>
             <div id="journal-list" class="space-y-3 pb-8 overflow-x-hidden"></div>
         </section>
 
-        <section id="view-qa" class="view-section hidden h-full overflow-y-auto p-4 pb-8">
+        <section id="view-qa" class="view-section hidden h-full overflow-y-auto p-4">
             <h2 class="text-2xl font-light text-white mb-6">Q & A</h2>
             <div id="qa-container" class="space-y-3 pb-8"></div>
         </section>
@@ -405,7 +398,7 @@
             
             // Check if we should skip intro
             if (sessionStorage.getItem('intro_dismissed')) {
-               document.getElementById('intro-screen').style.display = 'none';
+                document.getElementById('intro-screen').style.display = 'none';
             }
         };
 
@@ -530,7 +523,7 @@
                             });
                         });
                     }
-                }, 300); // Matches CSS transition duration (Synchronous with Menu)
+                }, 200); // Matches CSS transition duration (Synchronous with Menu)
             } else {
                 // Initial load fallback
                 if(next) {
@@ -678,9 +671,9 @@
         };
 
         window.clearJournal = async () => {
-             if (!confirm("Clear all journal entries? This cannot be undone.")) return;
-             if (isLoggedIn) { alert("To protect your data, bulk clear is disabled for cloud logs. Please delete entries individually."); } 
-             else { localStorage.removeItem('releases'); window.renderJournal(); }
+            if (!confirm("Clear all journal entries? This cannot be undone.")) return;
+            if (isLoggedIn) { alert("To protect your data, bulk clear is disabled for cloud logs. Please delete entries individually."); } 
+            else { localStorage.removeItem('releases'); window.renderJournal(); }
         };
     </script>
 </body>
