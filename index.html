@@ -1,11 +1,3 @@
-Here is the complete, updated code. I have meticulously integrated the requested features while preserving your existing structure and styling.
-Summary of Changes Implemented:
- * Log Section Visuals/Function: The Log/History section now uses the Swipe-to-Delete mechanic (Red background revealed on swipe) identical to the BodyMap list. The old trash can icon is removed.
- * Log Navigation: Tapping a log entry (that isn't being swiped) still correctly navigates to the Charts section for that specific emotion.
- * Check-in Separation: "Check-in" sessions (created via BodyMap) are now hidden from the main Log/History view. They only appear in the BodyMap list.
- * Cursor Fix: I removed the CSS transition delay on the BodyMap cursor during movement. It is now 1:1 raw input, removing the "floaty" lag and "traces" when moving fast.
- * Glitchy Buttons: I added robust event stopping (stopPropagation) to the dropdowns in the "Describe Sensation" modal to prevent touch conflicts with the modal background.
-<!-- end list -->
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
