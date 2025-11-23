@@ -140,40 +140,36 @@
             max-width: 400px; 
             max-height: 80vh; 
             aspect-ratio: 300 / 600; 
+            overflow: hidden;
+        }
+
+        /* Ensure there is no dark pseudo-overlay blocking the body image */
+        .body-stage::before {
+            background: none !important;
+            opacity: 0 !important;
         }
 
         /* The Image Layer */
         .anatomy-img {
-            z-index: 10;
+            z-index: 5;
             position: absolute;
-            top: 0;
-            left: 0;
+            inset: 0;
             width: 100%;
             height: 100%;
             object-fit: contain;
             display: block; 
-            /* Ensure opacity is 1 */
             opacity: 1 !important; 
             filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.05));
         }
 
-        /* The Invisible Tracking Layer */
-        .tracking-svg {
-            z-index: 20;
+        /* HOTSPOT STYLES */
+        .hotspot {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            opacity: 0; /* Invisible but clickable */
-            pointer-events: auto; 
-        }
-       
-        .tracking-svg path {
-            stroke: transparent;
-            stroke-width: 45px; /* Generous hit detection */
-            fill: transparent;
+            /* Uncomment border to debug positions */
+            /* border: 1px solid rgba(255, 0, 0, 0.5); */
+            z-index: 20;
+            /* Pointer events allowed for debug, but our trackpad uses coordinates */
+            pointer-events: none; 
         }
 
         .interactive-layer {
@@ -280,8 +276,6 @@
             <div class="flex justify-center">
                 <div class="quote-wrapper max-w-md relative">
                     <svg class="quote-mark start" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21L14.017 18C14.017 16.896 14.321 15.923 14.929 15.081C15.537 14.239 16.357 13.459 17.389 12.741L16.731 10.561C15.039 11.623 14.069 12.878 13.821 14.326C13.821 14.326 13.821 14.326 13.821 14.326C13.545 13.714 13.407 13.052 13.407 12.34C13.407 10.284 14.147 8.528 15.627 7.072C17.107 5.616 18.867 4.888 20.907 4.888C21.787 4.888 22.467 5.568 22.947 6.928C23.427 8.288 23.667 9.528 23.667 10.648C23.667 14.304 22.397 17.754 19.857 21L14.017 21ZM6.007 21L6.007 18C6.007 16.896 6.311 15.923 6.919 15.081C7.527 14.239 8.347 13.459 9.379 12.741L8.721 10.561C7.029 11.623 6.059 12.878 5.811 14.326C5.811 14.326 5.811 14.326 5.811 14.326C5.535 13.714 5.397 13.052 5.397 12.34C5.397 10.284 6.137 8.528 7.617 7.072C9.097 5.616 10.857 4.888 12.897 4.888C13.777 4.888 14.457 5.568 14.937 6.928C15.417 8.288 15.657 9.528 15.657 10.648C15.657 14.304 14.387 17.754 11.847 21L6.007 21Z" /></svg>
-                    <p id="intro-quote-text" class="text-lg text-white font-light leading-relaxed font-serif italic opacity-0 transition-opacity duration-500">To be surrendered means to have no strong emotion about a thing: 'It's okay if it happens, and it's okay if it doesn't.'</p>
-                    <svg class="quote-mark end" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21L14.017 18C14.017 16.896 14.321 15.923 14.929 15.081C15.537 14.239 16.357 13.459 17.389 12.741L16.731 10.561C15.039 11.623 14.069 12.878 13.821 14.326C13.821 14.326 13.821 14.326 13.821 14.326C13.545 13.714 13.407 13.052 13.407 12.34C13.407 10.284 14.147 8.528 15.627 7.072C17.107 5.616 18.867 4.888 20.907 4.888C21.787 4.888 22.467 5.568 22.947 6.928C23.427 8.288 23.667 9.528 23.667 10.648C23.667 14.304 22.397 17.754 19.857 21L14.017 21ZM6.007 21L6.007 18C6.007 16.896 6.311 15.923 6.919 15.081C7.527 14.239 8.347 13.459 9.379 12.741L8.721 10.561C7.029 11.623 6.059 12.878 5.811 14.326C5.811 14.326 5.811 14.326 5.811 14.326C5.535 13.714 5.397 13.052 5.397 12.34C5.397 10.284 6.137 8.528 7.617 7.072C9.097 5.616 10.857 4.888 12.897 4.888C13.777 4.888 14.457 5.568 14.937 6.928C15.417 8.288 15.657 9.528 15.657 10.648C15.657 14.304 14.387 17.754 11.847 21L6.007 21Z" /></svg>
                 </div>
             </div>
             <p id="intro-quote-author" class="text-xs text-gold-500 uppercase tracking-[0.25em] font-sans text-center opacity-0 transition-opacity duration-500 delay-100 mt-8">— David R. Hawkins</p>
@@ -480,41 +474,27 @@
                             src="image.jpg" 
                             id="body-image" 
                             class="layer anatomy-img" 
-                            alt="Body Map" 
+                            alt="Body Map"
+                            onerror="alert('Error: image.jpg not found. Please ensure the file is named exactly image.jpg and is in the same folder as this HTML file.')"
                         />
 
-                        <!-- 2. Tracking SVG (Invisible, Top Layer) -->
-                        <svg id="body-silhouette" class="layer tracking-svg" viewBox="0 0 300 600" preserveAspectRatio="xMidYMid meet">
-                            <g>
-                                <!-- Head/Neck -->
-                                <path id="head" d="M150,20 L150,80" stroke-width="50" />
-                                <path id="neck" d="M150,85 L150,105" stroke-width="40" />
-                                
-                                <!-- Torso -->
-                                <path id="chest" d="M150,110 L150,180" stroke-width="70" />
-                                <path id="solar-plexus" d="M150,185 L150,225" stroke-width="60" />
-                                <path id="stomach" d="M150,230 L150,270" stroke-width="60" />
-                                <path id="pelvis" d="M150,275 L150,310" stroke-width="60" />
-                                
-                                <!-- Arms (Calculated to match the slightly spread pose) -->
-                                <path id="left-shoulder" d="M110,110 L90,120" stroke-width="30" />
-                                <path id="right-shoulder" d="M190,110 L210,120" stroke-width="30" />
-                                
-                                <!-- Arms hanging down at angle -->
-                                <path id="left-arm" d="M90,130 L70,300" stroke-width="35" />
-                                <path id="right-arm" d="M210,130 L230,300" stroke-width="35" />
-                                
-                                <path id="left-hand" d="M70,310 L65,340" stroke-width="25" />
-                                <path id="right-hand" d="M230,310 L235,340" stroke-width="25" />
-                                
-                                <!-- Legs -->
-                                <path id="left-leg" d="M130,320 L125,540" stroke-width="40" />
-                                <path id="right-leg" d="M170,320 L175,540" stroke-width="40" />
-                                
-                                <path id="left-foot" d="M125,550 L120,580" stroke-width="30" />
-                                <path id="right-foot" d="M175,550 L180,580" stroke-width="30" />
-                            </g>
-                        </svg>
+                        <!-- HOTSPOTS -->
+                        <!-- These are invisible boxes over the image for hit detection -->
+                        <div class="hotspot" style="top: 5%; left: 40%; width: 20%; height: 12%;" data-name="Head"></div>
+                        <div class="hotspot" style="top: 17%; left: 42%; width: 16%; height: 5%;" data-name="Throat"></div>
+                        <div class="hotspot" style="top: 22%; left: 35%; width: 30%; height: 12%;" data-name="Chest"></div>
+                        <div class="hotspot" style="top: 34%; left: 38%; width: 24%; height: 8%;" data-name="Solar Plexus"></div>
+                        <div class="hotspot" style="top: 42%; left: 35%; width: 30%; height: 10%;" data-name="Stomach"></div>
+                        <div class="hotspot" style="top: 52%; left: 35%; width: 30%; height: 10%;" data-name="Pelvis"></div>
+                        
+                        <!-- Arms -->
+                        <div class="hotspot" style="top: 22%; left: 15%; width: 15%; height: 35%;" data-name="Left Arm"></div>
+                        <div class="hotspot" style="top: 22%; left: 70%; width: 15%; height: 35%;" data-name="Right Arm"></div>
+                        
+                        <!-- Legs -->
+                        <div class="hotspot" style="top: 60%; left: 25%; width: 20%; height: 35%;" data-name="Left Leg"></div>
+                        <div class="hotspot" style="top: 60%; left: 55%; width: 20%; height: 35%;" data-name="Right Leg"></div>
+
 
                         <!-- 3. Interactive Marker Container -->
                         <div id="interactive-layer" class="layer interactive-layer">
@@ -1304,60 +1284,46 @@
             const cursor = document.getElementById('active-cursor');
             cursor.style.transform = `translate3d(${bodyX}px, ${bodyY}px, 0)`;
 
-            // 4. HIT TEST: Find what Element is UNDER the Virtual Cursor
-            // We need the absolute screen coordinates of the virtual cursor position.
-            // The #active-cursor is inside #interactive-layer (relative).
-            // We can use the #interactive-layer's bounding rect to offset.
-            const layerRect = document.getElementById('interactive-layer').getBoundingClientRect();
-           
-            // Calculate screen X/Y relative to the interactive layer's current screen position
-            // Note: bodyX/bodyY are relative to the 300x700 viewBox.
-            // We need to scale them if the container is scaled (e.g. on small screens).
-            const scaleX = layerRect.width / BODY_WIDTH;
-            const scaleY = layerRect.height / BODY_HEIGHT;
-           
-            const screenX = layerRect.left + (bodyX * scaleX);
-            const screenY = layerRect.top + (bodyY * scaleY);
-
-            // Temporarily hide cursor so we don't hit-test IT instead of the SVG
-            cursor.style.display = 'none';
-            // IMPORTANT: We need to hide the image too so we don't hit test against IT
-            const img = document.getElementById('body-image');
-            const prevDisplay = img.style.display;
-            img.style.display = 'none';
-           
-            const element = document.elementFromPoint(screenX, screenY);
-           
-            // Restore
-            cursor.style.display = 'block';
-            img.style.display = prevDisplay;
-
-            let region = "";
-           
-            if (element && element.tagName === 'path') {
-                // Check if it belongs to our anatomy SVG
-                if (element.closest('svg#body-silhouette')) {
-                    // Format ID: "left-shoulder" -> "Left Shoulder"
-                    region = element.id
-                        .replace(/-/g, ' ')
-                        .replace(/\b\w/g, l => l.toUpperCase());
+            // 4. NEW HIT TEST: Using actual Hotspot divs
+            // We need the relative position of the virtual cursor
+            // bodyX/bodyY is relative to .body-stage (300x600)
+            
+            let detectedRegion = "";
+            
+            const hotspots = document.querySelectorAll('.hotspot');
+            for (const hs of hotspots) {
+                // Get percentages from inline style
+                const topP = parseFloat(hs.style.top);
+                const leftP = parseFloat(hs.style.left);
+                const wP = parseFloat(hs.style.width);
+                const hP = parseFloat(hs.style.height);
+                
+                // Convert % to pixels in our 300x600 virtual space
+                const hsX = (leftP / 100) * BODY_WIDTH;
+                const hsY = (topP / 100) * BODY_HEIGHT;
+                const hsW = (wP / 100) * BODY_WIDTH;
+                const hsH = (hP / 100) * BODY_HEIGHT;
+                
+                // Check collision
+                if (bodyX >= hsX && bodyX <= hsX + hsW &&
+                    bodyY >= hsY && bodyY <= hsY + hsH) {
+                    detectedRegion = hs.dataset.name;
+                    break;
                 }
             }
 
             const label = document.getElementById('body-part-label');
            
-            if (region && label.textContent !== region) {
-                label.textContent = region;
+            if (detectedRegion && label.textContent !== detectedRegion) {
+                label.textContent = detectedRegion;
                 if (navigator.vibrate) navigator.vibrate(5);
-            } else if (!region) {
+            } else if (!detectedRegion) {
                 label.textContent = "Scanning...";
             }
 
             // Save normalized point + region name for saving
-            pendingPoint = { x: tx, y: ty, region: region || "General" };
+            pendingPoint = { x: tx, y: ty, region: detectedRegion || "General" };
         }
-
-        // Function identifyBodyRegion(x, y) is DELETED as requested.
 
         function confirmBodyPoint() {
             const type = document.getElementById('sensation-type').value;
