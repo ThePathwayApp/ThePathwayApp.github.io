@@ -34,6 +34,7 @@
                         'slide-up': 'slideUp 0.3s ease-out forwards',
                         'slide-down': 'slideDown 0.25s ease-in forwards',
                         'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     },
                     keyframes: {
                         breathe: {
@@ -71,32 +72,9 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Merriweather:ital,wght@0,300;0,400;1,300&display=swap');
         
-        html,
-        body {
-            height: 100%;
-            min-height: 100vh;
-            width: 100%;
-            margin: 0;
-            background-color: #020617;
-            color: #e2e8f0;
-            -webkit-font-smoothing: antialiased;
-            -webkit-tap-highlight-color: transparent;
-            overflow: hidden;
-            overscroll-behavior: none;
-            overscroll-behavior-y: none;
-        }
-
-        @supports (height: 100dvh) {
-            body {
-                min-height: 100dvh;
-            }
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-        }
-
+        html, body { height: 100%; min-height: 100vh; width: 100%; margin: 0; background-color: #020617; color: #e2e8f0; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; overflow: hidden; overscroll-behavior: none; overscroll-behavior-y: none; }
+        @supports (height: 100dvh) { body { min-height: 100dvh; } }
+        body { display: flex; flex-direction: column; }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
@@ -105,23 +83,12 @@
         .intro-overlay { background: #020617; }
         .btn-primary { transition: all 0.2s ease; }
         .btn-primary:active { transform: scale(0.96); }
-        
-        /* SAFE AREA UTILS */
         .pb-safe { padding-bottom: 0; }
         .pt-safe { padding-top: env(safe-area-inset-top, 20px); }
         .mb-safe { margin-bottom: 0; }
         
-        /* SMOOTH TRANSITIONS */
-        .view-section {
-            opacity: 0;
-            transition: opacity 0.25s ease-in-out;
-            padding-bottom: calc(env(safe-area-inset-bottom) + 2rem);
-            overscroll-behavior-y: contain;
-        }
-        .view-section.active-view {
-            opacity: 1;
-        }
-
+        .view-section { opacity: 0; transition: opacity 0.25s ease-in-out; padding-bottom: calc(env(safe-area-inset-bottom) + 2rem); overscroll-behavior-y: contain; }
+        .view-section.active-view { opacity: 1; }
         .faq-answer { display: none; }
         .faq-answer.active { display: block; animation: slideUp 0.3s ease-out forwards; }
         .faq-icon { transition: transform 0.3s ease; }
@@ -132,13 +99,11 @@
         .quote-mark.start { top: 0; left: 0; }
         .quote-mark.end { bottom: 0; right: 0; transform: rotate(180deg); }
         
-        /* MENU */
         .side-menu-open #side-menu-backdrop { display: block; opacity: 1; }
         .side-menu-open #side-menu { transform: translateX(0); }
         .menu-link { transition: color 0.3s ease; }
         .menu-link.active { color: #d4af37; } 
 
-        /* SWIPE TO DELETE STYLES */
         .swipe-container { position: relative; overflow: hidden; border-radius: 0.75rem; margin-bottom: 0.75rem; }
         .swipe-item { transition: transform 0.2s ease-out; position: relative; z-index: 10; background: rgba(15, 23, 42, 0.9); touch-action: pan-y; }
         .delete-action { position: absolute; right: 0; top: 0; bottom: 0; width: 80px; display: flex; align-items: center; justify-content: center; z-index: 0; }
@@ -147,6 +112,24 @@
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%; background: #d4af37; cursor: pointer; margin-top: -8px; box-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #334155; border-radius: 2px; }
         .shake-error { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; border-color: #ef4444 !important; color: #ef4444 !important; }
+
+        /* BODY MAP STYLES */
+        .body-grid-overlay {
+            background-image: linear-gradient(rgba(212, 175, 55, 0.2) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(212, 175, 55, 0.2) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+        }
+        .body-marker {
+            position: absolute;
+            background: rgba(212, 175, 55, 0.8);
+            border: 1px solid #fff;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.6);
+            pointer-events: none;
+            z-index: 20;
+        }
     </style>
 </head>
 <body class="selection:bg-gold-500 selection:text-white" ontouchstart="handleGlobalTouchStart(event)" ontouchmove="handleGlobalTouchMove(event)" ontouchend="handleGlobalTouchEnd(event)">
@@ -154,19 +137,15 @@
     <div id="side-menu-backdrop" onclick="toggleMenu()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90] hidden opacity-0 transition-opacity duration-[1000ms]"></div>
 
     <aside id="side-menu" class="fixed top-0 bottom-0 right-0 w-3/4 max-w-xs bg-slate-900/95 backdrop-blur-xl border-l border-slate-800 z-[100] transform translate-x-full transition-transform duration-[1000ms] ease-out flex flex-col shadow-2xl pt-safe pb-safe">
-        
         <div class="px-6 pb-6 border-b border-slate-800 flex flex-col relative" style="padding-top: env(safe-area-inset-top);">
             <button onclick="toggleMenu()" class="absolute top-0 right-6 text-slate-400 hover:text-white transition" style="margin-top: env(safe-area-inset-top);"><i data-lucide="x" class="w-6 h-6"></i></button>
-            
             <div class="mt-4 mb-2">
                 <h2 class="text-xl font-serif italic text-gold-500 tracking-wide">The Pathway</h2>
                 <p class="text-[10px] text-slate-500 uppercase tracking-[0.2em] mt-1">Mechanism of Surrender</p>
             </div>
-
             <div class="mt-6 pt-6 border-t border-slate-800/50" id="auth-container">
                 <div id="logged-out-view">
                     <button onclick="login()" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl transition font-medium flex items-center justify-center gap-3 shadow-lg border border-slate-700">
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
                         Sign In
                     </button>
                 </div>
@@ -187,13 +166,14 @@
             <button onclick="switchTab('guide')" id="menu-guide" class="menu-link w-full text-left py-3 px-2 text-lg font-light text-slate-300 hover:text-white transition flex items-center gap-4 active"><i data-lucide="book" class="w-5 h-5 opacity-70"></i> Guide</button>
             <button onclick="switchTab('process')" id="menu-process" class="menu-link w-full text-left py-3 px-2 text-lg font-light text-slate-300 hover:text-white transition flex items-center gap-4"><i data-lucide="layers" class="w-5 h-5 opacity-70"></i> Work</button>
             <button onclick="switchTab('timer')" id="menu-timer" class="menu-link w-full text-left py-3 px-2 text-lg font-light text-slate-300 hover:text-white transition flex items-center gap-4"><i data-lucide="clock" class="w-5 h-5 opacity-70"></i> Timer</button>
-            <button onclick="switchTab('charts')" id="menu-charts" class="menu-link w-full text-left py-3 px-2 text-lg font-light text-slate-300 hover:text-white transition flex items-center gap-4"><i data-lucide="bar-chart-2" class="w-5 h-5 opacity-70"></i> Charts</button>
             <button onclick="switchTab('journal')" id="menu-journal" class="menu-link w-full text-left py-3 px-2 text-lg font-light text-slate-300 hover:text-white transition flex items-center gap-4"><i data-lucide="archive" class="w-5 h-5 opacity-70"></i> Log</button>
+            <!-- New Insights Tab, Charts removed from sidebar -->
+            <button onclick="switchTab('insights')" id="menu-insights" class="menu-link w-full text-left py-3 px-2 text-lg font-light text-slate-300 hover:text-white transition flex items-center gap-4"><i data-lucide="layout-grid" class="w-5 h-5 opacity-70"></i> Insights</button>
             <button onclick="switchTab('qa')" id="menu-qa" class="menu-link w-full text-left py-3 px-2 text-lg font-light text-slate-300 hover:text-white transition flex items-center gap-4"><i data-lucide="help-circle" class="w-5 h-5 opacity-70"></i> Q&A</button>
         </nav>
 
         <div class="px-6 pt-6 pb-4 text-center border-t border-slate-800/50 mt-auto">
-            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 8.9.5</p>
+            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 9.0.0</p>
         </div>
     </aside>
 
@@ -279,7 +259,8 @@
                     <h2 class="text-3xl font-light mb-2 text-white">Released</h2>
                     <p class="text-slate-300 mb-8 font-light">You have surrendered a layer of "<span class="current-emotion font-normal text-white"></span>".</p>
                     <div class="mb-8"><p class="text-sm text-slate-400 mb-3">Peak Emotion Intensity</p><input type="range" min="1" max="10" value="5" class="w-full" id="process-intensity-slider" oninput="document.getElementById('process-intensity-val').textContent = this.value"><div class="text-center text-gold-500 font-mono mt-2 text-xl" id="process-intensity-val">5</div></div>
-                    <button onclick="saveAndClose()" class="w-full py-4 bg-slate-100 hover:bg-white text-slate-900 font-medium rounded-xl transition btn-primary shadow-lg shadow-white/5">Save to Log</button>
+                    <!-- CHANGED: Now goes to BodyMap -->
+                    <button onclick="transitionToBodyMapFromProcess()" class="w-full py-4 bg-gold-600 hover:bg-gold-500 text-white font-medium rounded-xl transition btn-primary shadow-lg shadow-gold-900/20">Continue to BodyMap</button>
                 </div>
                 <button onclick="resetProcess()" class="absolute top-0 right-0 p-4 text-slate-600 hover:text-slate-400 hidden" id="process-reset-btn"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
@@ -317,8 +298,55 @@
             </div>
         </section>
 
+        <!-- NEW INSIGHTS VIEW -->
+        <section id="view-insights" class="view-section hidden h-full overflow-y-auto p-4">
+            <h2 class="text-2xl font-light text-white mb-6">Insights</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <!-- Charts Feature -->
+                <button onclick="openCharts()" class="glass-panel rounded-2xl p-6 aspect-square flex flex-col items-center justify-center text-center gap-3 hover:bg-slate-800/80 transition group relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gold-500/5 opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                    <div class="w-12 h-12 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-gold-500 group-hover:scale-110 transition duration-300">
+                        <i data-lucide="bar-chart-2" class="w-6 h-6"></i>
+                    </div>
+                    <span class="text-sm font-medium text-slate-200">Charts</span>
+                </button>
+
+                <!-- Emotional Heatmap (Future) -->
+                <button class="glass-panel rounded-2xl p-6 aspect-square flex flex-col items-center justify-center text-center gap-3 opacity-60 cursor-not-allowed relative overflow-hidden">
+                    <div class="w-12 h-12 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-slate-500">
+                        <i data-lucide="thermometer" class="w-6 h-6"></i>
+                    </div>
+                    <span class="text-sm font-medium text-slate-500">Heatmap</span>
+                    <span class="absolute top-3 right-3 text-[9px] uppercase tracking-wider text-slate-600 border border-slate-700 px-1 rounded">Soon</span>
+                </button>
+
+                <!-- Mechanism Coach (Future) -->
+                <button class="glass-panel rounded-2xl p-6 aspect-square flex flex-col items-center justify-center text-center gap-3 opacity-60 cursor-not-allowed relative overflow-hidden">
+                    <div class="w-12 h-12 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-slate-500">
+                        <i data-lucide="bot" class="w-6 h-6"></i>
+                    </div>
+                    <span class="text-sm font-medium text-slate-500">Coach</span>
+                    <span class="absolute top-3 right-3 text-[9px] uppercase tracking-wider text-slate-600 border border-slate-700 px-1 rounded">Soon</span>
+                </button>
+
+                <!-- Streaks (Future) -->
+                <button class="glass-panel rounded-2xl p-6 aspect-square flex flex-col items-center justify-center text-center gap-3 opacity-60 cursor-not-allowed relative overflow-hidden">
+                    <div class="w-12 h-12 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-slate-500">
+                        <i data-lucide="flame" class="w-6 h-6"></i>
+                    </div>
+                    <span class="text-sm font-medium text-slate-500">Streaks</span>
+                    <span class="absolute top-3 right-3 text-[9px] uppercase tracking-wider text-slate-600 border border-slate-700 px-1 rounded">Soon</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- CHARTS VIEW (Now hidden, accessed via Insights) -->
         <section id="view-charts" class="view-section hidden h-full overflow-hidden flex flex-col p-4">
-            <div class="mb-4 flex justify-between items-end"><h2 class="text-2xl font-light text-white">Progress</h2></div>
+            <div class="mb-4 flex justify-between items-center">
+                <button onclick="switchTab('insights')" class="p-2 text-slate-400 hover:text-white transition rounded-full bg-slate-800"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+                <h2 class="text-xl font-light text-white">Progress Charts</h2>
+                <div class="w-9"></div>
+            </div>
             <div class="mb-6">
                 <label class="text-xs text-slate-500 uppercase tracking-wider mb-2 block">Select Emotion</label>
                 <button onclick="toggleModal('emotion-picker')" id="chart-emotion-btn" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-white flex justify-between items-center hover:border-gold-500 transition">
@@ -328,6 +356,29 @@
             <div class="flex-1 min-h-[300px] relative">
                 <canvas id="progressChart"></canvas>
                 <div id="chart-placeholder" class="absolute inset-0 flex items-center justify-center text-slate-600 text-sm">Select an emotion to view progress</div>
+            </div>
+        </section>
+
+        <!-- NEW BODYMAP VIEW -->
+        <section id="view-bodymap" class="view-section hidden h-full overflow-hidden flex flex-col p-4 relative">
+             <div class="flex justify-between items-center mb-2 z-30">
+                <h2 class="text-xl font-light text-white">Somatic Map</h2>
+                <button onclick="finalizeSession()" class="text-xs bg-gold-600 hover:bg-gold-500 text-white px-3 py-1.5 rounded-lg transition font-medium">Save Session</button>
+            </div>
+            <p class="text-xs text-slate-400 text-center mb-4 z-30">Tap where you felt the sensation.</p>
+            
+            <div class="flex-1 relative flex items-center justify-center" id="bodymap-container">
+                <!-- SVG Silhouette -->
+                <svg viewBox="0 0 300 600" class="h-full w-auto opacity-80" id="body-silhouette" onclick="handleBodyTap(event)">
+                    <!-- Simple Human Silhouette Path -->
+                    <path d="M150,50 C130,50 115,65 115,85 C115,95 120,105 128,112 L110,125 C90,135 80,160 85,180 L70,250 C65,270 80,290 100,290 L110,290 L110,400 L90,550 C88,570 100,585 120,585 L145,585 L148,450 L152,450 L155,585 L180,585 C200,585 212,570 210,550 L190,400 L190,290 L200,290 C220,290 235,270 230,250 L215,180 C220,160 210,135 190,125 L172,112 C180,105 185,95 185,85 C185,65 170,50 150,50 Z" fill="#1e293b" stroke="#d4af37" stroke-width="2"/>
+                </svg>
+
+                <!-- Grid Overlay (Hidden by default) -->
+                <div id="grid-overlay" class="hidden absolute inset-0 body-grid-overlay z-10" onclick="handleGridTap(event)"></div>
+
+                <!-- Markers Container -->
+                <div id="markers-container" class="absolute inset-0 pointer-events-none w-full h-full"></div>
             </div>
         </section>
 
@@ -342,7 +393,7 @@
         </section>
     </main>
 
-    <!-- Emotion Picker (Removed animate-fade-in for manual control) -->
+    <!-- Emotion Picker -->
     <div id="emotion-picker" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] hidden flex-col justify-end" onclick="if(event.target === this) toggleModal('emotion-picker')">
         <div class="bg-slate-900 border-t border-slate-700 rounded-t-3xl w-full max-w-md mx-auto max-h-[70vh] flex flex-col shadow-2xl">
             <div class="flex justify-between items-center p-6 border-b border-slate-800">
@@ -350,6 +401,39 @@
                 <button onclick="toggleModal('emotion-picker')" class="text-slate-500"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <div class="overflow-y-auto p-2" id="emotion-list-container"></div>
+        </div>
+    </div>
+
+    <!-- Sensation Picker Modal -->
+    <div id="sensation-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[80] hidden items-end sm:items-center justify-center p-4 animate-fade-in" onclick="if(event.target === this) cancelBodyPoint()">
+        <div class="bg-slate-900 border border-slate-700 p-6 rounded-2xl max-w-sm w-full shadow-2xl mb-safe sm:mb-0">
+            <div class="flex justify-between items-center mb-4"><h3 class="text-lg text-white font-medium">Describe Sensation</h3><button onclick="cancelBodyPoint()" class="text-slate-500"><i data-lucide="x" class="w-5 h-5"></i></button></div>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs text-slate-500 uppercase tracking-wider mb-2 block">Type</label>
+                    <select id="sensation-type" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:border-gold-500 outline-none">
+                        <option value="Tightness">Tightness</option>
+                        <option value="Heat">Heat</option>
+                        <option value="Pressure">Pressure</option>
+                        <option value="Heaviness">Heaviness</option>
+                        <option value="Vibration">Vibration</option>
+                        <option value="Burning">Burning</option>
+                        <option value="Numbness">Numbness</option>
+                        <option value="Pins & Needles">Pins & Needles</option>
+                        <option value="Ache">Dull Ache</option>
+                        <option value="Sharp">Sharp Pain</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-xs text-slate-500 uppercase tracking-wider mb-2 block">Intensity (1-10)</label>
+                    <div class="flex items-center gap-3">
+                        <span class="text-xs text-slate-500">1</span>
+                        <input type="range" min="1" max="10" value="5" class="flex-1" id="sensation-intensity" oninput="document.getElementById('sens-int-val').textContent = this.value">
+                        <span class="text-lg font-mono text-gold-500 w-6 text-center" id="sens-int-val">5</span>
+                    </div>
+                </div>
+                <button onclick="confirmBodyPoint()" class="w-full py-3 bg-gold-600 hover:bg-gold-500 text-white rounded-xl transition font-medium mt-2">Add Spot</button>
+            </div>
         </div>
     </div>
 
@@ -364,7 +448,8 @@
                 <div class="text-center text-gold-500 font-mono mt-2 text-xl" id="timer-intensity-val">5</div>
             </div>
             <div class="space-y-3">
-                <button onclick="saveTimerSession()" class="w-full py-3 bg-gold-600 hover:bg-gold-500 text-white rounded-xl transition font-medium">Add to Log</button>
+                <!-- CHANGED: Now goes to BodyMap -->
+                <button onclick="transitionToBodyMapFromTimer()" class="w-full py-3 bg-gold-600 hover:bg-gold-500 text-white rounded-xl transition font-medium">Continue to BodyMap</button>
                 <button onclick="closeCompleteModal()" class="w-full py-3 border border-slate-700 text-slate-400 hover:text-white rounded-xl transition">Discard</button>
             </div>
         </div>
@@ -402,6 +487,11 @@
         var currentSelectedEmotion = "";
         var currentTimerSessionLength = 600;
         var globalLogData = [];
+        
+        // BODY MAP VARS
+        var pendingSessionData = null; // Stores data before final save
+        var currentBodyPoints = []; // Stores points for current session
+        var pendingPoint = null; // Temp store for x,y while selecting sensation
 
         // --- DATA ---
         const INTRO_QUOTES = [
@@ -419,137 +509,7 @@
             { q: "What you resist, persists.", a: "David R. Hawkins" },
             { q: "The energy of the suppressed feeling is the cause of the thought.", a: "David R. Hawkins" },
             { q: "We are all doing the best we can with what we have at the moment.", a: "David R. Hawkins" },
-            { q: "There is no 'out there'. It is all 'in here'.", a: "David R. Hawkins" },
-            { q: "Love promotes healing. When we hold it for others, we are healing ourselves.", a: "David R. Hawkins" },
-            { q: "The only thing that stands between you and God is a thought.", a: "David R. Hawkins" },
-            { q: "Desire is the energy of 'I want'. Surrender is the energy of 'I have'.", a: "David R. Hawkins" },
-            { q: "Humility is the doorway to the truth.", a: "David R. Hawkins" },
-            { q: "We get what we want when we stop insisting on it.", a: "David R. Hawkins" },
-            { q: "The ego is not the real you; it is the self-image you have of yourself.", a: "David R. Hawkins" },
-            { q: "The world is merely a mirror of our own inner state.", a: "David R. Hawkins" },
-            { q: "Spiritual progress is not an acquisition, but a removal of obstacles.", a: "David R. Hawkins" },
-            { q: "Forgiveness is the key to freedom.", a: "David R. Hawkins" },
-            { q: "To change the world, change yourself.", a: "David R. Hawkins" },
-            { q: "Acceptance is the first step toward transcendence.", a: "David R. Hawkins" },
-            { q: "The mind is a mechanism for survival; the heart is a mechanism for transcendence.", a: "David R. Hawkins" },
-            { q: "We are not the victims of the world we see; we are the victims of the way we see it.", a: "David R. Hawkins" },
-            { q: "When we let go of the negative, the positive appears by itself.", a: "David R. Hawkins" },
-            { q: "True power is within; force is without.", a: "David R. Hawkins" },
-            { q: "The presence of God is available at all times, in all places.", a: "David R. Hawkins" },
-            { q: "Letting go is the path to inner peace.", a: "David R. Hawkins" },
-            { q: "Your life is a gift; how you live it is your gift to the world.", a: "David R. Hawkins" },
-            { q: "The only way to heal is to let go of the past.", a: "David R. Hawkins" },
-            { q: "Peace comes when we surrender our need to control.", a: "David R. Hawkins" },
-            { q: "Joy is the natural result of a heart that is open.", a: "David R. Hawkins" },
-            { q: "Wisdom is the result of letting go of ignorance.", a: "David R. Hawkins" },
-            { q: "The truth is self-evident to those who are open to it.", a: "David R. Hawkins" },
-            { q: "Compassion is the highest form of love.", a: "David R. Hawkins" },
-            { q: "Every moment is an opportunity to let go.", a: "David R. Hawkins" },
-            { q: "The past is a memory; the future is a fantasy; only the present is real.", a: "David R. Hawkins" },
-            { q: "Silence is the language of the soul.", a: "David R. Hawkins" },
-            { q: "Faith is the courage to let go of the known.", a: "David R. Hawkins" },
-            { q: "Grace is the unearned favor of the universe.", a: "David R. Hawkins" },
-            { q: "Happiness is a choice, not a destination.", a: "David R. Hawkins" },
-            { q: "The only limits we have are the ones we place on ourselves.", a: "David R. Hawkins" },
-            { q: "To let go is to trust.", a: "David R. Hawkins" },
-            { q: "Love is the ultimate healer.", a: "David R. Hawkins" },
-            { q: "Peace is not the absence of conflict, but the presence of love.", a: "David R. Hawkins" },
-            { q: "The journey to the self is the only journey worth taking.", a: "David R. Hawkins" },
-            { q: "He who has a why to live can bear almost any how.", a: "Friedrich Nietzsche" },
-            { q: "What disturbs men's minds is not events but their judgments on events.", a: "Epictetus" },
-            { q: "We suffer more often in imagination than in reality.", a: "Seneca" },
-            { q: "The curious paradox is that when I accept myself just as I am, then I can change.", a: "Carl Rogers" },
-            { q: "Until you make the unconscious conscious, it will direct your life and you will call it fate.", a: "Carl Jung" },
-            { q: "Your vision will become clear only when you can look into your own heart.", a: "Carl Jung" },
-            { q: "Everything that irritates us about others can lead us to an understanding of ourselves.", a: "Carl Jung" },
-            { q: "The privilege of a lifetime is to become who you truly are.", a: "Carl Jung" },
-            { q: "The only way out is through.", a: "Robert Frost" },
-            { q: "Pain is inevitable. Suffering is optional.", a: "Haruki Murakami" },
-            { q: "The unexamined life is not worth living.", a: "Socrates" },
-            { q: "Knowing yourself is the beginning of all wisdom.", a: "Aristotle" },
-            { q: "It is not what happens to you, but how you react to it that matters.", a: "Epictetus" },
-            { q: "Happiness depends upon ourselves.", a: "Aristotle" },
-            { q: "The mind is everything. What you think you become.", a: "Buddha" },
-            { q: "Peace comes from within. Do not seek it without.", a: "Buddha" },
-            { q: "Three things cannot be long hidden: the sun, the moon, and the truth.", a: "Buddha" },
-            { q: "You will not be punished for your anger, you will be punished by your anger.", a: "Buddha" },
-            { q: "Do not dwell in the past, do not dream of the future, concentrate the mind on the present moment.", a: "Buddha" },
-            { q: "The only true wisdom is in knowing you know nothing.", a: "Socrates" },
-            { q: "Be the change that you wish to see in the world.", a: "Mahatma Gandhi" },
-            { q: "An eye for an eye only ends up making the whole world blind.", a: "Mahatma Gandhi" },
-            { q: "Live as if you were to die tomorrow. Learn as if you were to live forever.", a: "Mahatma Gandhi" },
-            { q: "Happiness is when what you think, what you say, and what you do are in harmony.", a: "Mahatma Gandhi" },
-            { q: "The weak can never forgive. Forgiveness is the attribute of the strong.", a: "Mahatma Gandhi" },
-            { q: "Freedom is not worth having if it does not include the freedom to make mistakes.", a: "Mahatma Gandhi" },
-            { q: "To accept ourselves as we are means to value our imperfections as much as our perfections.", a: "Sandra Bierig" },
-            { q: "Self-acceptance is my refusal to be in an adversarial relationship with myself.", a: "Nathaniel Branden" },
-            { q: "The worst loneliness is to not be comfortable with yourself.", a: "Mark Twain" },
-            { q: "You yourself, as much as anybody in the entire universe, deserve your love and affection.", a: "Buddha" },
-            { q: "To love oneself is the beginning of a lifelong romance.", a: "Oscar Wilde" },
-            { q: "Be yourself; everyone else is already taken.", a: "Oscar Wilde" },
-            { q: "It takes courage to grow up and become who you really are.", a: "E.E. Cummings" },
-            { q: "To find yourself, think for yourself.", a: "Socrates" },
-            { q: "The more you know yourself, the more you forgive yourself.", a: "Confucius" },
-            { q: "Respect yourself and others will respect you.", a: "Confucius" },
-            { q: "When I let go of what I am, I become what I might be.", a: "Lao Tzu" },
-            { q: "Nature does not hurry, yet everything is accomplished.", a: "Lao Tzu" },
-            { q: "He who conquers others is strong; he who conquers himself is mighty.", a: "Lao Tzu" },
-            { q: "At the center of your being you have the answer; you know who you are and you know what you want.", a: "Lao Tzu" },
-            { q: "Simplicity is the ultimate sophistication.", a: "Leonardo da Vinci" },
-            { q: "Knowing others is intelligence; knowing yourself is true wisdom.", a: "Lao Tzu" },
-            { q: "The journey of a thousand miles begins with one step.", a: "Lao Tzu" },
-            { q: "Act without expectation.", a: "Lao Tzu" },
-            { q: "Be content with what you have; rejoice in the way things are.", a: "Lao Tzu" },
-            { q: "When you realize there is nothing lacking, the whole world belongs to you.", a: "Lao Tzu" },
-            { q: "In dwelling, live close to the ground. In thinking, keep to the simple.", a: "Lao Tzu" },
-            { q: "Manifest plainness, embrace simplicity, reduce selfishness, have few desires.", a: "Lao Tzu" },
-            { q: "I have just three things to teach: simplicity, patience, compassion. These three are your greatest treasures.", a: "Lao Tzu" },
-            { q: "The softest things in the world overcome the hardest things in the world.", a: "Lao Tzu" },
-            { q: "To the mind that is still, the whole universe surrenders.", a: "Lao Tzu" },
-            { q: "If you realize that all things change, there is nothing you will try to hold on to.", a: "Lao Tzu" },
-            { q: "Life is a series of natural and spontaneous changes. Don't resist them.", a: "Lao Tzu" },
-            { q: "Those who know do not speak. Those who speak do not know.", a: "Lao Tzu" },
-            { q: "The best fighter is never angry.", a: "Lao Tzu" },
-            { q: "Kindness in words creates confidence. Kindness in thinking creates profoundness. Kindness in giving creates love.", a: "Lao Tzu" },
-            { q: "Being deeply loved by someone gives you strength, while loving someone deeply gives you courage.", a: "Lao Tzu" },
-            { q: "A good traveler has no fixed plans and is not intent on arriving.", a: "Lao Tzu" },
-            { q: "Do the difficult things while they are easy and do the great things while they are small.", a: "Lao Tzu" },
-            { q: "Great acts are made up of small deeds.", a: "Lao Tzu" },
-            { q: "The wise man does not lay up his own treasures.", a: "Lao Tzu" },
-            { q: "He who is contented is rich.", a: "Lao Tzu" },
-            { q: "The power of intuitive understanding will protect you from harm until the end of your days.", a: "Lao Tzu" },
-            { q: "Respond to anger with virtue.", a: "Lao Tzu" },
-            { q: "Treat those who are good with goodness, and also treat those who are not good with goodness.", a: "Lao Tzu" },
-            { q: "Stop thinking, and end your problems.", a: "Lao Tzu" },
-            { q: "If you correct your mind, the rest of your life will fall into place.", a: "Lao Tzu" },
-            { q: "The flame that burns Twice as bright burns half as long.", a: "Lao Tzu" },
-            { q: "To know that you do not know is the best. To think you know when you do not is a disease.", a: "Lao Tzu" },
-            { q: "When the student is ready the teacher will appear.", a: "Lao Tzu" },
-            { q: "Mastering others is strength. Mastering yourself is true power.", a: "Lao Tzu" },
-            { q: "Silence is a source of great strength.", a: "Lao Tzu" },
-            { q: "Care about what other people think and you will always be their prisoner.", a: "Lao Tzu" },
-            { q: "If you are depressed you are living in the past. If you are anxious you are living in the future. If you are at peace you are living in the present.", a: "Lao Tzu" },
-            { q: "The truth is not always beautiful, nor beautiful words the truth.", a: "Lao Tzu" },
-            { q: "Hope is the only thing stronger than fear.", a: "Unknown" },
-            { q: "This too shall pass.", a: "Persian Adage" },
-            { q: "One day at a time.", a: "Unknown" },
-            { q: "Let go and let God.", a: "Unknown" },
-            { q: "Breathe.", a: "Unknown" },
-            { q: "Trust the process.", a: "Unknown" },
-            { q: "You are enough.", a: "Unknown" },
-            { q: "Be here now.", a: "Ram Dass" },
-            { q: "We're all just walking each other home.", a: "Ram Dass" },
-            { q: "The quieter you become, the more you can hear.", a: "Ram Dass" },
-            { q: "I am not this body. I am in this body.", a: "Ram Dass" },
-            { q: "Suffering is part of our training program for becoming wise.", a: "Ram Dass" },
-            { q: "As soon as you give it up, you can have it all.", a: "Ram Dass" },
-            { q: "The most important aspect of love is not in giving or the receiving: it's in the being.", a: "Ram Dass" },
-            { q: "Your problem is you're too busy holding onto your unworthiness.", a: "Ram Dass" },
-            { q: "It is important to expect nothing, to take every experience, including the negative ones, as merely steps on the path, and to proceed.", a: "Ram Dass" },
-            { q: "Treat everyone you meet like God in drag.", a: "Ram Dass" },
-            { q: "Information is just bits of data. Knowledge is putting them together. Wisdom is transcending them.", a: "Ram Dass" },
-            { q: "The spiritual journey is individual, highly personal. It can't be organized or regulated.", a: "Ram Dass" },
-            { q: "Everything changes once we identify with being the witness to the story, instead of the actor in it.", a: "Ram Dass" }
+            { q: "There is no 'out there'. It is all 'in here'.", a: "David R. Hawkins" }
         ];
         const HAWKINS_SCALE = [ { name: "Shame", val: 20 }, { name: "Guilt", val: 30 }, { name: "Apathy", val: 50 }, { name: "Grief", val: 75 }, { name: "Fear", val: 100 }, { name: "Desire", val: 125 }, { name: "Anger", val: 150 }, { name: "Pride", val: 175 }, { name: "Courage", val: 200 }, { name: "Neutrality", val: 250 }, { name: "Willingness", val: 310 }, { name: "Acceptance", val: 350 }, { name: "Reason", val: 400 }, { name: "Love", val: 500 }, { name: "Joy", val: 540 }, { name: "Peace", val: 600 } ];
         const QA_DATA = [ 
@@ -557,25 +517,7 @@
             { category: "Beginner / Skeptic", q: "Is this just suppressing feelings?", a: "No. Suppression is pushing a feeling down to avoid it. Letting go is the opposite: it is allowing the feeling to come up, acknowledging it, and letting the energy escape." }, 
             { category: "Beginner / Skeptic", q: "Why should I ignore my thoughts?", a: "Thoughts are rationalizations created by the mind to explain the presence of a feeling. They are often repetitive. Focusing on the physical sensation cuts the fuel supply to thoughts." }, 
             { category: "Beginner / Skeptic", q: "What if the feeling is too strong?", a: "If overwhelmed, surrender to the fear of the feeling first. Acknowledge you are afraid. Let go of resistance to the fear." }, 
-            { category: "Beginner / Skeptic", q: "Is there scientific proof for this?", a: "Dr. Hawkins' work correlates vibrational states with muscle testing (kinesiology). While the subjective experience is internal, the physiological benefits of stress reduction are well-documented." }, 
-            { category: "Beginner / Skeptic", q: "How is this different from relaxation?", a: "Relaxation often targets the body directly. Letting go targets the emotional energy *causing* the tension. It is a permanent release rather than a temporary respite." }, 
-            { category: "Beginner / Skeptic", q: "Can I surrender to physical pain?", a: "Yes. Much pain is held in place by resistance. If you stop resisting the sensation and just experience it as pure energy, it often shifts or diminishes." }, 
-            { category: "Novice", q: "Nothing seems to be changing in my life?", a: "Letting Go can be subtle or dramatic, both inwardly and outwardly. Often it is others in our life who notice our change before we do. Like shoveling coal from a pile, we're unaware of the amount we've handled because our focus is on what is at hand." }, 
-            { category: "Novice", q: "I feel stuck. Nothing is happening.", a: "You may be 'wanting' it to change. Wanting is resistance. Can you let go of the desire to change it? Can you allow it to just be?" }, 
-            { category: "Novice", q: "Can I do this in public?", a: "Yes. It's internal. Notice the tension, drop resistance, and let it pass through while walking or in a meeting." }, 
-            { category: "Novice", q: "How do I know if I've let go?", a: "You feel lighter, relieved, or clear. Thoughts stop returning, or lack emotional charge." }, 
-            { category: "Novice", q: "Why do I feel worse sometimes?", a: "This is the 'healing crisis.' As you open the doors, suppressed energy rushes up to be released. It feels intense, but it is actually leaving. Stay with it." }, 
-            { category: "Novice", q: "Is crying okay?", a: "Absolutely. Crying is a natural mechanism of release, especially for Grief. Do not suppress the tears; let them flow until they stop on their own." }, 
-            { category: "Adept", q: "Spiritual Pride", a: "Watch out for the ego claiming credit for your progress. 'Look how spiritual I am' is just another feeling (Pride) to be surrendered." }, 
-            { category: "Adept", q: "Running out of things to surrender?", a: "You may reach periods of peace, but deeper layers often emerge later. Remain vigilant for subtle attachments to comfort or even to the practice itself." }, 
-            { category: "Adept", q: "Handling major crises", a: "In a crisis, the volume of emotion is high. This is actually a golden opportunity. A massive amount of karma can be discharged quickly if you can stay present with the raw energy without resisting." }, 
-            { category: "Adept", q: "Attachment to outcomes", a: "Surrender doesn't mean you don't act; it means you surrender your attachment to the result. You do your best and let go of the rest." }, 
-            { category: "Adept", q: "The dark night of the soul?", a: "This often occurs before a major transition. It feels like abandonment or total despair. It is the ego facing its own demise. Surrender to the despair itself." }, 
-            { category: "Pro", q: "The Witness Trap", a: "At high levels, one can become attached to the 'Observer' role to dissociate from subtle pain. Are you witnessing to avoid feeling? Surrender the position of the witness to become the experience itself, then surrender that." }, 
-            { category: "Pro", q: "Somatic Holding Patterns", a: "When the mind is silent but the body remains tense, you are hitting somatic repression. The energy is no longer generating thoughts but is trapped in the fascia. Drop resistance to the physical tightness itself, without labeling it as 'tension'." }, 
-            { category: "Pro", q: "Surrendering Positive States?", a: "Yes. When you reach joy or ecstasy, surrender the attachment to it. The fear that it will end is 'Fear'. The desire to keep it is 'Desire'. Letting go of the 'high' allows you to settle into the permanent bedrock of Peace." }, 
-            { category: "Pro", q: "Subtle Apathy vs Peace", a: "Apathy feels blank, heavy, and 'I don't care'. Peace feels alive, light, and 'I have everything'. If the silence feels dead, it is Apathy. Look for the subtle resistance to being alive." },
-            { category: "Pro", q: "The 'I' Thought", a: "Eventually, you notice that for every feeling, there is a subtle 'me' feeling it. This 'I-ness' is the root. Instead of surrendering the object (the feeling), surrender the subject (the 'I'). Ask 'Who is feeling this?' and surrender the answer." }
+            { category: "Novice", q: "Nothing seems to be changing in my life?", a: "Letting Go can be subtle or dramatic, both inwardly and outwardly. Often it is others in our life who notice our change before we do. Like shoveling coal from a pile, we're unaware of the amount we've handled because our focus is on what is at hand." }
         ];
 
         // STATE
@@ -634,92 +576,44 @@
             if (!currentSwipeItem) return;
             const touchX = e.touches[0].clientX;
             const diff = touchX - touchStartX;
-            
-            // Determine current state based on style not computed
-            // If it was already open, we start from -80
             const isOpen = el.dataset.isOpen === 'true';
-            
             let newTranslate = 0;
-            
-            if (!isOpen) {
-                // Closed: only drag left (negative)
-                if (diff < 0) newTranslate = Math.max(diff, -80);
-            } else {
-                // Open: drag right (positive) to close, or slightly more left
-                newTranslate = -80 + diff;
-                // Clamp between -80 and 0
-                newTranslate = Math.max(Math.min(newTranslate, 0), -80);
-            }
-            
+            if (!isOpen) { if (diff < 0) newTranslate = Math.max(diff, -80); } 
+            else { newTranslate = -80 + diff; newTranslate = Math.max(Math.min(newTranslate, 0), -80); }
             el.style.transform = `translateX(${newTranslate}px)`;
         };
 
         window.handleTouchEnd = (e, el) => {
             if (!currentSwipeItem) return;
             el.style.transition = 'transform 0.2s ease-out';
-            
-            // Get final position from style
             const styleTransform = el.style.transform;
             const match = /translateX\(([^p]+)px\)/.exec(styleTransform);
             const currentTranslate = match ? parseFloat(match[1]) : 0;
-            
-            if (currentTranslate < -40) {
-                el.style.transform = 'translateX(-80px)';
-                el.dataset.isOpen = 'true';
-            } else {
-                el.style.transform = 'translateX(0)';
-                el.dataset.isOpen = 'false';
-            }
-            
+            if (currentTranslate < -40) { el.style.transform = 'translateX(-80px)'; el.dataset.isOpen = 'true'; } 
+            else { el.style.transform = 'translateX(0)'; el.dataset.isOpen = 'false'; }
             currentSwipeItem = null;
         };
 
         // EDGE SWIPE LOGIC (Navigation)
-        window.handleGlobalTouchStart = (e) => {
-            globalTouchStartX = e.touches[0].clientX;
+        window.handleGlobalTouchStart = (e) => { globalTouchStartX = e.touches[0].clientX; };
+        window.handleGlobalTouchMove = (e) => { 
+             const x = e.touches[0].clientX;
+             const isMenuOpen = document.body.classList.contains('side-menu-open');
+             if (isMenuOpen && (x - globalTouchStartX) > 0) {} // Swallow logic if needed
         };
-
-        window.handleGlobalTouchMove = (e) => {
-            const x = e.touches[0].clientX;
-            const width = window.innerWidth;
-            const diff = x - globalTouchStartX;
-            const isMenuOpen = document.body.classList.contains('side-menu-open');
-
-            // Swipe Right-to-Left from Edge to Open Menu
-            if (!isMenuOpen && globalTouchStartX > width - 40 && diff < 0) {
-               // Optional: Add visual drag logic here if desired, for now we trigger on end
-            }
-            
-            // Swipe Left-to-Right on Menu to Close
-            if (isMenuOpen && diff > 0) {
-                // Logic handles at end
-            }
-        };
-
         window.handleGlobalTouchEnd = (e) => {
             const diff = e.changedTouches[0].clientX - globalTouchStartX;
             const width = window.innerWidth;
             const isMenuOpen = document.body.classList.contains('side-menu-open');
-
-            // Swipe Left (Open Menu)
-            if (!isMenuOpen && globalTouchStartX > width - 50 && diff < -50) {
-                document.body.classList.add('side-menu-open');
-            }
-            // Swipe Right (Close Menu)
-            else if (isMenuOpen && diff > 50) {
-                document.body.classList.remove('side-menu-open');
-            }
+            if (!isMenuOpen && globalTouchStartX > width - 50 && diff < -50) { document.body.classList.add('side-menu-open'); }
+            else if (isMenuOpen && diff > 50) { document.body.classList.remove('side-menu-open'); }
         };
 
         // ROBUST AUDIO ENGINE REWRITE
         function unlockAudio() {
             const AudioContext = window.AudioContext || window.webkitAudioContext;
-            if (!audioContext) {
-                audioContext = new AudioContext();
-            }
-            if (audioContext.state === 'suspended') {
-                audioContext.resume().then(() => console.log("Audio Context Resumed"));
-            }
+            if (!audioContext) { audioContext = new AudioContext(); }
+            if (audioContext.state === 'suspended') { audioContext.resume().then(() => console.log("Audio Context Resumed")); }
         }
 
         function createWhiteNoise() {
@@ -727,32 +621,22 @@
             const bufferSize = audioContext.sampleRate * 2; 
             const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
             const output = buffer.getChannelData(0);
-            for (let i = 0; i < bufferSize; i++) {
-                output[i] = Math.random() * 2 - 1;
-            }
+            for (let i = 0; i < bufferSize; i++) { output[i] = Math.random() * 2 - 1; }
             return buffer;
         }
 
         function playBell() {
             unlockAudio();
-            if(!audioContext || audioContext.state === 'suspended') {
-                unlockAudio();
-                setTimeout(playBell, 100); // Retry shortly
-                return;
-            }
-            
+            if(!audioContext || audioContext.state === 'suspended') { unlockAudio(); setTimeout(playBell, 100); return; }
             const t = audioContext.currentTime;
             const osc = audioContext.createOscillator();
             const gain = audioContext.createGain();
-            
             osc.type = 'sine';
             osc.frequency.setValueAtTime(440, t);
             osc.frequency.exponentialRampToValueAtTime(110, t + 3); 
-            
             gain.gain.setValueAtTime(0, t);
             gain.gain.linearRampToValueAtTime(0.4, t + 0.05);
             gain.gain.exponentialRampToValueAtTime(0.001, t + 4); 
-            
             osc.connect(gain);
             gain.connect(audioContext.destination);
             osc.start(t);
@@ -769,12 +653,7 @@
         function playAmbience(type) {
             stopAmbience(); 
             unlockAudio();
-            if(!audioContext || audioContext.state === 'suspended') {
-                unlockAudio();
-                setTimeout(() => playAmbience(type), 100);
-                return;
-            }
-
+            if(!audioContext || audioContext.state === 'suspended') { unlockAudio(); setTimeout(() => playAmbience(type), 100); return; }
             const t = audioContext.currentTime;
             const gain = audioContext.createGain();
             gain.connect(audioContext.destination);
@@ -784,16 +663,10 @@
                 noiseNode = audioContext.createBufferSource();
                 noiseNode.buffer = buffer;
                 noiseNode.loop = true;
-                
                 const filter = audioContext.createBiquadFilter();
-                filter.type = 'lowpass';
-                filter.frequency.value = 400; 
-                
-                noiseNode.connect(filter);
-                filter.connect(gain);
-                
-                gain.gain.setValueAtTime(0, t);
-                gain.gain.linearRampToValueAtTime(0.15, t + 2); 
+                filter.type = 'lowpass'; filter.frequency.value = 400; 
+                noiseNode.connect(filter); filter.connect(gain);
+                gain.gain.setValueAtTime(0, t); gain.gain.linearRampToValueAtTime(0.15, t + 2); 
                 noiseNode.start(t);
             }
             else if(type === 'wind') { 
@@ -801,98 +674,64 @@
                 noiseNode = audioContext.createBufferSource();
                 noiseNode.buffer = buffer;
                 noiseNode.loop = true;
-                
                 const filter = audioContext.createBiquadFilter();
-                filter.type = 'bandpass';
-                filter.frequency.value = 400;
-                filter.Q.value = 1;
-
+                filter.type = 'bandpass'; filter.frequency.value = 400; filter.Q.value = 1;
                 modOsc = audioContext.createOscillator();
                 modOsc.frequency.value = 0.1; 
                 const modGain = audioContext.createGain();
                 modGain.gain.value = 200;
-                
-                modOsc.connect(modGain);
-                modGain.connect(filter.frequency);
-                
-                noiseNode.connect(filter);
-                filter.connect(gain);
-                
-                gain.gain.setValueAtTime(0, t);
-                gain.gain.linearRampToValueAtTime(0.15, t + 2);
-                noiseNode.start(t);
-                modOsc.start(t);
+                modOsc.connect(modGain); modGain.connect(filter.frequency);
+                noiseNode.connect(filter); filter.connect(gain);
+                gain.gain.setValueAtTime(0, t); gain.gain.linearRampToValueAtTime(0.15, t + 2); 
+                noiseNode.start(t); modOsc.start(t);
             }
             else if(type === 'river') {
                 const buffer = createWhiteNoise();
                 noiseNode = audioContext.createBufferSource();
                 noiseNode.buffer = buffer;
                 noiseNode.loop = true;
-                
                 const filter = audioContext.createBiquadFilter();
-                filter.type = 'lowpass';
-                filter.frequency.value = 250; 
-                
-                noiseNode.connect(filter);
-                filter.connect(gain);
-                
-                gain.gain.setValueAtTime(0, t);
-                gain.gain.linearRampToValueAtTime(0.3, t + 2);
+                filter.type = 'lowpass'; filter.frequency.value = 250; 
+                noiseNode.connect(filter); filter.connect(gain);
+                gain.gain.setValueAtTime(0, t); gain.gain.linearRampToValueAtTime(0.3, t + 2); 
                 noiseNode.start(t);
             }
             else if(type === 'birds') {
-                birdInterval = setInterval(() => {
-                    if(Math.random() > 0.7) playSingleBird();
-                }, 2000);
+                birdInterval = setInterval(() => { if(Math.random() > 0.7) playSingleBird(); }, 2000);
             }
             else if(type === 'chimes') {
-                chimeInterval = setInterval(() => {
-                    if(Math.random() > 0.6) playSingleChime();
-                }, 3000);
+                chimeInterval = setInterval(() => { if(Math.random() > 0.6) playSingleChime(); }, 3000);
                 playSingleChime();
             }
         }
 
         function playSingleBird() {
-            unlockAudio();
-            if(!audioContext) return;
+            unlockAudio(); if(!audioContext) return;
             const osc = audioContext.createOscillator();
             const gain = audioContext.createGain();
-            osc.connect(gain);
-            gain.connect(audioContext.destination);
-            
+            osc.connect(gain); gain.connect(audioContext.destination);
             const t = audioContext.currentTime;
             const freq = 2000 + Math.random() * 1500;
-            
             osc.frequency.setValueAtTime(freq, t);
             osc.frequency.linearRampToValueAtTime(freq + 500, t + 0.1);
-            
             gain.gain.setValueAtTime(0, t);
             gain.gain.linearRampToValueAtTime(0.05, t + 0.05);
             gain.gain.linearRampToValueAtTime(0, t + 0.2);
-            
-            osc.start(t);
-            osc.stop(t + 0.3);
+            osc.start(t); osc.stop(t + 0.3);
         }
 
         function playSingleChime() {
-            unlockAudio();
-            if(!audioContext) return;
+            unlockAudio(); if(!audioContext) return;
             const osc = audioContext.createOscillator();
             const gain = audioContext.createGain();
-            osc.connect(gain);
-            gain.connect(audioContext.destination);
-            
+            osc.connect(gain); gain.connect(audioContext.destination);
             const t = audioContext.currentTime;
-            const freqs = [523.25, 659.25, 783.99, 1046.50]; // C majorish
+            const freqs = [523.25, 659.25, 783.99, 1046.50]; 
             osc.frequency.value = freqs[Math.floor(Math.random() * freqs.length)];
-            
             gain.gain.setValueAtTime(0, t);
             gain.gain.linearRampToValueAtTime(0.05, t + 0.02);
             gain.gain.exponentialRampToValueAtTime(0.001, t + 3);
-            
-            osc.start(t);
-            osc.stop(t + 3.5);
+            osc.start(t); osc.stop(t + 3.5);
         }
 
         // TIMER Logic
@@ -908,13 +747,10 @@
                 if (timerDuration <= 0) timerDuration = defaultDuration;
                 currentTimerSessionLength = timerDuration; isTimerRunning = true; timerEndTime = Date.now() + (timerDuration*1000);
                 lastBellMinute = -1; halfwayBellPlayed = false; 
-                
                 if(currentAmbience !== 'none') playAmbience(currentAmbience);
                 btn.innerHTML = '<i data-lucide="pause" class="w-8 h-8 fill-current"></i>'; bc.classList.add('animate-breathe'); d.disabled = true; updateTimerDisplay();
-                
                 timerInterval = setInterval(() => {
                     const now = Date.now(), rem = Math.ceil((timerEndTime - now)/1000);
-                    
                     if (bellInterval !== 0 && rem > 0) {
                         const elapsed = currentTimerSessionLength - rem;
                         if (bellInterval === 'half') {
@@ -922,12 +758,9 @@
                             if (Math.abs(elapsed - halfWay) < 2 && !halfwayBellPlayed) { playBell(); halfwayBellPlayed = true; }
                         } else {
                             const currentMinute = Math.floor(elapsed / 60);
-                            if (currentMinute > lastBellMinute && currentMinute > 0 && currentMinute % bellInterval === 0) {
-                                lastBellMinute = currentMinute; playBell();
-                            }
+                            if (currentMinute > lastBellMinute && currentMinute > 0 && currentMinute % bellInterval === 0) { lastBellMinute = currentMinute; playBell(); }
                         }
                     }
-                    
                     if (rem <= 0) { timerDuration = 0; isTimerRunning = false; clearInterval(timerInterval); stopAmbience(); playBell(); btn.innerHTML = '<i data-lucide="play" class="w-8 h-8 fill-current ml-1"></i>'; bc.classList.remove('animate-breathe'); bc.style.transform='scale(1)'; d.value="00:00"; d.disabled=false; document.getElementById('complete-modal').classList.remove('hidden'); document.getElementById('complete-modal').classList.add('flex'); } else updateTimerDisplay();
                 }, 1000);
             }
@@ -950,11 +783,7 @@
         function adjustTimer(amt) { 
             unlockAudio(); 
             if(isTimerRunning) return; 
-            if(timerDuration+amt > 0) { 
-                timerDuration+=amt; 
-                defaultDuration=timerDuration; 
-                updateTimerDisplay(); 
-            } 
+            if(timerDuration+amt > 0) { timerDuration+=amt; defaultDuration=timerDuration; updateTimerDisplay(); } 
         }
         
         function resetTimer() { 
@@ -972,49 +801,23 @@
         function toggleModal(id) {
             const el = document.getElementById(id);
             if (!el) return;
-            
             // Specific handling for the Emotion Picker to slide smoothly
             if (id === 'emotion-picker') {
                 const panel = el.firstElementChild;
                 const isHidden = el.classList.contains('hidden');
-                
                 if (isHidden) {
-                    // OPEN
-                    el.classList.remove('hidden');
-                    el.classList.add('flex');
-                    
-                    // Backdrop Fade In
-                    el.classList.remove('animate-fade-out');
-                    el.classList.add('animate-fade-in');
-                    
-                    // Panel Slide Up
-                    panel.classList.remove('animate-slide-down');
-                    panel.classList.add('animate-slide-up');
+                    el.classList.remove('hidden'); el.classList.add('flex');
+                    el.classList.remove('animate-fade-out'); el.classList.add('animate-fade-in');
+                    panel.classList.remove('animate-slide-down'); panel.classList.add('animate-slide-up');
                 } else {
-                    // CLOSE
                     if (pickerCallback) pickerCallback = null;
-                    
-                    // Backdrop Fade Out
-                    el.classList.remove('animate-fade-in');
-                    el.classList.add('animate-fade-out');
-                    
-                    // Panel Slide Down
-                    panel.classList.remove('animate-slide-up');
-                    panel.classList.add('animate-slide-down');
-                    
-                    // Wait for animation to finish before hiding
-                    setTimeout(() => {
-                        if (el.classList.contains('animate-fade-out')) { // Check if still closing
-                            el.classList.add('hidden');
-                            el.classList.remove('flex');
-                        }
-                    }, 280); // Slightly less than 0.3s to prevent flash
+                    el.classList.remove('animate-fade-in'); el.classList.add('animate-fade-out');
+                    panel.classList.remove('animate-slide-up'); panel.classList.add('animate-slide-down');
+                    setTimeout(() => { if (el.classList.contains('animate-fade-out')) { el.classList.add('hidden'); el.classList.remove('flex'); } }, 280);
                 }
                 return;
             }
-            
-            // Default behavior for other modals (Bell, Ambience, etc.)
-            if (id === 'emotion-picker' && !el.classList.contains('hidden')) pickerCallback = null; // Redundant check but safe
+            if (id === 'emotion-picker' && !el.classList.contains('hidden')) pickerCallback = null; 
             el.classList.toggle('hidden');
             el.classList.toggle('flex');
         }
@@ -1023,26 +826,20 @@
             unlockAudio(); bellInterval=val; 
             ['0','1','5','half'].forEach(v => document.getElementById(`bell-check-${v}`).classList.add('hidden')); 
             document.getElementById(`bell-check-${val}`).classList.remove('hidden'); 
-            
-            // Update indicators in both places
             const mainInd = document.getElementById('bell-status');
             const procInd = document.getElementById('process-bell-status');
             if(mainInd) mainInd.classList.toggle('hidden', val===0);
             if(procInd) procInd.classList.toggle('hidden', val===0);
-            
             toggleModal('bell-modal'); 
         }
         function setAmbience(val) { 
             unlockAudio(); currentAmbience=val; 
             ['none','rain','wind','river','birds','chimes'].forEach(v => document.getElementById(`amb-check-${v}`).classList.add('hidden')); 
             document.getElementById(`amb-check-${val}`).classList.remove('hidden'); 
-            
-            // Update indicators in both places
             const mainInd = document.getElementById('ambience-status');
             const procInd = document.getElementById('process-ambience-status');
             if(mainInd) mainInd.classList.toggle('hidden', val==='none');
             if(procInd) procInd.classList.toggle('hidden', val==='none');
-
             if(isTimerRunning || document.getElementById('process-step-4').classList.contains('hidden') === false) playAmbience(val); 
             toggleModal('ambience-modal'); 
         }
@@ -1070,6 +867,11 @@
             } else { if(next) { next.classList.remove('hidden'); next.classList.add('active-view'); } }
         }
 
+        function openCharts() {
+            // Helper to open charts from Insights grid
+            switchTab('charts');
+        }
+
         // BRIDGE FUNCTIONS
         window.saveTimerSession = () => {}; window.saveAndClose = () => {}; window.deleteEntry = () => {}; window.renameEntry = () => {}; window.clearJournal = () => {}; window.loadJournal = () => {};
         window.startProcess = () => { if(!currentSelectedEmotion) { alert("Please select an emotion first."); return; } currentProcessEmotion = currentSelectedEmotion; document.querySelectorAll('.current-emotion').forEach(el=>el.textContent=currentProcessEmotion); processSeconds=0; nextStep(1); document.getElementById('process-reset-btn').classList.remove('hidden'); };
@@ -1079,7 +881,6 @@
             t.classList.remove('hidden'); t.classList.add('animate-fade-in'); 
             if(s===4) {
                 startProcessTimer(); 
-                // Auto-start ambience if selected
                 if(currentAmbience !== 'none') playAmbience(currentAmbience);
             } else stopProcessTimer(); 
             if(s===5) document.getElementById('process-reset-btn').classList.add('hidden'); 
@@ -1088,7 +889,176 @@
         window.stopProcessTimer = () => { if(processInterval) clearInterval(processInterval); };
         window.finishProcess = () => { stopProcessTimer(); stopAmbience(); nextStep(5); };
         window.resetProcess = () => { stopProcessTimer(); stopAmbience(); document.querySelectorAll('.process-step').forEach(e=>e.classList.add('hidden')); document.getElementById('process-step-0').classList.remove('hidden'); document.getElementById('process-reset-btn').classList.add('hidden'); };
-        window.saveAndClose = () => { const int = document.getElementById('process-intensity-slider').value; const rel = JSON.parse(localStorage.getItem('releases') || '[]'); rel.unshift({ emotion: currentProcessEmotion, date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}), time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), duration: window.processSeconds, intensity: int }); localStorage.setItem('releases', JSON.stringify(rel)); resetProcess(); switchTab('journal'); }
+        
+        // --- BODY MAP LOGIC ---
+
+        function handleBodyTap(e) {
+            const rect = e.target.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width;
+            const y = (e.clientY - rect.top) / rect.height;
+            
+            // Simple Region Detection (Approximate)
+            let region = "Body";
+            if (y < 0.15) region = "Head";
+            else if (y < 0.25) region = "Throat/Neck";
+            else if (y < 0.35) { region = (x < 0.3 || x > 0.7) ? "Shoulders" : "Chest"; }
+            else if (y < 0.50) { region = (x < 0.3 || x > 0.7) ? "Arms" : "Solar Plexus/Stomach"; }
+            else if (y < 0.60) region = "Hips/Pelvis";
+            else if (y < 0.85) region = "Legs";
+            else region = "Feet";
+
+            pendingPoint = { x, y, region };
+            
+            // Show grid for precise tap
+            document.getElementById('grid-overlay').classList.remove('hidden');
+        }
+
+        function handleGridTap(e) {
+            if(!pendingPoint) return;
+            const rect = e.target.getBoundingClientRect();
+            // Update to precise grid click
+            pendingPoint.x = (e.clientX - rect.left) / rect.width;
+            pendingPoint.y = (e.clientY - rect.top) / rect.height;
+
+            // Open Sensation Modal
+            toggleModal('sensation-modal');
+        }
+
+        function confirmBodyPoint() {
+            const type = document.getElementById('sensation-type').value;
+            const intensity = document.getElementById('sensation-intensity').value;
+            
+            if(pendingPoint) {
+                currentBodyPoints.push({
+                    x: pendingPoint.x,
+                    y: pendingPoint.y,
+                    region: pendingPoint.region,
+                    sensation: type,
+                    intensity: intensity
+                });
+                renderBodyMarkers();
+            }
+            
+            toggleModal('sensation-modal');
+            document.getElementById('grid-overlay').classList.add('hidden');
+            pendingPoint = null;
+        }
+
+        function cancelBodyPoint() {
+            toggleModal('sensation-modal');
+            document.getElementById('grid-overlay').classList.add('hidden');
+            pendingPoint = null;
+        }
+
+        function renderBodyMarkers() {
+            const container = document.getElementById('markers-container');
+            container.innerHTML = '';
+            currentBodyPoints.forEach(p => {
+                const el = document.createElement('div');
+                el.className = 'body-marker';
+                // Scale size by intensity (10px to 40px)
+                const size = 10 + (p.intensity * 3); 
+                el.style.width = `${size}px`;
+                el.style.height = `${size}px`;
+                el.style.left = `${p.x * 100}%`;
+                el.style.top = `${p.y * 100}%`;
+                container.appendChild(el);
+            });
+        }
+
+        // --- TRANSITIONS TO BODY MAP ---
+
+        window.transitionToBodyMapFromTimer = () => {
+            const intensity = document.getElementById('timer-intensity-slider').value;
+            const emotion = window.currentSelectedEmotion || "Meditation";
+            
+            // Store temp data
+            pendingSessionData = {
+                emotion: emotion,
+                date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}),
+                time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+                duration: window.currentTimerSessionLength,
+                intensity: intensity,
+                timestamp: Date.now()
+            };
+
+            currentBodyPoints = [];
+            renderBodyMarkers();
+            
+            // UI Switch
+            document.getElementById('complete-modal').classList.add('hidden'); 
+            document.getElementById('complete-modal').classList.remove('flex');
+            resetTimer(); // Reset timer UI in bg
+            
+            // Show BodyMap View directly (bypass regular switchTab to keep history clean/modal feel)
+            // But we can use switchTab to make it a distinct step
+            // We need to temporarily un-hide view-bodymap manually or use logic
+            document.querySelectorAll('.view-section').forEach(v => {
+                v.classList.remove('active-view');
+                v.classList.add('hidden');
+            });
+            const bm = document.getElementById('view-bodymap');
+            bm.classList.remove('hidden');
+            setTimeout(() => bm.classList.add('active-view'), 10);
+        };
+
+        window.transitionToBodyMapFromProcess = () => {
+            const intensity = document.getElementById('process-intensity-slider').value;
+            
+            pendingSessionData = {
+                emotion: window.currentProcessEmotion,
+                date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}),
+                time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+                duration: window.processSeconds,
+                intensity: intensity,
+                timestamp: Date.now()
+            };
+
+            currentBodyPoints = [];
+            renderBodyMarkers();
+
+            resetProcess(); // Reset process UI in bg
+
+            // Switch to BodyMap
+            document.querySelectorAll('.view-section').forEach(v => {
+                v.classList.remove('active-view');
+                v.classList.add('hidden');
+            });
+            const bm = document.getElementById('view-bodymap');
+            bm.classList.remove('hidden');
+            setTimeout(() => bm.classList.add('active-view'), 10);
+        };
+
+        // --- FINAL SAVE ---
+
+        window.finalizeSession = async () => {
+            if(!pendingSessionData) { switchTab('journal'); return; }
+            
+            // Add body points to data
+            pendingSessionData.bodyPoints = currentBodyPoints;
+
+            // Save to DB
+            if (isLoggedIn && currentUser) { 
+                try { 
+                    // Need to import/use addDoc here, accessed via global window or module scope?
+                    // Since module script is below, we need a bridge. 
+                    // We'll call a global function defined in the module.
+                    if(window.saveSessionToFirebase) {
+                        await window.saveSessionToFirebase(pendingSessionData);
+                    }
+                } catch (e) { alert("Error saving: " + e.message); } 
+            } else { 
+                const rel = JSON.parse(localStorage.getItem('releases') || '[]'); 
+                rel.unshift(pendingSessionData); 
+                localStorage.setItem('releases', JSON.stringify(rel)); 
+            }
+
+            pendingSessionData = null;
+            currentBodyPoints = [];
+            switchTab('journal');
+        };
+
+
         window.loadChart = (em) => { const ctx = document.getElementById('progressChart'); if(!ctx) return; document.getElementById('chart-placeholder').classList.add('hidden'); let data = globalLogData.filter(r => r.emotion === em && r.intensity).reverse(); if(data.length===0) { if(progressChart) progressChart.destroy(); document.getElementById('chart-placeholder').classList.remove('hidden'); document.getElementById('chart-placeholder').textContent = `No data yet for "${em}"`; return; } const lbl = data.map(x => x.date), val = data.map(x => parseInt(x.intensity)); if(progressChart) progressChart.destroy(); progressChart = new Chart(ctx, { type: 'line', data: { labels: lbl, datasets: [{ label: 'Intensity', data: val, borderColor: '#d4af37', backgroundColor: 'rgba(212, 175, 55, 0.1)', tension: 0.4, fill: true, pointBackgroundColor: '#d4af37' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 10, grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } }, x: { grid: { display: false }, ticks: { color: '#94a3b8' } } }, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#0f172a', borderColor: '#334155', borderWidth: 1 } } } }); };
         window.closeCompleteModal = () => { document.getElementById('complete-modal').classList.add('hidden'); document.getElementById('complete-modal').classList.remove('flex'); resetTimer(); };
     </script>
@@ -1130,25 +1100,31 @@
                     if(uName) uName.textContent = user.displayName || "User";
                     if(uEmail) uEmail.textContent = user.email;
                     startJournalListener(user.uid);
+                    window.currentUser = user; // Export for global usage
+                    window.isLoggedIn = true;
                 } else {
                     isLoggedIn = false; currentUser = null;
                     if(lOut) lOut.classList.remove('hidden');
                     if(lIn) lIn.classList.add('hidden');
                     if(unsubscribeJournal) unsubscribeJournal();
                     renderJournal(); 
+                    window.currentUser = null;
+                    window.isLoggedIn = false;
                 }
             });
         } catch (e) { console.error("Firebase Init Error:", e); }
 
+        // EXPORT FOR GLOBAL SCOPE
+        window.saveSessionToFirebase = async (data) => {
+            if(!auth || !currentUser) return;
+            data.timestamp = serverTimestamp();
+            await addDoc(collection(db, 'users', currentUser.uid, 'logs'), data);
+        };
+
         window.login = function() { 
             if (!auth) return alert("Firebase Error"); 
             signInWithPopup(auth, provider)
-                .then((result) => {
-                    console.log("Logged in successfully via popup");
-                }).catch((error) => {
-                    console.error("Login failed", error);
-                    alert("Sign in failed: " + error.message);
-                });
+                .then((result) => { console.log("Logged in"); }).catch((error) => { alert("Sign in failed: " + error.message); });
         }
         window.logout = function() { if (!auth) return; signOut(auth); }
 
@@ -1162,7 +1138,8 @@
             else {
                 list.innerHTML = logs.map((e, i) => {
                     const idParam = e.id ? `'${e.id}'` : i; 
-                    return `<div class="relative overflow-hidden rounded-xl mb-3 animate-fade-in swipe-container" style="animation-delay: ${i*50}ms"><div class="delete-action bg-red-600 text-white" onclick="deleteEntry(${idParam})"><i data-lucide="trash-2" class="w-5 h-5"></i></div><div class="glass-panel p-5 flex justify-between items-center swipe-item" ontouchstart="handleTouchStart(event, this)" ontouchmove="handleTouchMove(event, this)" ontouchend="handleTouchEnd(event, this)"><div class="flex-1 pr-4" onclick="renameEntry(${idParam}, '${e.emotion}')"><h3 class="text-white font-medium capitalize text-lg truncate">${e.emotion} <i data-lucide="edit-2" class="inline-block w-3 h-3 text-slate-600 ml-1"></i></h3><p class="text-xs text-slate-500 mt-1">${e.date} • ${e.time}</p></div><div class="text-right shrink-0"><div class="text-xs font-mono text-gold-500">${e.duration > 60 ? Math.floor(e.duration/60) + 'm' : e.duration + 's'}</div>${e.intensity ? `<div class="text-[10px] text-slate-500 mt-1">Int: ${e.intensity}</div>` : ''}</div></div></div>`;
+                    const bodyPointsCount = e.bodyPoints ? e.bodyPoints.length : 0;
+                    return `<div class="relative overflow-hidden rounded-xl mb-3 animate-fade-in swipe-container" style="animation-delay: ${i*50}ms"><div class="delete-action bg-red-600 text-white" onclick="deleteEntry(${idParam})"><i data-lucide="trash-2" class="w-5 h-5"></i></div><div class="glass-panel p-5 flex justify-between items-center swipe-item" ontouchstart="handleTouchStart(event, this)" ontouchmove="handleTouchMove(event, this)" ontouchend="handleTouchEnd(event, this)"><div class="flex-1 pr-4" onclick="renameEntry(${idParam}, '${e.emotion}')"><h3 class="text-white font-medium capitalize text-lg truncate">${e.emotion} <i data-lucide="edit-2" class="inline-block w-3 h-3 text-slate-600 ml-1"></i></h3><p class="text-xs text-slate-500 mt-1">${e.date} • ${e.time}</p></div><div class="text-right shrink-0"><div class="text-xs font-mono text-gold-500">${e.duration > 60 ? Math.floor(e.duration/60) + 'm' : e.duration + 's'}</div>${e.intensity ? `<div class="text-[10px] text-slate-500 mt-1">Int: ${e.intensity}</div>` : ''}${bodyPointsCount > 0 ? `<div class="text-[10px] text-slate-400 mt-0.5 flex items-center justify-end gap-1"><i data-lucide="map-pin" class="w-2 h-2"></i> ${bodyPointsCount}</div>` : ''}</div></div></div>`;
                 }).join('');
             }
             if(window.lucide) window.lucide.createIcons();
@@ -1178,28 +1155,8 @@
             });
         }
 
-        window.loadJournal = () => { 
-            if(!isLoggedIn) window.renderJournal(); 
-        };
+        window.loadJournal = () => { if(!isLoggedIn) window.renderJournal(); };
         
-        window.saveTimerSession = async () => {
-            const intensity = document.getElementById('timer-intensity-slider').value;
-            const emotion = window.currentSelectedEmotion || "Meditation"; 
-            const entry = { emotion: emotion, date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}), time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), duration: window.currentTimerSessionLength, intensity: intensity, timestamp: serverTimestamp() };
-            
-            if (isLoggedIn && currentUser) { try { await addDoc(collection(db, 'users', currentUser.uid, 'logs'), entry); } catch (e) { alert("Error saving: " + e.message); } }
-            else { const rel = JSON.parse(localStorage.getItem('releases') || '[]'); entry.timestamp = Date.now(); rel.unshift(entry); localStorage.setItem('releases', JSON.stringify(rel)); }
-            window.closeCompleteModal(); window.resetTimer(); window.switchTab('journal');
-        };
-
-        window.saveAndClose = async () => {
-            const intensity = document.getElementById('process-intensity-slider').value;
-            const entry = { emotion: window.currentProcessEmotion, date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}), time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), duration: window.processSeconds, intensity: intensity, timestamp: serverTimestamp() };
-            if (isLoggedIn && currentUser) { await addDoc(collection(db, 'users', currentUser.uid, 'logs'), entry); }
-            else { const rel = JSON.parse(localStorage.getItem('releases') || '[]'); entry.timestamp = Date.now(); rel.unshift(entry); localStorage.setItem('releases', JSON.stringify(rel)); }
-            window.resetProcess(); window.switchTab('journal');
-        };
-
         window.deleteEntry = async (id) => {
             if (!confirm("Delete this entry?")) return;
             if (isLoggedIn && typeof id === 'string') { await deleteDoc(doc(db, 'users', currentUser.uid, 'logs', id)); }
@@ -1215,25 +1172,16 @@
 
         window.clearJournal = async () => {
             if (!confirm("Clear all journal entries? This cannot be undone.")) return;
-            
             if (isLoggedIn && currentUser) {
                 try {
                     const q = query(collection(db, 'users', currentUser.uid, 'logs'));
                     const snapshot = await getDocs(q);
                     const batch = writeBatch(db);
-                    snapshot.docs.forEach((doc) => {
-                        batch.delete(doc.ref);
-                    });
+                    snapshot.docs.forEach((doc) => { batch.delete(doc.ref); });
                     await batch.commit();
                     alert("Cloud logs cleared successfully.");
-                } catch (e) {
-                    console.error("Error clearing logs:", e);
-                    alert("Failed to clear logs: " + e.message);
-                }
-            } else { 
-                localStorage.removeItem('releases'); 
-                window.renderJournal(); 
-            }
+                } catch (e) { console.error("Error clearing logs:", e); alert("Failed to clear logs: " + e.message); }
+            } else { localStorage.removeItem('releases'); window.renderJournal(); }
         };
     </script>
 </body>
