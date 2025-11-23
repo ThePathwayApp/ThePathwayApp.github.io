@@ -68,36 +68,36 @@
     </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Merriweather:ital,wght@0,300;0,400;1,300&display=swap');
-        
+       
         html, body { height: 100%; min-height: 100vh; width: 100%; margin: 0; background-color: #020617; color: #e2e8f0; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; overflow: hidden; overscroll-behavior: none; overscroll-behavior-y: none; }
         @supports (height: 100dvh) { body { min-height: 100dvh; } }
         body { display: flex; flex-direction: column; }
-        
+       
         /* Gold Selection Theme */
         ::selection { background-color: #d4af37; color: white; }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
-        
+       
         .glass-panel { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
         .btn-primary { transition: all 0.2s ease; }
         .btn-primary:active { transform: scale(0.96); }
         .pb-safe { padding-bottom: 0; }
         .pt-safe { padding-top: env(safe-area-inset-top, 20px); }
         .mb-safe { margin-bottom: 0; }
-        
+       
         .view-section { opacity: 0; transition: opacity 0.25s ease-in-out; padding-bottom: calc(env(safe-area-inset-bottom) + 2rem); overscroll-behavior-y: contain; }
         .view-section.active-view { opacity: 1; }
         .faq-answer { display: none; }
         .faq-answer.active { display: block; animation: slideUp 0.3s ease-out forwards; }
         .faq-icon { transition: transform 0.3s ease; }
         .faq-icon.active { transform: rotate(180deg); }
-        
+       
         .quote-wrapper { position: relative; display: inline-block; padding: 2rem 3rem; max-width: 100%; }
         .quote-mark { position: absolute; width: 2.5rem; height: 2.5rem; color: rgba(212, 175, 55, 0.4); }
         .quote-mark.start { top: 0; left: 0; }
         .quote-mark.end { bottom: 0; right: 0; transform: rotate(180deg); }
-        
+       
         .side-menu-open #side-menu-backdrop { display: block; opacity: 1; }
         .side-menu-open #side-menu { transform: translateX(0); }
         .menu-link { transition: color 0.3s ease; }
@@ -106,7 +106,7 @@
         .swipe-container { position: relative; overflow: hidden; border-radius: 0.75rem; margin-bottom: 0.75rem; }
         .swipe-item { transition: transform 0.2s ease-out; position: relative; z-index: 10; background: rgba(15, 23, 42, 0.9); touch-action: pan-y; }
         .delete-action { position: absolute; right: 0; top: 0; bottom: 0; width: 80px; display: flex; align-items: center; justify-content: center; z-index: 0; }
-        
+       
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%; background: #d4af37; cursor: pointer; margin-top: -8px; box-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #334155; border-radius: 2px; }
@@ -116,44 +116,72 @@
         .neuro-body-container {
             position: relative;
             width: 100%;
-            height: calc(100% - 220px); 
+            height: 60vh;
+            max-height: 600px;
             display: flex;
             justify-content: center;
             align-items: center; 
             background-color: #020617;
+            /* Subtle Grid Background */
             background-image: 
                 linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
             background-size: 30px 30px;
             background-position: center;
             overflow: hidden; 
-            padding-bottom: 2rem;
+            padding-bottom: 1rem;
         }
 
-        /* The SVG layer - Anatomical Outline */
-        .anatomy-svg {
-            height: 90%; 
-            width: auto;
-            max-width: 100%;
-            filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.1));
+        /* THE STAGE: Ensures perfect aspect ratio overlap of layers */
+        .body-stage {
             position: relative;
-            z-index: 10;
+            width: 100%;
+            height: 100%;
+            max-width: 400px; 
+            max-height: 80vh; 
+            aspect-ratio: 300 / 600; 
         }
-        
-        /* Hover effects for individual parts */
-        .anatomy-svg path {
-            transition: all 0.3s ease;
+
+        /* The Image Layer */
+        .anatomy-img {
+            z-index: 10;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block; 
+            /* Ensure opacity is 1 */
+            opacity: 1 !important; 
+            filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.05));
+        }
+
+        /* The Invisible Tracking Layer */
+        .tracking-svg {
+            z-index: 20;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            opacity: 0; /* Invisible but clickable */
+            pointer-events: auto; 
+        }
+       
+        .tracking-svg path {
+            stroke: transparent;
+            stroke-width: 45px; /* Generous hit detection */
             fill: transparent;
         }
-        
-        /* When cursor (via trackpad logic) is over a part, we might want to highlight it via JS, 
-           but pure CSS hover won't work well with the virtual cursor. 
-           We rely on the gold glow filter already applied to container or stroke. */
 
         .interactive-layer {
             position: absolute;
-            height: 90%; 
-            aspect-ratio: 300 / 700; 
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             z-index: 50;
             pointer-events: none; 
         }
@@ -182,7 +210,7 @@
             border-radius: 50%;
             box-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
         }
-        
+       
         .neuro-cursor-inner::before { content: ''; position: absolute; top: -6px; bottom: -6px; left: 50%; width: 1px; background: #d4af37; transform: translateX(-50%); opacity: 0.8; }
         .neuro-cursor-inner::after { content: ''; position: absolute; left: -6px; right: -6px; top: 50%; height: 1px; background: #d4af37; transform: translateY(-50%); opacity: 0.8; }
 
@@ -197,7 +225,7 @@
             pointer-events: auto; 
             background-color: rgba(212, 175, 55, 0.8); /* Gold */
         }
-        
+       
         select { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right 0.5rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em; }
     </style>
 </head>
@@ -252,11 +280,11 @@
             <div class="flex justify-center">
                 <div class="quote-wrapper max-w-md relative">
                     <svg class="quote-mark start" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21L14.017 18C14.017 16.896 14.321 15.923 14.929 15.081C15.537 14.239 16.357 13.459 17.389 12.741L16.731 10.561C15.039 11.623 14.069 12.878 13.821 14.326C13.821 14.326 13.821 14.326 13.821 14.326C13.545 13.714 13.407 13.052 13.407 12.34C13.407 10.284 14.147 8.528 15.627 7.072C17.107 5.616 18.867 4.888 20.907 4.888C21.787 4.888 22.467 5.568 22.947 6.928C23.427 8.288 23.667 9.528 23.667 10.648C23.667 14.304 22.397 17.754 19.857 21L14.017 21ZM6.007 21L6.007 18C6.007 16.896 6.311 15.923 6.919 15.081C7.527 14.239 8.347 13.459 9.379 12.741L8.721 10.561C7.029 11.623 6.059 12.878 5.811 14.326C5.811 14.326 5.811 14.326 5.811 14.326C5.535 13.714 5.397 13.052 5.397 12.34C5.397 10.284 6.137 8.528 7.617 7.072C9.097 5.616 10.857 4.888 12.897 4.888C13.777 4.888 14.457 5.568 14.937 6.928C15.417 8.288 15.657 9.528 15.657 10.648C15.657 14.304 14.387 17.754 11.847 21L6.007 21Z" /></svg>
-                    <p id="intro-quote-text" class="text-lg text-white font-light leading-relaxed font-serif italic opacity-0 transition-opacity duration-500">Loading...</p>
+                    <p id="intro-quote-text" class="text-lg text-white font-light leading-relaxed font-serif italic opacity-0 transition-opacity duration-500">To be surrendered means to have no strong emotion about a thing: 'It's okay if it happens, and it's okay if it doesn't.'</p>
                     <svg class="quote-mark end" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21L14.017 18C14.017 16.896 14.321 15.923 14.929 15.081C15.537 14.239 16.357 13.459 17.389 12.741L16.731 10.561C15.039 11.623 14.069 12.878 13.821 14.326C13.821 14.326 13.821 14.326 13.821 14.326C13.545 13.714 13.407 13.052 13.407 12.34C13.407 10.284 14.147 8.528 15.627 7.072C17.107 5.616 18.867 4.888 20.907 4.888C21.787 4.888 22.467 5.568 22.947 6.928C23.427 8.288 23.667 9.528 23.667 10.648C23.667 14.304 22.397 17.754 19.857 21L14.017 21ZM6.007 21L6.007 18C6.007 16.896 6.311 15.923 6.919 15.081C7.527 14.239 8.347 13.459 9.379 12.741L8.721 10.561C7.029 11.623 6.059 12.878 5.811 14.326C5.811 14.326 5.811 14.326 5.811 14.326C5.535 13.714 5.397 13.052 5.397 12.34C5.397 10.284 6.137 8.528 7.617 7.072C9.097 5.616 10.857 4.888 12.897 4.888C13.777 4.888 14.457 5.568 14.937 6.928C15.417 8.288 15.657 9.528 15.657 10.648C15.657 14.304 14.387 17.754 11.847 21L6.007 21Z" /></svg>
                 </div>
             </div>
-            <p id="intro-quote-author" class="text-xs text-gold-500 uppercase tracking-[0.25em] font-sans text-center opacity-0 transition-opacity duration-500 delay-100 mt-8"></p>
+            <p id="intro-quote-author" class="text-xs text-gold-500 uppercase tracking-[0.25em] font-sans text-center opacity-0 transition-opacity duration-500 delay-100 mt-8">— David R. Hawkins</p>
             <div class="mt-16 animate-pulse opacity-50"><span class="text-[10px] text-slate-400 uppercase tracking-[0.4em]">Tap to Begin</span></div>
         </div>
     </div>
@@ -267,7 +295,7 @@
     </header>
 
     <main id="app-content" class="flex-1 relative w-full overflow-hidden">
-        
+       
         <section id="view-guide" class="view-section active-view h-full overflow-y-auto p-4">
             <div class="glass-panel p-6 rounded-2xl shadow-lg mb-8">
                 <h2 class="text-2xl font-light mb-4 text-white">The Mechanism</h2>
@@ -314,7 +342,7 @@
                     <div class="absolute inset-0 flex items-center justify-center -z-10 opacity-20 pointer-events-none"><div class="w-64 h-64 bg-gold-500 rounded-full blur-3xl animate-breathe"></div></div>
                     <h2 class="text-xl font-light mb-2 text-white">Stay with it</h2>
                     <div class="text-6xl font-extralight text-white mb-8 font-serif tabular-nums tracking-tight" id="process-timer">00:00</div>
-                    
+                   
                     <div class="flex justify-center gap-4 mb-8">
                         <button onclick="toggleModal('bell-modal')" class="flex items-center gap-2 px-3 py-2 bg-slate-900/80 border border-slate-800 rounded-full text-[10px] text-slate-400 hover:text-gold-500 transition"><i data-lucide="bell" class="w-3 h-3"></i> <span>Interval</span><div id="process-bell-status" class="w-1 h-1 bg-gold-500 rounded-full hidden ml-1"></div></button>
                         <button onclick="toggleModal('ambience-modal')" class="flex items-center gap-2 px-3 py-2 bg-slate-900/80 border border-slate-800 rounded-full text-[10px] text-slate-400 hover:text-emerald-500 transition"><i data-lucide="waves" class="w-3 h-3"></i> <span>Sound</span><div id="process-ambience-status" class="w-1 h-1 bg-emerald-500 rounded-full hidden ml-1"></div></button>
@@ -340,7 +368,7 @@
                         <span id="timer-emotion-display">Select Emotion...</span><i data-lucide="chevron-down" class="w-4 h-4 opacity-50"></i>
                     </button>
                 </div>
-                
+              
                 <div class="relative w-64 h-64 mx-auto mb-10 flex items-center justify-center z-10">
                     <div id="breath-circle" class="absolute inset-0 bg-slate-800 rounded-full opacity-50 scale-100 transition-transform duration-1000"></div>
                     <div id="breath-circle-inner" class="absolute w-40 h-40 bg-slate-700/50 rounded-full blur-2xl"></div>
@@ -434,97 +462,75 @@
                     <button id="bodymap-save-btn" onclick="finalizeSession()" class="hidden text-xs bg-gold-600 hover:bg-gold-500 text-white px-4 py-2 rounded-lg transition font-medium shadow-lg shadow-gold-900/30">Save</button>
                 </div>
             </div>
-        
+       
             <div id="bodymap-list-view" class="flex-1 overflow-y-auto pt-24 px-4 pb-safe">
                 <div id="bodymap-log-container" class="space-y-3 pb-8"></div>
             </div>
-        
+       
             <div id="bodymap-canvas-view" class="hidden flex-1 relative w-full h-full">
-                
+              
                 <div class="neuro-body-container" id="neuro-container">
-                    
-                    <svg id="body-silhouette" class="anatomy-svg" viewBox="0 0 300 700" preserveAspectRatio="xMidYMid meet">
-                        <defs>
-                            <filter id="gold-glow" x="-20%" y="-20%" width="140%" height="140%">
-                                <feGaussianBlur stdDeviation="2" result="blur" />
-                                <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                            </filter>
-                        </defs>
-                        <g stroke="#d4af37" stroke-width="1.5" fill="rgba(255, 255, 255, 0.02)">
-                            <!-- HEAD -->
-                            <path id="head" d="M150 40 c -26 0 -44 18 -44 46 c 0 28 18 46 44 46 c 26 0 44 -18 44 -46 c 0 -28 -18 -46 -44 -46z" />
+                   
+                    <div class="body-stage bg-slate-900/50 rounded-2xl relative">
+                       
+                        <img 
+                            src="Image.jpg" 
+                            id="body-image" 
+                            class="layer anatomy-img" 
+                            alt="Body Map" 
+                        />
 
-                            <!-- NECK -->
-                            <path id="neck" d="M125 132 L175 132 L182 170 L118 170 Z" />
+                        <svg id="body-silhouette" class="layer tracking-svg" viewBox="0 0 300 600" preserveAspectRatio="xMidYMid meet">
+                            <g>
+                                <path id="head" d="M150,20 L150,80" stroke-width="50" />
+                                <path id="neck" d="M150,85 L150,105" stroke-width="40" />
+                                
+                                <path id="chest" d="M150,110 L150,180" stroke-width="70" />
+                                <path id="solar-plexus" d="M150,185 L150,225" stroke-width="60" />
+                                <path id="stomach" d="M150,230 L150,270" stroke-width="60" />
+                                <path id="pelvis" d="M150,275 L150,310" stroke-width="60" />
+                                
+                                <path id="left-shoulder" d="M110,110 L90,120" stroke-width="30" />
+                                <path id="right-shoulder" d="M190,110 L210,120" stroke-width="30" />
+                                
+                                <path id="left-arm" d="M90,130 L70,300" stroke-width="35" />
+                                <path id="right-arm" d="M210,130 L230,300" stroke-width="35" />
+                                
+                                <path id="left-hand" d="M70,310 L65,340" stroke-width="25" />
+                                <path id="right-hand" d="M230,310 L235,340" stroke-width="25" />
+                                
+                                <path id="left-leg" d="M130,320 L125,540" stroke-width="40" />
+                                <path id="right-leg" d="M170,320 L175,540" stroke-width="40" />
+                                
+                                <path id="left-foot" d="M125,550 L120,580" stroke-width="30" />
+                                <path id="right-foot" d="M175,550 L180,580" stroke-width="30" />
+                            </g>
+                        </svg>
 
-                            <!-- SHOULDERS / CLAVICLE -->
-                            <path id="left-shoulder" d="M118 170 L80 185 L75 210 L118 200 Z" />
-                            <path id="right-shoulder" d="M182 170 L220 185 L225 210 L182 200 Z" />
-
-                            <!-- TORSO -->
-                            <path id="upper-torso" d="M118 200 L182 200 L190 300 L110 300 Z" />
-
-                            <!-- CHEST -->
-                            <path id="left-chest" d="M118 200 L150 200 L150 260 L115 260 Z" />
-                            <path id="right-chest" d="M150 200 L182 200 L185 260 L150 260 Z" />
-
-                            <!-- CORE -->
-                            <path id="solar-plexus" d="M125 260 L175 260 L178 300 L122 300 Z" />
-
-                            <!-- ABDOMEN -->
-                            <path id="left-abdomen" d="M122 300 L150 300 L150 360 L120 360 Z" />
-                            <path id="right-abdomen" d="M150 300 L178 300 L180 360 L150 360 Z" />
-
-                            <!-- PELVIS -->
-                            <path id="pelvis" d="M120 360 L180 360 L185 420 L115 420 Z" />
-
-                            <!-- ARMS -->
-                            <path id="left-upper-arm" d="M75 210 L55 300 L80 300 L100 210 Z" />
-                            <path id="right-upper-arm" d="M225 210 L245 300 L220 300 L200 210 Z" />
-
-                            <path id="left-forearm" d="M55 300 L40 390 L65 390 L80 300 Z" />
-                            <path id="right-forearm" d="M245 300 L260 390 L235 390 L220 300 Z" />
-
-                            <!-- HANDS -->
-                            <path id="left-hand" d="M40 390 L35 430 L70 430 L65 390 Z" />
-                            <path id="right-hand" d="M260 390 L265 430 L230 430 L235 390 Z" />
-
-                            <!-- LEGS -->
-                            <path id="left-thigh" d="M115 420 L145 420 L145 540 L110 540 Z" />
-                            <path id="right-thigh" d="M155 420 L185 420 L190 540 L155 540 Z" />
-
-                            <path id="left-shin" d="M110 540 L145 540 L145 630 L110 630 Z" />
-                            <path id="right-shin" d="M155 540 L190 540 L190 630 L155 630 Z" />
-
-                            <!-- FEET -->
-                            <path id="left-foot" d="M110 630 L150 630 L150 665 L110 665 Z" />
-                            <path id="right-foot" d="M155 630 L195 630 L195 665 L155 665 Z" />
-                        </g>
-                    </svg>
-
-                    <div id="interactive-layer" class="interactive-layer">
-                        <div id="markers-container" class="w-full h-full relative"></div>
-                        <div id="active-cursor" class="neuro-cursor">
-                            <div class="neuro-cursor-inner"></div>
+                        <div id="interactive-layer" class="layer interactive-layer">
+                            <div id="markers-container" class="w-full h-full relative"></div>
+                            <div id="active-cursor" class="neuro-cursor">
+                                <div class="neuro-cursor-inner"></div>
+                            </div>
                         </div>
                     </div>
 
                 </div>
-        
+       
                 <div class="absolute bottom-6 left-1/2 -translate-x-1/2 w-64 h-48 z-50 mb-safe">
-                     <div class="w-full h-full rounded-2xl border border-slate-700 bg-slate-900/90 backdrop-blur-xl shadow-2xl relative overflow-hidden ring-1 ring-gold-500/20"
+                    <div class="w-full h-full rounded-2xl border border-slate-700 bg-slate-900/90 backdrop-blur-xl shadow-2xl relative overflow-hidden ring-1 ring-gold-500/20"
                           id="sensation-trackpad"
                           ontouchstart="handleTrackpadStart(event)"
                           ontouchmove="handleTrackpadMove(event)"
                           ontouchend="handleTrackpadEnd(event)">
-                          
+                           
                           <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#d4af37 1px, transparent 1px); background-size: 10px 10px;"></div>
-                          
+                           
                           <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none opacity-60">
                               <i data-lucide="fingerprint" class="w-8 h-8 text-gold-500 mb-2"></i>
                               <span class="text-[9px] uppercase tracking-widest text-gold-500">Touch & Drag</span>
                           </div>
-                     </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -540,7 +546,6 @@
         </section>
     </main>
 
-    <!-- Modals remain unchanged ... -->
     <div id="emotion-picker" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] hidden flex-col justify-end" onclick="if(event.target === this) toggleModal('emotion-picker')">
         <div class="bg-slate-900 border-t border-slate-700 rounded-t-3xl w-full max-w-md mx-auto max-h-[70vh] flex flex-col shadow-2xl">
             <div class="flex justify-between items-center p-6 border-b border-slate-800">
@@ -637,14 +642,14 @@
         var currentSelectedEmotion = "";
         var currentTimerSessionLength = 600;
         var globalLogData = [];
-        
+       
         // BODY MAP VARS
         var pendingSessionData = null; 
         var currentBodyPoints = []; 
         var pendingPoint = null; 
         var bodyMapSource = ''; 
         var chartsSource = ''; 
-        
+       
         // TRACKPAD VARS
         let isDraggingTrackpad = false;
         let lastVibrationGridIndex = -1;
@@ -706,27 +711,43 @@
         let bellInterval = 0, currentAmbience = 'none', audioContext, noiseNode, modOsc, birdInterval, chimeInterval;
         let processInterval, processStartTime = 0, pickerCallback, progressChart;
         let lastBellMinute = -1, halfwayBellPlayed = false;
-        
+       
         // TOUCH VARS
         let touchStartX = 0, currentSwipeItem = null;
         let globalTouchStartX = 0;
 
+        // DEFINE GLOBAL FUNCTIONS BEFORE ONLOAD TO PREVENT RACE CONDITIONS
+        function dismissIntro() { 
+            // Wrap in try-catch to ensure UI dismisses even if audio fails
+            try {
+                unlockAudio();
+            } catch(e) {
+                console.warn("Audio unlock failed, proceeding with dismiss", e);
+            }
+            document.getElementById('intro-screen').style.opacity='0'; 
+            sessionStorage.setItem('intro_dismissed', 'true');
+            setTimeout(()=>{ document.getElementById('intro-screen').style.display='none'; },1000); 
+        }
+
+        // EXPORT TO GLOBAL SCOPE IMMEDIATELY
+        window.dismissIntro = dismissIntro;
+
         window.onload = function() {
             // Ensure Intro plays first
             initIntro();
-            
+           
             lucide.createIcons();
             initQA();
             initEmotionPicker();
             initSensationEmotionPicker();
             updateTimerDisplay();
             loadJournal();
-            
+           
             // If dismissed in session, hide immediately
             if (sessionStorage.getItem('intro_dismissed')) {
                 document.getElementById('intro-screen').style.display = 'none';
             }
-            
+           
             document.addEventListener('click', unlockAudio, { once: true });
             document.addEventListener('touchstart', unlockAudio, { once: true });
         };
@@ -744,14 +765,7 @@
                 authEl.style.opacity = '0.8';
             }
         }
-        
-        function dismissIntro() { 
-            unlockAudio();
-            document.getElementById('intro-screen').style.opacity='0'; 
-            sessionStorage.setItem('intro_dismissed', 'true');
-            setTimeout(()=>{ document.getElementById('intro-screen').style.display='none'; },1000); 
-        }
-        
+       
         function toggleMenu() { document.body.classList.toggle('side-menu-open'); }
         function toggleSettings() { toggleMenu(); } 
 
@@ -767,7 +781,7 @@
             if (!currentSwipeItem) return;
             const touchX = e.touches[0].clientX;
             const diff = touchX - touchStartX;
-            
+           
             if (Math.abs(diff) > 5) isSwiping = true;
 
             const isOpen = el.dataset.isOpen === 'true';
@@ -785,16 +799,16 @@
             const currentTranslate = match ? parseFloat(match[1]) : 0;
             if (currentTranslate < -40) { el.style.transform = 'translateX(-80px)'; el.dataset.isOpen = 'true'; } 
             else { el.style.transform = 'translateX(0)'; el.dataset.isOpen = 'false'; }
-            
+           
             currentSwipeItem = null;
         };
 
         // EDGE SWIPE LOGIC (Navigation)
         window.handleGlobalTouchStart = (e) => { globalTouchStartX = e.touches[0].clientX; };
         window.handleGlobalTouchMove = (e) => { 
-             const x = e.touches[0].clientX;
-             const isMenuOpen = document.body.classList.contains('side-menu-open');
-             if (isMenuOpen && (x - globalTouchStartX) > 0) {} 
+            const x = e.touches[0].clientX;
+            const isMenuOpen = document.body.classList.contains('side-menu-open');
+            if (isMenuOpen && (x - globalTouchStartX) > 0) {} 
         };
         window.handleGlobalTouchEnd = (e) => {
             const diff = e.changedTouches[0].clientX - globalTouchStartX;
@@ -963,7 +977,7 @@
         }
         function formatTime(sec) { if (sec < 0) sec = 0; const m = Math.floor(sec/60).toString().padStart(2,'0'), s = (sec%60).toString().padStart(2,'0'); return `${m}:${s}`; }
         function updateTimerDisplay() { let sec = timerDuration; if(isTimerRunning) { const now = Date.now(), rem = Math.ceil((timerEndTime - now)/1000); sec = rem > 0 ? rem : 0; } document.getElementById('timer-display').value = formatTime(sec); }
-        
+       
         function handleTimerInput(input) { 
             let val = input.value.replace(/\D/g, ''); 
             if (val.length > 4) val = val.slice(-4); 
@@ -974,13 +988,13 @@
             defaultDuration = timerDuration; 
             input.value = `${val.slice(0,2)}:${val.slice(2,4)}`; 
         }
-        
+       
         function adjustTimer(amt) { 
             unlockAudio(); 
             if(isTimerRunning) return; 
             if(timerDuration+amt > 0) { timerDuration+=amt; defaultDuration=timerDuration; updateTimerDisplay(); } 
         }
-        
+       
         function resetTimer() { 
             unlockAudio();
             isTimerRunning = false; clearInterval(timerInterval); stopAmbience(); 
@@ -1068,12 +1082,12 @@
                 s.innerHTML = HAWKINS_SCALE.map(e => `<option value="${e.name}">${e.name} (${e.val})</option>`).join('');
             }
         }
-        
+       
         function selectEmotion(n) { 
             setCurrentEmotion(n);
             toggleModal('emotion-picker');
         }
-        
+       
         function setCurrentEmotion(n) {
             currentSelectedEmotion=n;
             if(pickerCallback) { 
@@ -1091,7 +1105,7 @@
         }
 
         function openPickerFor(ctx) { toggleModal('emotion-picker'); if(ctx==='process') pickerCallback=n=>{ const el=document.getElementById('process-emotion-display'); el.textContent=n; el.classList.remove('text-slate-400'); el.classList.add('text-white'); }; else if(ctx==='timer') pickerCallback=n=>{ const el=document.getElementById('timer-emotion-display'); el.textContent=n; el.classList.add('text-gold-500'); }; else if(ctx==='chart') pickerCallback=n=>{ document.getElementById('chart-emotion-display').textContent=n; loadChart(n); }; }
-        
+       
         // SMOOTH SWITCH
         function switchTab(id) {
             const current = document.querySelector('.view-section.active-view');
@@ -1114,7 +1128,7 @@
             chartsSource = source || 'insights';
             switchTab('charts'); 
         }
-        
+       
         function exitCharts() {
             if (chartsSource === 'journal') {
                 switchTab('journal');
@@ -1122,7 +1136,7 @@
                 switchTab('insights');
             }
         }
-        
+       
         function openBodyMap() { 
             openBodyMapList();
             switchTab('bodymap');
@@ -1134,16 +1148,17 @@
             document.getElementById('bodymap-back-btn').classList.add('hidden');
             document.getElementById('bodymap-exit-btn').classList.remove('hidden');
             document.getElementById('bodymap-save-btn').classList.add('hidden');
-            
+           
             const bodyLogs = globalLogData.filter(l => l.bodyPoints && l.bodyPoints.length > 0);
             const container = document.getElementById('bodymap-log-container');
-            
+           
             if (bodyLogs.length === 0) {
                 container.innerHTML = `<div class="text-center py-16 animate-fade-in"><div class="text-slate-800 mb-4"><i data-lucide="activity" class="w-16 h-16 mx-auto"></i></div><p class="text-slate-600 text-sm">No somatic maps recorded.</p><button onclick="startNewMapSession()" class="mt-6 text-gold-500 text-xs uppercase tracking-widest border border-slate-800 px-4 py-2 rounded-lg hover:bg-slate-800 transition">New Scan</button></div>`;
             } else {
                 container.innerHTML = `<div class="mb-4 px-1"><button onclick="startNewMapSession()" class="w-full py-3 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-900 rounded-xl text-xs uppercase tracking-widest transition">+ New Scan</button></div>` + 
                 bodyLogs.map((e, i) => {
                     const idParam = e.id ? `'${e.id}'` : i; 
+                    const bodyPointsCount = e.bodyPoints ? e.bodyPoints.length : 0;
                     return `<div class="relative overflow-hidden rounded-xl mb-3 animate-fade-in swipe-container" style="animation-delay: ${i*50}ms">                        <div class="delete-action bg-red-600 text-white" onclick="deleteEntry(${idParam})"><i data-lucide="trash-2" class="w-5 h-5"></i></div>
                         <div class="glass-panel p-5 flex justify-between items-center swipe-item" ontouchstart="handleTouchStart(event, this)" ontouchmove="handleTouchMove(event, this)" ontouchend="handleTouchEnd(event, this)" onclick="if(!isSwiping) loadBodySession('${e.id || i}')">
                             <div class="flex-1 pr-4">
@@ -1151,7 +1166,9 @@
                                 <p class="text-xs text-slate-500 mt-1">${e.date} • ${e.time}</p>
                             </div>
                             <div class="text-right shrink-0">
-                                <div class="text-gold-500 text-xs"><i data-lucide="map-pin" class="w-3 h-3 inline mr-1"></i>${e.bodyPoints.length}</div>
+                                <div class="text-xs font-mono text-gold-500">${e.duration > 60 ? Math.floor(e.duration/60) + 'm' : e.duration + 's'}</div>
+                                ${e.intensity ? `<div class="text-[10px] text-slate-500 mt-1">Int: ${e.intensity}</div>` : ''}
+                                ${bodyPointsCount > 0 ? `<div class="text-[10px] text-slate-400 mt-0.5 flex items-center justify-end gap-1"><i data-lucide="map-pin" class="w-2 h-2"></i> ${bodyPointsCount}</div>` : ''}
                             </div>
                         </div>
                     </div>`;                 }).join('');
@@ -1181,7 +1198,7 @@
                 session = globalLogData[id];
             }
             if(!session) return;
-            
+           
             pendingSessionData = { ...session };
             currentBodyPoints = session.bodyPoints || [];
             bodyMapSource = 'insights_view';
@@ -1191,7 +1208,7 @@
         function switchToCanvasMode() {
             document.getElementById('bodymap-list-view').classList.add('hidden');
             document.getElementById('bodymap-canvas-view').classList.remove('hidden');
-            
+           
             if (bodyMapSource === 'insights_new' || bodyMapSource === 'insights_view') {
                 document.getElementById('bodymap-back-btn').classList.remove('hidden');
                 document.getElementById('bodymap-exit-btn').classList.add('hidden');
@@ -1199,7 +1216,7 @@
                 document.getElementById('bodymap-back-btn').classList.add('hidden'); 
                 document.getElementById('bodymap-exit-btn').classList.add('hidden'); 
             }
-            
+           
             document.getElementById('bodymap-save-btn').classList.remove('hidden');
             renderBodyMarkers();
         }
@@ -1221,24 +1238,24 @@
         window.stopProcessTimer = () => { if(processInterval) clearInterval(processInterval); };
         window.finishProcess = () => { stopProcessTimer(); stopAmbience(); nextStep(5); };
         window.resetProcess = () => { stopProcessTimer(); stopAmbience(); document.querySelectorAll('.process-step').forEach(e=>e.classList.add('hidden')); document.getElementById('process-step-0').classList.remove('hidden'); document.getElementById('process-reset-btn').classList.add('hidden'); };
-        
+       
         // --- UPDATED BODY MAP LOGIC WITH HIT TESTING ---
 
         const BODY_WIDTH = 300;
-        const BODY_HEIGHT = 700;
+        const BODY_HEIGHT = 600;
 
         function handleTrackpadStart(e) {
             e.preventDefault();
             isDraggingTrackpad = true;
             const cursor = document.getElementById('active-cursor');
             const label = document.getElementById('body-part-label');
-            
+           
             cursor.style.display = 'block';
             cursor.style.transition = 'none'; 
-            
+           
             label.style.opacity = '1';
             updateCursorPosition(e.touches[0]);
-            
+           
             requestAnimationFrame(() => {
                 cursor.style.transition = 'transform 0.06s linear';
             });
@@ -1261,7 +1278,7 @@
         function updateCursorPosition(touch) {
             const pad = document.getElementById('sensation-trackpad');
             const padRect = pad.getBoundingClientRect();
-            
+           
             // 1. Normalise Touch on Trackpad
             let tx = (touch.clientX - padRect.left) / padRect.width;
             let ty = (touch.clientY - padRect.top) / padRect.height;
@@ -1281,23 +1298,31 @@
             // The #active-cursor is inside #interactive-layer (relative).
             // We can use the #interactive-layer's bounding rect to offset.
             const layerRect = document.getElementById('interactive-layer').getBoundingClientRect();
-            
+           
             // Calculate screen X/Y relative to the interactive layer's current screen position
             // Note: bodyX/bodyY are relative to the 300x700 viewBox.
             // We need to scale them if the container is scaled (e.g. on small screens).
             const scaleX = layerRect.width / BODY_WIDTH;
             const scaleY = layerRect.height / BODY_HEIGHT;
-            
+           
             const screenX = layerRect.left + (bodyX * scaleX);
             const screenY = layerRect.top + (bodyY * scaleY);
 
             // Temporarily hide cursor so we don't hit-test IT instead of the SVG
             cursor.style.display = 'none';
+            // IMPORTANT: We need to hide the image too so we don't hit test against IT
+            const img = document.getElementById('body-image');
+            const prevDisplay = img.style.display;
+            img.style.display = 'none';
+           
             const element = document.elementFromPoint(screenX, screenY);
+           
+            // Restore
             cursor.style.display = 'block';
+            img.style.display = prevDisplay;
 
             let region = "";
-            
+           
             if (element && element.tagName === 'path') {
                 // Check if it belongs to our anatomy SVG
                 if (element.closest('svg#body-silhouette')) {
@@ -1309,7 +1334,7 @@
             }
 
             const label = document.getElementById('body-part-label');
-            
+           
             if (region && label.textContent !== region) {
                 label.textContent = region;
                 if (navigator.vibrate) navigator.vibrate(5);
@@ -1327,7 +1352,7 @@
             const type = document.getElementById('sensation-type').value;
             const emotion = document.getElementById('sensation-emotion').value;
             const intensity = document.getElementById('sensation-intensity').value;
-            
+           
             if(pendingPoint) {
                 currentBodyPoints.push({
                     x: pendingPoint.x,
@@ -1339,7 +1364,7 @@
                 });
                 renderBodyMarkers();
             }
-            
+           
             toggleModal('sensation-modal');
             document.getElementById('active-cursor').style.display = 'none';
             document.getElementById('body-part-label').style.opacity = '0';
@@ -1363,23 +1388,23 @@
         function renderBodyMarkers() {
             const container = document.getElementById('markers-container');
             container.innerHTML = '';
-            
+           
             currentBodyPoints.forEach((p, i) => {
                 const el = document.createElement('div');
                 el.className = 'body-marker';
                 el.onclick = (e) => { e.stopPropagation(); deleteBodyPoint(i); };
-                
+              
                 // Intensity -> Size/Opacity
                 const size = 12 + (p.intensity * 1.5); 
                 const opacity = 0.4 + (p.intensity / 20);
-                
+              
                 el.style.width = `${size}px`;
                 el.style.height = `${size}px`;
                 el.style.backgroundColor = `rgba(212, 175, 55, ${opacity})`; // Gold Markers
                 // Use standard positioning for static markers
                 el.style.left = `${p.x * BODY_WIDTH}px`;
                 el.style.top = `${p.y * BODY_HEIGHT}px`;
-                
+              
                 container.appendChild(el);
             });
         }
@@ -1387,7 +1412,7 @@
         window.transitionToBodyMapFromTimer = () => {
             const intensity = document.getElementById('timer-intensity-slider').value;
             const emotion = window.currentSelectedEmotion || "Meditation";
-            
+           
             pendingSessionData = {
                 emotion: emotion,
                 date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}),
@@ -1399,7 +1424,7 @@
 
             currentBodyPoints = [];
             bodyMapSource = 'timer'; 
-            
+           
             document.getElementById('complete-modal').classList.add('hidden'); 
             document.getElementById('complete-modal').classList.remove('flex');
             resetTimer(); 
@@ -1409,7 +1434,7 @@
 
         window.transitionToBodyMapFromProcess = () => {
             const intensity = document.getElementById('process-intensity-slider').value;
-            
+           
             pendingSessionData = {
                 emotion: window.currentProcessEmotion,
                 date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}),
@@ -1436,10 +1461,10 @@
                 else switchTab('insights');
                 return; 
             }
-            
+           
             pendingSessionData.bodyPoints = currentBodyPoints;
 
-            if (isLoggedIn && currentUser) { 
+            if (window.isLoggedIn && window.currentUser) { 
                 try { 
                     if(pendingSessionData.id && window.updateSessionInFirebase) {
                         await window.updateSessionInFirebase(pendingSessionData.id, { bodyPoints: currentBodyPoints });
@@ -1475,156 +1500,6 @@
 
         window.loadChart = (em) => { const ctx = document.getElementById('progressChart'); if(!ctx) return; document.getElementById('chart-placeholder').classList.add('hidden'); let data = globalLogData.filter(r => r.emotion === em && r.intensity).reverse(); if(data.length===0) { if(progressChart) progressChart.destroy(); document.getElementById('chart-placeholder').classList.remove('hidden'); document.getElementById('chart-placeholder').textContent = `No data yet for "${em}"`; return; } const lbl = data.map(x => x.date), val = data.map(x => parseInt(x.intensity)); if(progressChart) progressChart.destroy(); progressChart = new Chart(ctx, { type: 'line', data: { labels: lbl, datasets: [{ label: 'Intensity', data: val, borderColor: '#d4af37', backgroundColor: 'rgba(212, 175, 55, 0.1)', tension: 0.4, fill: true, pointBackgroundColor: '#d4af37' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 10, grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } }, x: { grid: { display: false }, ticks: { color: '#94a3b8' } } }, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#0f172a', borderColor: '#334155', borderWidth: 1 } } } }); };
         window.closeCompleteModal = () => { document.getElementById('complete-modal').classList.add('hidden'); document.getElementById('complete-modal').classList.remove('flex'); resetTimer(); };
-    </script>
-
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
-        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
-        import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot, query, orderBy, serverTimestamp, writeBatch, getDocs } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyBc1FA6RTM0sTktO3hhMxWxhYp50CsKJ0I",
-            authDomain: "letting-go-app.firebaseapp.com",
-            projectId: "letting-go-app",
-            storageBucket: "letting-go-app.firebasestorage.app",
-            messagingSenderId: "43093477154",
-            appId: "1:43093477154:web:60cd1b6da597de2830077b",
-            measurementId: "G-K5CDP81Y0T"
-        };
-
-        let auth, provider, db, isLoggedIn=false, currentUser=null, unsubscribeJournal=null;
-
-        try {
-            const app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            provider = new GoogleAuthProvider();
-            db = getFirestore(app);
-
-            setPersistence(auth, browserLocalPersistence).catch(console.error);
-            
-            onAuthStateChanged(auth, (user) => {
-                const lOut = document.getElementById('logged-out-view'), lIn = document.getElementById('logged-in-view');
-                const uName = document.getElementById('user-name'), uEmail = document.getElementById('user-email');
-
-                if (user) {
-                    // Note: removed dismissIntro() so users always see the intro
-                    isLoggedIn = true; currentUser = user;
-                    if(lOut) lOut.classList.add('hidden');
-                    if(lIn) lIn.classList.remove('hidden');
-                    if(uName) uName.textContent = user.displayName || "User";
-                    if(uEmail) uEmail.textContent = user.email;
-                    startJournalListener(user.uid);
-                    window.currentUser = user; 
-                    window.isLoggedIn = true;
-                } else {
-                    isLoggedIn = false; currentUser = null;
-                    if(lOut) lOut.classList.remove('hidden');
-                    if(lIn) lIn.classList.add('hidden');
-                    if(unsubscribeJournal) unsubscribeJournal();
-                    renderJournal(); 
-                    window.currentUser = null;
-                    window.isLoggedIn = false;
-                }
-            });
-        } catch (e) { console.error("Firebase Init Error:", e); }
-
-        window.saveSessionToFirebase = async (data) => {
-            if(!auth || !currentUser) return;
-            data.timestamp = serverTimestamp();
-            await addDoc(collection(db, 'users', currentUser.uid, 'logs'), data);
-        };
-        
-        window.updateSessionInFirebase = async (id, updates) => {
-            if(!auth || !currentUser) return;
-            await updateDoc(doc(db, 'users', currentUser.uid, 'logs', id), updates);
-        };
-
-        window.login = function() { 
-            if (!auth) return alert("Firebase Error"); 
-            signInWithPopup(auth, provider)
-                .then((result) => { console.log("Logged in"); }).catch((error) => { alert("Sign in failed: " + error.message); });
-        }
-        window.logout = function() { if (!auth) return; signOut(auth); }
-
-        window.renderJournal = function(logs) {
-            if (!isLoggedIn || !logs) { logs = JSON.parse(localStorage.getItem('releases') || '[]'); }
-            window.globalLogData = logs; 
-            
-            const list = document.getElementById('journal-list');
-            if (!list) return;
-            if (logs.length === 0) { list.innerHTML = `<div class="text-center py-16 animate-fade-in"><div class="text-slate-800 mb-4"><i data-lucide="book-open" class="w-16 h-16 mx-auto"></i></div><p class="text-slate-600 text-sm">No entries found.</p></div>`; }
-            else {
-                list.innerHTML = logs.map((e, i) => {
-                    const idParam = e.id ? `'${e.id}'` : i; 
-                    const bodyPointsCount = e.bodyPoints ? e.bodyPoints.length : 0;
-                    return `<div class="relative overflow-hidden rounded-xl mb-3 animate-fade-in swipe-container" style="animation-delay: ${i*50}ms">                        <div class="delete-action bg-red-600 text-white" onclick="deleteEntry(${idParam})"><i data-lucide="trash-2" class="w-5 h-5"></i></div>
-                        <div class="glass-panel p-5 flex justify-between items-center swipe-item" ontouchstart="handleTouchStart(event, this)" ontouchmove="handleTouchMove(event, this)" ontouchend="handleTouchEnd(event, this)" onclick="if(!isSwiping) viewChartsForLog('${e.emotion}')">
-                            <div class="flex-1 pr-4">
-                                <h3 class="text-white font-medium capitalize text-lg truncate" onclick="renameEntry(${idParam}, '${e.emotion}', event)">${e.emotion} <i data-lucide="edit-2" class="inline-block w-3 h-3 text-slate-600 ml-1"></i></h3>
-                                <p class="text-xs text-slate-500 mt-1">${e.date} • ${e.time}</p>
-                            </div>
-                            <div class="text-right shrink-0">
-                                <div class="text-xs font-mono text-gold-500">${e.duration > 60 ? Math.floor(e.duration/60) + 'm' : e.duration + 's'}</div>
-                                ${e.intensity ? `<div class="text-[10px] text-slate-500 mt-1">Int: ${e.intensity}</div>` : ''}
-                                ${bodyPointsCount > 0 ? `<div class="text-[10px] text-slate-400 mt-0.5 flex items-center justify-end gap-1"><i data-lucide="map-pin" class="w-2 h-2"></i> ${bodyPointsCount}</div>` : ''}
-                            </div>
-                        </div>
-                    </div>`;                 }).join('');
-            }
-            if(window.lucide) window.lucide.createIcons();
-            const chartEmotion = document.getElementById('chart-emotion-display').textContent;
-            if (chartEmotion !== 'Select to view...') window.loadChart(chartEmotion);
-        };
-
-        function startJournalListener(uid) {
-            const q = query(collection(db, 'users', uid, 'logs'), orderBy('timestamp', 'desc'));
-            unsubscribeJournal = onSnapshot(q, (snapshot) => {
-                const logs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                window.renderJournal(logs);
-                if(!document.getElementById('bodymap-list-view').classList.contains('hidden')) {
-                    openBodyMapList();
-                }
-            });
-        }
-
-        window.loadJournal = () => { if(!isLoggedIn) window.renderJournal(); };
-        
-        window.deleteEntry = async (id) => {
-            if (!confirm("Delete this entry?")) return;
-            if (isLoggedIn && typeof id === 'string') { 
-                await deleteDoc(doc(db, 'users', currentUser.uid, 'logs', id)); 
-            } else { 
-                const rel = JSON.parse(localStorage.getItem('releases') || '[]'); 
-                rel.splice(id, 1); 
-                localStorage.setItem('releases', JSON.stringify(rel)); 
-                window.renderJournal();
-                if(!document.getElementById('bodymap-list-view').classList.contains('hidden')) {
-                    openBodyMapList();
-                }
-            }
-        };
-
-        window.renameEntry = async (id, currentName, event) => {
-            if(event) event.stopPropagation();
-            const newName = prompt("Rename entry:", currentName);
-            if (!newName || newName.trim() === "") return;
-            if (isLoggedIn && typeof id === 'string') { await updateDoc(doc(db, 'users', currentUser.uid, 'logs', id), { emotion: newName.trim() }); }
-            else { const rel = JSON.parse(localStorage.getItem('releases') || '[]'); rel[id].emotion = newName.trim(); localStorage.setItem('releases', JSON.stringify(rel)); window.renderJournal(); }
-        };
-
-        window.clearJournal = async () => {
-            if (!confirm("Clear all journal entries? This cannot be undone.")) return;
-            if (isLoggedIn && currentUser) {
-                try {
-                    const q = query(collection(db, 'users', currentUser.uid, 'logs'));
-                    const snapshot = await getDocs(q);
-                    const batch = writeBatch(db);
-                    snapshot.docs.forEach((doc) => { batch.delete(doc.ref); });
-                    await batch.commit();
-                    alert("Cloud logs cleared successfully.");
-                } catch (e) { console.error("Error clearing logs:", e); alert("Failed to clear logs: " + e.message); }
-            } else { localStorage.removeItem('releases'); window.renderJournal(); }
-        };
     </script>
 </body>
 </html>
