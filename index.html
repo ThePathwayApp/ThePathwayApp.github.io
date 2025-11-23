@@ -131,19 +131,23 @@
 
         /* The SVG layer - Updated Anatomy */
         .anatomy-svg {
-            height: 85%; /* Optimal size */
+            height: 90%; /* Optimal size */
             width: auto;
             max-width: 100%;
-            filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.15));
+            filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.1));
             position: relative;
             z-index: 10;
-            pointer-events: none; 
+        }
+        
+        /* Path Styles */
+        .anatomy-svg path {
+            transition: fill-opacity 0.3s ease;
         }
 
         /* The Interactive Layer - Must match SVG aspect ratio perfectly */
         .interactive-layer {
             position: absolute;
-            height: 85%; /* Match SVG height */
+            height: 90%; /* Match SVG height */
             aspect-ratio: 300 / 700; /* Match SVG ViewBox */
             z-index: 50;
             pointer-events: none; 
@@ -233,7 +237,7 @@
         </nav>
 
         <div class="px-6 pt-6 pb-4 text-center border-t border-slate-800/50 mt-auto">
-            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 9.9.5</p>
+            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 9.9.7</p>
         </div>
     </aside>
 
@@ -435,46 +439,63 @@
                 
                 <div class="neuro-body-container" id="neuro-container">
                     
-                    <!-- NEW ANATOMICAL SVG (300x700) - A-POSE GEOMETRY -->
-                    <svg viewBox="0 0 300 700" class="anatomy-svg" id="body-silhouette">
-                        <!-- Definitions for glow effect -->
+                    <!-- NEW ANATOMICAL SVG FROM PROMPT -->
+                    <svg id="body-silhouette" class="anatomy-svg" viewBox="0 0 300 700" preserveAspectRatio="xMidYMid meet">
                         <defs>
-                            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                                <feGaussianBlur stdDeviation="4" result="blur" />
+                            <filter id="gold-glow" x="-20%" y="-20%" width="140%" height="140%">
+                                <feGaussianBlur stdDeviation="2" result="blur" />
                                 <feComposite in="SourceGraphic" in2="blur" operator="over" />
                             </filter>
                         </defs>
-                        
-                        <g stroke="#d4af37" stroke-width="1.5" fill="rgba(255,255,255,0.03)" stroke-linecap="round" stroke-linejoin="round">
-                            <!-- Head -->
-                            <path d="M150,25 Q180,25 180,60 Q180,90 165,100 L165,110 L135,110 L135,100 Q120,90 120,60 Q120,25 150,25 Z" />
-                            
-                            <!-- Shoulders to Arms (Left) -->
-                            <path d="M135,110 L100,115 Q80,120 75,150 L60,230 L50,300 L30,320 L50,330 L65,300 L75,230 L90,160" />
-                            
-                            <!-- Shoulders to Arms (Right) -->
-                            <path d="M165,110 L200,115 Q220,120 225,150 L240,230 L250,300 L270,320 L250,330 L235,300 L225,230 L210,160" />
-                            
-                            <!-- Torso -->
-                            <path d="M100,115 L100,160 L105,320 Q100,350 95,380" /> <!-- Left Side -->
-                            <path d="M200,115 L200,160 L195,320 Q200,350 205,380" /> <!-- Right Side -->
-                            
-                            <!-- Legs (Left) -->
-                            <path d="M95,380 L90,520 L85,650 L75,660 L110,660 L120,650 L125,520 L135,390" />
-                            
-                            <!-- Legs (Right) -->
-                            <path d="M205,380 L210,520 L215,650 L225,660 L190,660 L180,650 L175,520 L165,390" />
-                            
-                            <!-- Crotch Connect -->
-                            <path d="M135,390 L165,390" stroke-width="1" opacity="0.5" />
-                        </g>
-                        
-                        <!-- Subtle Internal Markers -->
-                        <g fill="#d4af37" opacity="0.2">
-                            <circle cx="150" cy="60" r="2" /> <!-- Third Eye -->
-                            <circle cx="150" cy="180" r="2" /> <!-- Heart -->
-                            <circle cx="150" cy="270" r="2" /> <!-- Solar Plexus -->
-                            <circle cx="150" cy="340" r="2" /> <!-- Sacral -->
+                        <g stroke="#d4af37" stroke-width="1.5" fill="rgba(212, 175, 55, 0.05)">
+                            <!-- HEAD -->
+                            <path id="head" d="M150 40 c -26 0 -44 18 -44 46 c 0 28 18 46 44 46 c 26 0 44 -18 44 -46 c 0 -28 -18 -46 -44 -46z" />
+
+                            <!-- NECK -->
+                            <path id="neck" d="M125 132 L175 132 L182 170 L118 170 Z" />
+
+                            <!-- SHOULDERS / CLAVICLE -->
+                            <path id="left-shoulder" d="M118 170 L80 185 L75 210 L118 200 Z" />
+                            <path id="right-shoulder" d="M182 170 L220 185 L225 210 L182 200 Z" />
+
+                            <!-- TORSO -->
+                            <path id="upper-torso" d="M118 200 L182 200 L190 300 L110 300 Z" />
+
+                            <!-- CHEST -->
+                            <path id="left-chest" d="M118 200 L150 200 L150 260 L115 260 Z" />
+                            <path id="right-chest" d="M150 200 L182 200 L185 260 L150 260 Z" />
+
+                            <!-- CORE -->
+                            <path id="solar-plexus" d="M125 260 L175 260 L178 300 L122 300 Z" />
+
+                            <!-- ABDOMEN -->
+                            <path id="left-abdomen" d="M122 300 L150 300 L150 360 L120 360 Z" />
+                            <path id="right-abdomen" d="M150 300 L178 300 L180 360 L150 360 Z" />
+
+                            <!-- PELVIS -->
+                            <path id="pelvis" d="M120 360 L180 360 L185 420 L115 420 Z" />
+
+                            <!-- ARMS -->
+                            <path id="left-upper-arm" d="M75 210 L55 300 L80 300 L100 210 Z" />
+                            <path id="right-upper-arm" d="M225 210 L245 300 L220 300 L200 210 Z" />
+
+                            <path id="left-forearm" d="M55 300 L40 390 L65 390 L80 300 Z" />
+                            <path id="right-forearm" d="M245 300 L260 390 L235 390 L220 300 Z" />
+
+                            <!-- HANDS -->
+                            <path id="left-hand" d="M40 390 L35 430 L70 430 L65 390 Z" />
+                            <path id="right-hand" d="M260 390 L265 430 L230 430 L235 390 Z" />
+
+                            <!-- LEGS -->
+                            <path id="left-thigh" d="M115 420 L145 420 L145 540 L110 540 Z" />
+                            <path id="right-thigh" d="M155 420 L185 420 L190 540 L155 540 Z" />
+
+                            <path id="left-shin" d="M110 540 L145 540 L145 630 L110 630 Z" />
+                            <path id="right-shin" d="M155 540 L190 540 L190 630 L155 630 Z" />
+
+                            <!-- FEET -->
+                            <path id="left-foot" d="M110 630 L150 630 L150 665 L110 665 Z" />
+                            <path id="right-foot" d="M155 630 L195 630 L195 665 L155 665 Z" />
                         </g>
                     </svg>
 
@@ -749,7 +770,7 @@
             let newTranslate = 0;
             if (!isOpen) { if (diff < 0) newTranslate = Math.max(diff, -80); } 
             else { newTranslate = -80 + diff; newTranslate = Math.max(Math.min(newTranslate, 0), -80); }
-            el.style.transform = `translateX(${newTranslate}px)`;
+            el.style.transform = translateX(${newTranslate}px);
         };
 
         window.handleTouchEnd = (e, el) => {
@@ -936,7 +957,7 @@
             }
             lucide.createIcons();
         }
-        function formatTime(sec) { if (sec < 0) sec = 0; const m = Math.floor(sec/60).toString().padStart(2,'0'), s = (sec%60).toString().padStart(2,'0'); return `${m}:${s}`; }
+        function formatTime(sec) { if (sec < 0) sec = 0; const m = Math.floor(sec/60).toString().padStart(2,'0'), s = (sec%60).toString().padStart(2,'0'); return ${m}:${s}; }
         function updateTimerDisplay() { let sec = timerDuration; if(isTimerRunning) { const now = Date.now(), rem = Math.ceil((timerEndTime - now)/1000); sec = rem > 0 ? rem : 0; } document.getElementById('timer-display').value = formatTime(sec); }
         
         function handleTimerInput(input) { 
@@ -947,7 +968,7 @@
             const s = parseInt(val.slice(2, 4), 10); 
             timerDuration = (m * 60) + s; 
             defaultDuration = timerDuration; 
-            input.value = `${val.slice(0,2)}:${val.slice(2,4)}`; 
+            input.value = ${val.slice(0,2)}:${val.slice(2,4)}; 
         }
         
         function adjustTimer(amt) { 
@@ -1002,8 +1023,8 @@
 
         function setBellInterval(val) { 
             unlockAudio(); bellInterval=val; 
-            ['0','1','5','half'].forEach(v => document.getElementById(`bell-check-${v}`).classList.add('hidden')); 
-            document.getElementById(`bell-check-${val}`).classList.remove('hidden'); 
+            ['0','1','5','half'].forEach(v => document.getElementById(bell-check-${v}).classList.add('hidden')); 
+            document.getElementById(bell-check-${val}).classList.remove('hidden'); 
             const mainInd = document.getElementById('bell-status');
             const procInd = document.getElementById('process-bell-status');
             if(mainInd) mainInd.classList.toggle('hidden', val===0);
@@ -1012,8 +1033,8 @@
         }
         function setAmbience(val) { 
             unlockAudio(); currentAmbience=val; 
-            ['none','rain','wind','river','birds','chimes'].forEach(v => document.getElementById(`amb-check-${v}`).classList.add('hidden')); 
-            document.getElementById(`amb-check-${val}`).classList.remove('hidden'); 
+            ['none','rain','wind','river','birds','chimes'].forEach(v => document.getElementById(amb-check-${v}).classList.add('hidden')); 
+            document.getElementById(amb-check-${val}).classList.remove('hidden'); 
             const mainInd = document.getElementById('ambience-status');
             const procInd = document.getElementById('process-ambience-status');
             if(mainInd) mainInd.classList.toggle('hidden', val==='none');
@@ -1021,13 +1042,13 @@
             if(isTimerRunning || document.getElementById('process-step-4').classList.contains('hidden') === false) playAmbience(val); 
             toggleModal('ambience-modal'); 
         }
-        function initQA() { const c=document.getElementById('qa-container'); if(!c) return; let html="", cat=""; QA_DATA.forEach((item,i)=>{ if(item.category!==cat){ cat=item.category; html+=`<h3 class="text-gold-500 text-xs uppercase tracking-widest mt-6 mb-2 font-medium pl-1">${cat}</h3>`; } html+=`<div class="glass-panel rounded-xl overflow-hidden mb-3"><button onclick="toggleFAQ(${i})" class="w-full px-5 py-4 text-left flex justify-between items-center hover:bg-slate-800/50 transition focus:outline-none select-none"><span class="text-slate-200 font-medium pr-4 text-sm">${item.q}</span><i data-lucide="chevron-down" id="faq-icon-${i}" class="faq-icon w-4 h-4 text-slate-500 shrink-0"></i></button><div id="faq-ans-${i}" class="faq-answer bg-slate-900/30 border-t border-slate-800/50"><p class="p-5 text-slate-400 text-sm leading-relaxed font-light">${item.a}</p></div></div>`; }); c.innerHTML=html; lucide.createIcons(); }
-        function toggleFAQ(i) { const a=document.getElementById(`faq-ans-${i}`), ic=document.getElementById(`faq-icon-${i}`); a.classList.toggle('active'); ic.classList.toggle('active'); }
-        function initEmotionPicker() { const c=document.getElementById('emotion-list-container'); if(c) c.innerHTML = HAWKINS_SCALE.map(e => `<button onclick="selectEmotion('${e.name}')" class="w-full text-left px-6 py-4 border-b border-slate-800 text-slate-300 hover:bg-slate-800 transition flex justify-between items-center group"><span class="font-medium text-lg">${e.name}</span><span class="text-xs text-slate-600 font-mono group-hover:text-gold-500">${e.val}</span></button>`).join(''); }
+        function initQA() { const c=document.getElementById('qa-container'); if(!c) return; let html="", cat=""; QA_DATA.forEach((item,i)=>{ if(item.category!==cat){ cat=item.category; html+=<h3 class="text-gold-500 text-xs uppercase tracking-widest mt-6 mb-2 font-medium pl-1">${cat}</h3>; } html+=<div class="glass-panel rounded-xl overflow-hidden mb-3"><button onclick="toggleFAQ(${i})" class="w-full px-5 py-4 text-left flex justify-between items-center hover:bg-slate-800/50 transition focus:outline-none select-none"><span class="text-slate-200 font-medium pr-4 text-sm">${item.q}</span><i data-lucide="chevron-down" id="faq-icon-${i}" class="faq-icon w-4 h-4 text-slate-500 shrink-0"></i></button><div id="faq-ans-${i}" class="faq-answer bg-slate-900/30 border-t border-slate-800/50"><p class="p-5 text-slate-400 text-sm leading-relaxed font-light">${item.a}</p></div></div>; }); c.innerHTML=html; lucide.createIcons(); }
+        function toggleFAQ(i) { const a=document.getElementById(faq-ans-${i}), ic=document.getElementById(faq-icon-${i}); a.classList.toggle('active'); ic.classList.toggle('active'); }
+        function initEmotionPicker() { const c=document.getElementById('emotion-list-container'); if(c) c.innerHTML = HAWKINS_SCALE.map(e => <button onclick="selectEmotion('${e.name}')" class="w-full text-left px-6 py-4 border-b border-slate-800 text-slate-300 hover:bg-slate-800 transition flex justify-between items-center group"><span class="font-medium text-lg">${e.name}</span><span class="text-xs text-slate-600 font-mono group-hover:text-gold-500">${e.val}</span></button>).join(''); }
         function initSensationEmotionPicker() {
             const s = document.getElementById('sensation-emotion');
             if(s) {
-                s.innerHTML = HAWKINS_SCALE.map(e => `<option value="${e.name}">${e.name} (${e.val})</option>`).join('');
+                s.innerHTML = HAWKINS_SCALE.map(e => <option value="${e.name}">${e.name} (${e.val})</option>).join('');
             }
         }
         
@@ -1057,10 +1078,10 @@
         // SMOOTH SWITCH
         function switchTab(id) {
             const current = document.querySelector('.view-section.active-view');
-            const next = document.getElementById(`view-${id}`);
-            if (current && current.id === `view-${id}`) { document.body.classList.remove('side-menu-open'); return; }
+            const next = document.getElementById(view-${id});
+            if (current && current.id === view-${id}) { document.body.classList.remove('side-menu-open'); return; }
             document.querySelectorAll('.menu-link').forEach(b=>b.classList.remove('active')); 
-            const btn = document.getElementById(`menu-${id}`); if(btn) btn.classList.add('active');
+            const btn = document.getElementById(menu-${id}); if(btn) btn.classList.add('active');
             document.body.classList.remove('side-menu-open');
             activeTab=id;
             if(id==='qa') initQA(); if(id==='journal') loadJournal(); 
@@ -1101,13 +1122,12 @@
             const container = document.getElementById('bodymap-log-container');
             
             if (bodyLogs.length === 0) {
-                container.innerHTML = `<div class="text-center py-16 animate-fade-in"><div class="text-slate-800 mb-4"><i data-lucide="activity" class="w-16 h-16 mx-auto"></i></div><p class="text-slate-600 text-sm">No somatic maps recorded.</p><button onclick="startNewMapSession()" class="mt-6 text-gold-500 text-xs uppercase tracking-widest border border-slate-800 px-4 py-2 rounded-lg hover:bg-slate-800 transition">New Scan</button></div>`;
+                container.innerHTML = <div class="text-center py-16 animate-fade-in"><div class="text-slate-800 mb-4"><i data-lucide="activity" class="w-16 h-16 mx-auto"></i></div><p class="text-slate-600 text-sm">No somatic maps recorded.</p><button onclick="startNewMapSession()" class="mt-6 text-gold-500 text-xs uppercase tracking-widest border border-slate-800 px-4 py-2 rounded-lg hover:bg-slate-800 transition">New Scan</button></div>;
             } else {
-                container.innerHTML = `<div class="mb-4 px-1"><button onclick="startNewMapSession()" class="w-full py-3 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-900 rounded-xl text-xs uppercase tracking-widest transition">+ New Scan</button></div>` + 
+                container.innerHTML = <div class="mb-4 px-1"><button onclick="startNewMapSession()" class="w-full py-3 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-900 rounded-xl text-xs uppercase tracking-widest transition">+ New Scan</button></div> + 
                 bodyLogs.map((e, i) => {
-                    const idParam = e.id ? `'${e.id}'` : i; 
-                    return `<div class="relative overflow-hidden rounded-xl mb-3 animate-fade-in swipe-container" style="animation-delay: ${i*50}ms">
-                        <div class="delete-action bg-red-600 text-white" onclick="deleteEntry(${idParam})"><i data-lucide="trash-2" class="w-5 h-5"></i></div>
+                    const idParam = e.id ? '${e.id}' : i; 
+                    return <div class="relative overflow-hidden rounded-xl mb-3 animate-fade-in swipe-container" style="animation-delay: ${i*50}ms">                        <div class="delete-action bg-red-600 text-white" onclick="deleteEntry(${idParam})"><i data-lucide="trash-2" class="w-5 h-5"></i></div>
                         <div class="glass-panel p-5 flex justify-between items-center swipe-item" ontouchstart="handleTouchStart(event, this)" ontouchmove="handleTouchMove(event, this)" ontouchend="handleTouchEnd(event, this)" onclick="if(!isSwiping) loadBodySession('${e.id || i}')">
                             <div class="flex-1 pr-4">
                                 <h3 class="text-white font-medium capitalize text-lg truncate">${e.emotion}</h3>
@@ -1117,8 +1137,7 @@
                                 <div class="text-gold-500 text-xs"><i data-lucide="map-pin" class="w-3 h-3 inline mr-1"></i>${e.bodyPoints.length}</div>
                             </div>
                         </div>
-                    </div>`;
-                }).join('');
+                    </div>;                }).join('');
             }
             lucide.createIcons();
         }
@@ -1173,7 +1192,7 @@
         window.startProcess = () => { if(!currentSelectedEmotion) { alert("Please select an emotion first."); return; } currentProcessEmotion = currentSelectedEmotion; document.querySelectorAll('.current-emotion').forEach(el=>el.textContent=currentProcessEmotion); processSeconds=0; nextStep(1); document.getElementById('process-reset-btn').classList.remove('hidden'); };
         window.nextStep = (s) => { 
             document.querySelectorAll('.process-step').forEach(e=>e.classList.add('hidden')); 
-            const t=document.getElementById(`process-step-${s}`); 
+            const t=document.getElementById(process-step-${s}); 
             t.classList.remove('hidden'); t.classList.add('animate-fade-in'); 
             if(s===4) {
                 startProcessTimer(); 
@@ -1181,12 +1200,12 @@
             } else stopProcessTimer(); 
             if(s===5) document.getElementById('process-reset-btn').classList.add('hidden'); 
         };
-        window.startProcessTimer = () => { const d=document.getElementById('process-timer'); processSeconds=0; d.textContent="00:00"; if(processInterval) clearInterval(processInterval); processStartTime=Date.now(); processInterval=setInterval(()=>{ const now=Date.now(); processSeconds=Math.floor((now-processStartTime)/1000); const m=Math.floor(processSeconds/60).toString().padStart(2,'0'), s=(processSeconds%60).toString().padStart(2,'0'); d.textContent=`${m}:${s}`; },1000); };
+        window.startProcessTimer = () => { const d=document.getElementById('process-timer'); processSeconds=0; d.textContent="00:00"; if(processInterval) clearInterval(processInterval); processStartTime=Date.now(); processInterval=setInterval(()=>{ const now=Date.now(); processSeconds=Math.floor((now-processStartTime)/1000); const m=Math.floor(processSeconds/60).toString().padStart(2,'0'), s=(processSeconds%60).toString().padStart(2,'0'); d.textContent=${m}:${s}; },1000); };
         window.stopProcessTimer = () => { if(processInterval) clearInterval(processInterval); };
         window.finishProcess = () => { stopProcessTimer(); stopAmbience(); nextStep(5); };
         window.resetProcess = () => { stopProcessTimer(); stopAmbience(); document.querySelectorAll('.process-step').forEach(e=>e.classList.add('hidden')); document.getElementById('process-step-0').classList.remove('hidden'); document.getElementById('process-reset-btn').classList.add('hidden'); };
         
-        // --- UPDATED BODY MAP LOGIC WITH NEW A-POSE SVG ---
+        // --- UPDATED BODY MAP LOGIC WITH HIT TESTING ---
 
         const BODY_WIDTH = 300;
         const BODY_HEIGHT = 700;
@@ -1226,95 +1245,66 @@
             const pad = document.getElementById('sensation-trackpad');
             const padRect = pad.getBoundingClientRect();
             
+            // 1. Normalise Touch on Trackpad
             let tx = (touch.clientX - padRect.left) / padRect.width;
             let ty = (touch.clientY - padRect.top) / padRect.height;
-            
             tx = Math.max(0, Math.min(1, tx));
             ty = Math.max(0, Math.min(1, ty));
 
+            // 2. Map to Body Container Coordinates
             const bodyX = tx * BODY_WIDTH;
             const bodyY = ty * BODY_HEIGHT;
 
+            // 3. Move Virtual Cursor
             const cursor = document.getElementById('active-cursor');
-            cursor.style.transform = `translate3d(${bodyX}px, ${bodyY}px, 0)`;
+            cursor.style.transform = translate3d(${bodyX}px, ${bodyY}px, 0);
 
-            const region = identifyBodyRegion(bodyX, bodyY);
+            // 4. HIT TEST: Find what Element is UNDER the Virtual Cursor
+            // We need the absolute screen coordinates of the virtual cursor position.
+            // The #active-cursor is inside #interactive-layer (relative).
+            // We can use the #interactive-layer's bounding rect to offset.
+            const layerRect = document.getElementById('interactive-layer').getBoundingClientRect();
+            
+            // Calculate screen X/Y relative to the interactive layer's current screen position
+            // Note: bodyX/bodyY are relative to the 300x700 viewBox.
+            // We need to scale them if the container is scaled (e.g. on small screens).
+            const scaleX = layerRect.width / BODY_WIDTH;
+            const scaleY = layerRect.height / BODY_HEIGHT;
+            
+            const screenX = layerRect.left + (bodyX * scaleX);
+            const screenY = layerRect.top + (bodyY * scaleY);
+
+            // Temporarily hide cursor so we don't hit-test IT instead of the SVG
+            cursor.style.display = 'none';
+            const element = document.elementFromPoint(screenX, screenY);
+            cursor.style.display = 'block';
+
+            let region = "";
+            
+            if (element && element.tagName === 'path') {
+                // Check if it belongs to our anatomy SVG
+                if (element.closest('svg#body-silhouette')) {
+                    // Format ID: "left-shoulder" -> "Left Shoulder"
+                    region = element.id
+                        .replace(/-/g, ' ')
+                        .replace(/\b\w/g, l => l.toUpperCase());
+                }
+            }
+
             const label = document.getElementById('body-part-label');
             
-            if (label.textContent !== region) {
+            if (region && label.textContent !== region) {
                 label.textContent = region;
                 if (navigator.vibrate) navigator.vibrate(5);
+            } else if (!region) {
+                label.textContent = "Scanning...";
             }
 
-            pendingPoint = { x: tx, y: ty, region };
+            // Save normalized point + region name for saving
+            pendingPoint = { x: tx, y: ty, region: region || "General" };
         }
 
-        function identifyBodyRegion(x, y) {
-            // Updated Logic for A-Pose Silhouette (300x700)
-            // Central Column is roughly X=110 to X=190
-            
-            // HEAD AREA
-            if (y < 100) {
-                if (y < 40) return "Crown";
-                if (y < 65) return "Forehead";
-                if (x > 135 && x < 165) return "Face / Nose";
-                if (x < 135) return "Left Temple";
-                return "Right Temple";
-            }
-            
-            // NECK
-            if (y < 120 && x > 120 && x < 180) return "Throat / Neck";
-
-            // SHOULDERS / ARMS (Upper Body Split)
-            if (y < 350) {
-                // Left Arm (x < 110)
-                if (x < 110) {
-                    if (y < 150) return "Left Shoulder";
-                    if (y < 220) return "Left Upper Arm";
-                    if (y < 250) return "Left Elbow";
-                    if (y < 300) return "Left Forearm";
-                    return "Left Hand";
-                }
-                // Right Arm (x > 190)
-                else if (x > 190) {
-                    if (y < 150) return "Right Shoulder";
-                    if (y < 220) return "Right Upper Arm";
-                    if (y < 250) return "Right Elbow";
-                    if (y < 300) return "Right Forearm";
-                    return "Right Hand";
-                }
-                // Central Torso (110 < x < 190)
-                else {
-                    if (y < 150) return "Collarbone";
-                    if (y < 190) return "Heart Center";
-                    if (y < 230) return "Solar Plexus";
-                    if (y < 280) return "Navel / Stomach";
-                    return "Lower Abdomen";
-                }
-            }
-
-            // HIPS / LEGS (Lower Body)
-            // Hips/Groin
-            if (y < 390) {
-                if (x > 130 && x < 170) return "Root / Pelvis";
-                return (x < 150) ? "Left Hip" : "Right Hip";
-            }
-
-            // Legs Split
-            if (x < 150) {
-                // Left Leg
-                if (y < 500) return "Left Thigh";
-                if (y < 540) return "Left Knee";
-                if (y < 640) return "Left Shin/Calf";
-                return "Left Foot";
-            } else {
-                // Right Leg
-                if (y < 500) return "Right Thigh";
-                if (y < 540) return "Right Knee";
-                if (y < 640) return "Right Shin/Calf";
-                return "Right Foot";
-            }
-        }
+        // Function identifyBodyRegion(x, y) is DELETED as requested.
 
         function confirmBodyPoint() {
             const type = document.getElementById('sensation-type').value;
@@ -1366,12 +1356,12 @@
                 const size = 12 + (p.intensity * 1.5); 
                 const opacity = 0.4 + (p.intensity / 20);
                 
-                el.style.width = `${size}px`;
-                el.style.height = `${size}px`;
-                el.style.backgroundColor = `rgba(212, 175, 55, ${opacity})`; // Gold Markers
+                el.style.width = ${size}px;
+                el.style.height = ${size}px;
+                el.style.backgroundColor = rgba(212, 175, 55, ${opacity}); // Gold Markers
                 // Use standard positioning for static markers
-                el.style.left = `${p.x * BODY_WIDTH}px`;
-                el.style.top = `${p.y * BODY_HEIGHT}px`;
+                el.style.left = ${p.x * BODY_WIDTH}px;
+                el.style.top = ${p.y * BODY_HEIGHT}px;
                 
                 container.appendChild(el);
             });
@@ -1466,7 +1456,7 @@
             openCharts('journal');
         }
 
-        window.loadChart = (em) => { const ctx = document.getElementById('progressChart'); if(!ctx) return; document.getElementById('chart-placeholder').classList.add('hidden'); let data = globalLogData.filter(r => r.emotion === em && r.intensity).reverse(); if(data.length===0) { if(progressChart) progressChart.destroy(); document.getElementById('chart-placeholder').classList.remove('hidden'); document.getElementById('chart-placeholder').textContent = `No data yet for "${em}"`; return; } const lbl = data.map(x => x.date), val = data.map(x => parseInt(x.intensity)); if(progressChart) progressChart.destroy(); progressChart = new Chart(ctx, { type: 'line', data: { labels: lbl, datasets: [{ label: 'Intensity', data: val, borderColor: '#d4af37', backgroundColor: 'rgba(212, 175, 55, 0.1)', tension: 0.4, fill: true, pointBackgroundColor: '#d4af37' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 10, grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } }, x: { grid: { display: false }, ticks: { color: '#94a3b8' } } }, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#0f172a', borderColor: '#334155', borderWidth: 1 } } } }); };
+        window.loadChart = (em) => { const ctx = document.getElementById('progressChart'); if(!ctx) return; document.getElementById('chart-placeholder').classList.add('hidden'); let data = globalLogData.filter(r => r.emotion === em && r.intensity).reverse(); if(data.length===0) { if(progressChart) progressChart.destroy(); document.getElementById('chart-placeholder').classList.remove('hidden'); document.getElementById('chart-placeholder').textContent = No data yet for "${em}"; return; } const lbl = data.map(x => x.date), val = data.map(x => parseInt(x.intensity)); if(progressChart) progressChart.destroy(); progressChart = new Chart(ctx, { type: 'line', data: { labels: lbl, datasets: [{ label: 'Intensity', data: val, borderColor: '#d4af37', backgroundColor: 'rgba(212, 175, 55, 0.1)', tension: 0.4, fill: true, pointBackgroundColor: '#d4af37' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 10, grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } }, x: { grid: { display: false }, ticks: { color: '#94a3b8' } } }, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#0f172a', borderColor: '#334155', borderWidth: 1 } } } }); };
         window.closeCompleteModal = () => { document.getElementById('complete-modal').classList.add('hidden'); document.getElementById('complete-modal').classList.remove('flex'); resetTimer(); };
     </script>
 
@@ -1545,13 +1535,12 @@
             
             const list = document.getElementById('journal-list');
             if (!list) return;
-            if (logs.length === 0) { list.innerHTML = `<div class="text-center py-16 animate-fade-in"><div class="text-slate-800 mb-4"><i data-lucide="book-open" class="w-16 h-16 mx-auto"></i></div><p class="text-slate-600 text-sm">No entries found.</p></div>`; }
+            if (logs.length === 0) { list.innerHTML = <div class="text-center py-16 animate-fade-in"><div class="text-slate-800 mb-4"><i data-lucide="book-open" class="w-16 h-16 mx-auto"></i></div><p class="text-slate-600 text-sm">No entries found.</p></div>; }
             else {
                 list.innerHTML = logs.map((e, i) => {
-                    const idParam = e.id ? `'${e.id}'` : i; 
+                    const idParam = e.id ? '${e.id}' : i; 
                     const bodyPointsCount = e.bodyPoints ? e.bodyPoints.length : 0;
-                    return `<div class="relative overflow-hidden rounded-xl mb-3 animate-fade-in swipe-container" style="animation-delay: ${i*50}ms">
-                        <div class="delete-action bg-red-600 text-white" onclick="deleteEntry(${idParam})"><i data-lucide="trash-2" class="w-5 h-5"></i></div>
+                    return <div class="relative overflow-hidden rounded-xl mb-3 animate-fade-in swipe-container" style="animation-delay: ${i*50}ms">                        <div class="delete-action bg-red-600 text-white" onclick="deleteEntry(${idParam})"><i data-lucide="trash-2" class="w-5 h-5"></i></div>
                         <div class="glass-panel p-5 flex justify-between items-center swipe-item" ontouchstart="handleTouchStart(event, this)" ontouchmove="handleTouchMove(event, this)" ontouchend="handleTouchEnd(event, this)" onclick="if(!isSwiping) viewChartsForLog('${e.emotion}')">
                             <div class="flex-1 pr-4">
                                 <h3 class="text-white font-medium capitalize text-lg truncate" onclick="renameEntry(${idParam}, '${e.emotion}', event)">${e.emotion} <i data-lucide="edit-2" class="inline-block w-3 h-3 text-slate-600 ml-1"></i></h3>
@@ -1559,12 +1548,11 @@
                             </div>
                             <div class="text-right shrink-0">
                                 <div class="text-xs font-mono text-gold-500">${e.duration > 60 ? Math.floor(e.duration/60) + 'm' : e.duration + 's'}</div>
-                                ${e.intensity ? `<div class="text-[10px] text-slate-500 mt-1">Int: ${e.intensity}</div>` : ''}
-                                ${bodyPointsCount > 0 ? `<div class="text-[10px] text-slate-400 mt-0.5 flex items-center justify-end gap-1"><i data-lucide="map-pin" class="w-2 h-2"></i> ${bodyPointsCount}</div>` : ''}
+                                ${e.intensity ? <div class="text-[10px] text-slate-500 mt-1">Int: ${e.intensity}</div> : ''}
+                                ${bodyPointsCount > 0 ? <div class="text-[10px] text-slate-400 mt-0.5 flex items-center justify-end gap-1"><i data-lucide="map-pin" class="w-2 h-2"></i> ${bodyPointsCount}</div> : ''}
                             </div>
                         </div>
-                    </div>`;
-                }).join('');
+                    </div>;                }).join('');
             }
             if(window.lucide) window.lucide.createIcons();
             const chartEmotion = document.getElementById('chart-emotion-display').textContent;
