@@ -471,34 +471,43 @@
               
                 <div class="neuro-body-container" id="neuro-container">
                    
+                    <!-- STAGE: A fixed-ratio container centered in the view -->
+                    <!-- This ensures layers overlap perfectly and stay centered on all screens -->
                     <div class="body-stage bg-slate-900/50 rounded-2xl relative">
                        
+                        <!-- 1. Image Layer (Visual) -->
                         <img 
-                            src="Image.jpg" 
+                            src="image.jpg" 
                             id="body-image" 
                             class="layer anatomy-img" 
                             alt="Body Map" 
                         />
 
+                        <!-- 2. Tracking SVG (Invisible, Top Layer) -->
                         <svg id="body-silhouette" class="layer tracking-svg" viewBox="0 0 300 600" preserveAspectRatio="xMidYMid meet">
                             <g>
+                                <!-- Head/Neck -->
                                 <path id="head" d="M150,20 L150,80" stroke-width="50" />
                                 <path id="neck" d="M150,85 L150,105" stroke-width="40" />
                                 
+                                <!-- Torso -->
                                 <path id="chest" d="M150,110 L150,180" stroke-width="70" />
                                 <path id="solar-plexus" d="M150,185 L150,225" stroke-width="60" />
                                 <path id="stomach" d="M150,230 L150,270" stroke-width="60" />
                                 <path id="pelvis" d="M150,275 L150,310" stroke-width="60" />
                                 
+                                <!-- Arms (Calculated to match the slightly spread pose) -->
                                 <path id="left-shoulder" d="M110,110 L90,120" stroke-width="30" />
                                 <path id="right-shoulder" d="M190,110 L210,120" stroke-width="30" />
                                 
+                                <!-- Arms hanging down at angle -->
                                 <path id="left-arm" d="M90,130 L70,300" stroke-width="35" />
                                 <path id="right-arm" d="M210,130 L230,300" stroke-width="35" />
                                 
                                 <path id="left-hand" d="M70,310 L65,340" stroke-width="25" />
                                 <path id="right-hand" d="M230,310 L235,340" stroke-width="25" />
                                 
+                                <!-- Legs -->
                                 <path id="left-leg" d="M130,320 L125,540" stroke-width="40" />
                                 <path id="right-leg" d="M170,320 L175,540" stroke-width="40" />
                                 
@@ -507,6 +516,7 @@
                             </g>
                         </svg>
 
+                        <!-- 3. Interactive Marker Container -->
                         <div id="interactive-layer" class="layer interactive-layer">
                             <div id="markers-container" class="w-full h-full relative"></div>
                             <div id="active-cursor" class="neuro-cursor">
@@ -546,6 +556,7 @@
         </section>
     </main>
 
+    <!-- Modals remain unchanged ... -->
     <div id="emotion-picker" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] hidden flex-col justify-end" onclick="if(event.target === this) toggleModal('emotion-picker')">
         <div class="bg-slate-900 border-t border-slate-700 rounded-t-3xl w-full max-w-md mx-auto max-h-[70vh] flex flex-col shadow-2xl">
             <div class="flex justify-between items-center p-6 border-b border-slate-800">
