@@ -203,8 +203,15 @@
             </div>
             <div class="mt-6 pt-6 border-t border-slate-800/50" id="auth-container">
                 <div id="logged-out-view">
-                    <button onclick="login()" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl transition font-medium flex items-center justify-center gap-3 shadow-lg border border-slate-700">
-                        Sign In
+                    <button onclick="login()" class="w-full py-3 bg-white hover:bg-gray-100 text-slate-900 rounded-xl transition font-medium flex items-center justify-center gap-3 shadow-lg border border-transparent relative group">
+                         <!-- Google Logo SVG -->
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                        </svg>
+                        <span>Sign In with Google</span>
                     </button>
                 </div>
                 <div id="logged-in-view" class="hidden">
@@ -242,7 +249,8 @@
             <div class="flex justify-center">
                 <div class="quote-wrapper max-w-md relative">
                     <svg class="quote-mark start" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21L14.017 18C14.017 16.896 14.321 15.923 14.929 15.081C15.537 14.239 16.357 13.459 17.389 12.741L16.731 10.561C15.039 11.623 14.069 12.878 13.821 14.326C13.821 14.326 13.821 14.326 13.821 14.326C13.545 13.714 13.407 13.052 13.407 12.34C13.407 10.284 14.147 8.528 15.627 7.072C17.107 5.616 18.867 4.888 20.907 4.888C21.787 4.888 22.467 5.568 22.947 6.928C23.427 8.288 23.667 9.528 23.667 10.648C23.667 14.304 22.397 17.754 19.857 21L14.017 21ZM6.007 21L6.007 18C6.007 16.896 6.311 15.923 6.919 15.081C7.527 14.239 8.347 13.459 9.379 12.741L8.721 10.561C7.029 11.623 6.059 12.878 5.811 14.326C5.811 14.326 5.811 14.326 5.811 14.326C5.535 13.714 5.397 13.052 5.397 12.34C5.397 10.284 6.137 8.528 7.617 7.072C9.097 5.616 10.857 4.888 12.897 4.888C13.777 4.888 14.457 5.568 14.937 6.928C15.417 8.288 15.657 9.528 15.657 10.648C15.657 14.304 14.387 17.754 11.847 21L6.007 21Z" /></svg>
-                    <p id="intro-quote-text" class="text-lg text-white font-light leading-relaxed font-serif italic transition-opacity duration-500 opacity-0">...</p>
+                    <!-- Removed opacity-0 to let JS handle it or default to visible once JS runs -->
+                    <p id="intro-quote-text" class="text-lg text-white font-light leading-relaxed font-serif italic transition-opacity duration-500">...</p>
                     <svg class="quote-mark end" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21L14.017 18C14.017 16.896 14.321 15.923 14.929 15.081C15.537 14.239 16.357 13.459 17.389 12.741L16.731 10.561C15.039 11.623 14.069 12.878 13.821 14.326C13.821 14.326 13.821 14.326 13.821 14.326C13.545 13.714 13.407 13.052 13.407 12.34C13.407 10.284 14.147 8.528 15.627 7.072C17.107 5.616 18.867 4.888 20.907 4.888C21.787 4.888 22.467 5.568 22.947 6.928C23.427 8.288 23.667 9.528 23.667 10.648C23.667 14.304 22.397 17.754 19.857 21L14.017 21ZM6.007 21L6.007 18C6.007 16.896 6.311 15.923 6.919 15.081C7.527 14.239 8.347 13.459 9.379 12.741L8.721 10.561C7.029 11.623 6.059 12.878 5.811 14.326C5.811 14.326 5.811 14.326 5.811 14.326C5.535 13.714 5.397 13.052 5.397 12.34C5.397 10.284 6.137 8.528 7.617 7.072C9.097 5.616 10.857 4.888 12.897 4.888C13.777 4.888 14.457 5.568 14.937 6.928C15.417 8.288 15.657 9.528 15.657 10.648C15.657 14.304 14.387 17.754 11.847 21L6.007 21Z" /></svg>
                 </div>
             </div>
@@ -425,7 +433,7 @@
                             <div id="body-part-label" class="text-gold-500 font-mono text-[10px] uppercase tracking-[0.2em] h-4 opacity-0 transition-opacity duration-300"></div>
                         </div>
                     </div>
-                    <button id="bodymap-save-btn" onclick="finalizeSession()" class="hidden text-xs bg-gold-600 hover:bg-gold-500 text-white px-4 py-2 rounded-lg transition font-medium shadow-lg shadow-gold-900/30">Save</button>
+                    <button id="bodymap-save-btn" disabled onclick="finalizeSession()" class="hidden text-xs bg-gold-600 hover:bg-gold-500 text-white px-4 py-2 rounded-lg transition font-medium shadow-lg shadow-gold-900/30 disabled:opacity-50 disabled:cursor-not-allowed">Save</button>
                 </div>
             </div>
        
@@ -537,7 +545,7 @@
                 <div class="flex gap-3">
                     <div class="w-1/2">
                         <label class="text-xs text-slate-500 uppercase tracking-wider mb-2 block">Front</label>
-                        <select id="body-part-front" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white text-xs focus:border-gold-500 outline-none" onchange="document.getElementById('body-part-back').value=''">
+                        <select id="body-part-front" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white text-xs focus:border-gold-500 outline-none" onchange="document.getElementById('body-part-back').value=''; event.stopPropagation();" onclick="event.stopPropagation();" ontouchstart="event.stopPropagation();">
                             <option value="" disabled selected>-</option>
                             <option value="Crown">Crown</option>
                             <option value="Forehead">Forehead</option>
@@ -580,7 +588,7 @@
                     </div>
                     <div class="w-1/2">
                         <label class="text-xs text-slate-500 uppercase tracking-wider mb-2 block">Back</label>
-                        <select id="body-part-back" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white text-xs focus:border-gold-500 outline-none" onchange="document.getElementById('body-part-front').value=''">
+                        <select id="body-part-back" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white text-xs focus:border-gold-500 outline-none" onchange="document.getElementById('body-part-front').value=''; event.stopPropagation();" onclick="event.stopPropagation();" ontouchstart="event.stopPropagation();">
                             <option value="" disabled selected>-</option>
                             <option value="Crown">Crown</option>
                             <option value="Back of Head">Back of Head</option>
@@ -596,6 +604,7 @@
                             <option value="Right Elbow">Right Elbow</option>
                             <option value="Left Forearm">Left Forearm</option>
                             <option value="Right Forearm">Right Forearm</option>
+                            <option value="Hands">Hands</option>
                             <!-- END NEW -->
                             <option value="Upper Back">Upper Back</option>
                             <option value="Mid Back">Mid Back</option>
@@ -614,7 +623,7 @@
 
                 <div>
                     <label class="text-xs text-slate-500 uppercase tracking-wider mb-2 block">Sensation</label>
-                    <select id="sensation-type" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:border-gold-500 outline-none">
+                    <select id="sensation-type" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:border-gold-500 outline-none" onchange="event.stopPropagation();" onclick="event.stopPropagation();" ontouchstart="event.stopPropagation();">
                         <option value="Tightness">Tightness</option>
                         <option value="Heat">Heat</option>
                         <option value="Pressure">Pressure</option>
@@ -629,7 +638,7 @@
                 </div>
                 <div id="sensation-emotion-container">
                     <label class="text-xs text-slate-500 uppercase tracking-wider mb-2 block">Associated Emotion</label>
-                    <select id="sensation-emotion" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:border-gold-500 outline-none">
+                    <select id="sensation-emotion" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:border-gold-500 outline-none" onchange="event.stopPropagation();" onclick="event.stopPropagation();" ontouchstart="event.stopPropagation();">
                         <!-- Options populated via JS including "Unsure ?" -->
                         </select>
                 </div>
@@ -689,6 +698,86 @@
             </div>
         </div>
     </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signInAnonymously, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
+        import { getFirestore, collection, addDoc, query, where, orderBy, onSnapshot, deleteDoc, doc } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app';
+        
+        let auth, db, currentUser = null;
+
+        if (firebaseConfig) {
+            try {
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                
+                window.login = async () => {
+                    try {
+                        const provider = new GoogleAuthProvider();
+                        await signInWithPopup(auth, provider);
+                    } catch (e) {
+                        console.error("Login failed", e);
+                        alert("Login failed: " + e.message);
+                    }
+                };
+
+                window.logout = async () => {
+                    try {
+                        await signOut(auth);
+                        window.location.reload();
+                    } catch (e) { console.error(e); }
+                };
+                
+                // Expose auth state listener
+                onAuthStateChanged(auth, (user) => {
+                    currentUser = user;
+                    window.currentUser = user; // Global access
+                    const loggedOutView = document.getElementById('logged-out-view');
+                    const loggedInView = document.getElementById('logged-in-view');
+                    if (user) {
+                         if(loggedOutView) loggedOutView.classList.add('hidden');
+                         if(loggedInView) loggedInView.classList.remove('hidden');
+                         const nameEl = document.getElementById('user-name');
+                         const emailEl = document.getElementById('user-email');
+                         if(nameEl) nameEl.textContent = user.displayName || 'User';
+                         if(emailEl) emailEl.textContent = user.email;
+                         // Load specific user data if needed
+                    } else {
+                        // Auto sign in anonymously if not logged in, for data access
+                        // signInAnonymously(auth).catch(console.error); 
+                         if(loggedOutView) loggedOutView.classList.remove('hidden');
+                         if(loggedInView) loggedInView.classList.add('hidden');
+                    }
+                });
+
+                // Override saving if firebase is active
+                window.saveSessionToFirebase = async (data) => {
+                     if (!currentUser || !db) return;
+                     try {
+                         // Note: Using user-specific path as per instructions would be ideal, 
+                         // but for quick compliance with existing logic, we just log it.
+                         // Real implementation: collection(db, 'artifacts', appId, 'users', currentUser.uid, 'logs')
+                         // Since this is a single file without user ID prop drilled everywhere, we stick to local for now 
+                         // OR basic console log if no strict requirement. 
+                         // Actually, prompt requires strict paths. 
+                         await addDoc(collection(db, 'artifacts', appId, 'users', currentUser.uid, 'logs'), data);
+                     } catch (e) { console.error("Firebase save error", e); }
+                };
+
+            } catch (e) {
+                console.warn("Firebase init error", e);
+            }
+        } else {
+            // Fallback login for UI demo if no config
+            window.login = () => alert("Firebase not configured in this preview.");
+            window.logout = () => window.location.reload();
+            window.saveSessionToFirebase = null;
+        }
+    </script>
 
     <script>
         // SHARED VARS
@@ -808,12 +897,11 @@
             if (sessionStorage.getItem('intro_dismissed')) {
                 document.getElementById('intro-screen').style.display = 'none';
             } else {
-                setTimeout(() => {
-                    const textEl = document.getElementById('intro-quote-text');
-                    const authEl = document.getElementById('intro-quote-author');
-                    if(textEl) textEl.classList.remove('opacity-0');
-                    if(authEl) authEl.classList.remove('opacity-0');
-                }, 500);
+                // Removed delay: Show immediately
+                const textEl = document.getElementById('intro-quote-text');
+                const authEl = document.getElementById('intro-quote-author');
+                if(textEl) textEl.classList.remove('opacity-0');
+                if(authEl) authEl.classList.remove('opacity-0');
             }
            
             document.addEventListener('click', unlockAudio, { once: true });
@@ -1275,6 +1363,16 @@
                 el.style.top = `${p.y * BODY_HEIGHT}px`;
                 container.appendChild(el);
             });
+            
+            // UPDATE SAVE BUTTON STATE
+            const saveBtn = document.getElementById('bodymap-save-btn');
+            if (currentBodyPoints.length > 0) {
+                saveBtn.disabled = false;
+                saveBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                saveBtn.disabled = true;
+                saveBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
         }
 
         window.transitionToBodyMapFromTimer = () => {
