@@ -28,7 +28,7 @@
                     animation: {
                         'breathe': 'breathe 8s infinite ease-in-out',
                         'fade-in': 'fadeIn 0.3s ease-out forwards', 
-                        'fade-out': 'fadeOut 0.2s ease-in forwards', 
+                        'fade-out': 'fadeOut 0.5s ease-in forwards', 
                         'slide-up': 'slideUp 0.3s ease-out forwards',
                         'slide-down': 'slideDown 0.25s ease-in forwards',
                         'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
@@ -43,8 +43,8 @@
                             '100%': { opacity: '1' },
                         },
                         fadeOut: {
-                            '0%': { opacity: '1' },
-                            '100%': { opacity: '0' },
+                            '0%': { opacity: '1', visibility: 'visible' },
+                            '100%': { opacity: '0', visibility: 'hidden' },
                         },
                         slideUp: {
                             '0%': { opacity: '0', transform: 'translateY(100%)' },
@@ -85,6 +85,15 @@
         
         .view-section { opacity: 0; transition: opacity 0.25s ease-in-out; padding-bottom: calc(env(safe-area-inset-bottom) + 2rem); overscroll-behavior-y: contain; }
         .view-section.active-view { opacity: 1; }
+        .faq-answer { display: none; }
+        .faq-answer.active { display: block; animation: slideUp 0.3s ease-out forwards; }
+        .faq-icon { transition: transform 0.3s ease; }
+        .faq-icon.active { transform: rotate(180deg); }
+        
+        .quote-wrapper { position: relative; display: inline-block; padding: 2rem 3rem; max-width: 100%; }
+        .quote-mark { position: absolute; width: 2.5rem; height: 2.5rem; color: rgba(212, 175, 55, 0.4); }
+        .quote-mark.start { top: 0; left: 0; }
+        .quote-mark.end { bottom: 0; right: 0; transform: rotate(180deg); }
         
         .side-menu-open #side-menu-backdrop { display: block; opacity: 1; }
         .side-menu-open #side-menu { transform: translateX(0); }
@@ -100,7 +109,7 @@
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #334155; border-radius: 2px; }
         .shake-error { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; border-color: #ef4444 !important; color: #ef4444 !important; }
 
-        /* --- NEW NEURO-ANATOMY BODY MAP STYLES --- */
+        /* --- REFINED BODY MAP STYLES --- */
         .neuro-body-container {
             position: relative;
             width: 100%;
@@ -108,15 +117,16 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            /* Scientific background grid */
+            /* Subtle grid */
             background-image: 
-                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 30px 30px;
             background-position: center;
             overflow: hidden; 
         }
 
+        /* The SVG layer - purely visual */
         .anatomy-svg {
             height: 85%; 
             width: auto;
@@ -125,20 +135,19 @@
             margin-top: 2rem;
             position: relative;
             z-index: 10;
+            pointer-events: none; /* Clicks go through to layer below? No, we handle clicks on trackpad */
         }
 
-        /* THE LAYER SEPARATION - FIXES TRACES/GHOSTING */
-        /* We separate the visual body from the interactive layer */
+        /* The Cursor Layer - sits exactly on top of SVG coordinates */
         .interactive-layer {
             position: absolute;
-            top: 2rem; /* Must match margin-top of anatomy-svg */
-            height: 85%; /* Must match height of anatomy-svg */
-            aspect-ratio: 300 / 700; /* Enforce aspect ratio of SVG viewBox */
-            z-index: 20;
-            pointer-events: none; /* Events handled by trackpad */
+            top: 2rem; /* Matches anatomy-svg margin-top */
+            height: 85%; /* Matches anatomy-svg height */
+            aspect-ratio: 300 / 700; /* Enforce SVG viewBox ratio */
+            z-index: 50;
+            pointer-events: none; /* Let clicks pass through, trackpad controls cursor */
         }
 
-        /* The Cursor - High Precision & GPU Accelerated */
         .neuro-cursor {
             position: absolute;
             top: 0;
@@ -146,41 +155,32 @@
             width: 0;
             height: 0;
             pointer-events: none;
-            z-index: 50;
-            /* Use transform for movement to avoid repainting the DOM (Fixes Traces) */
-            will-change: transform;
-            /* Smooth ease */
-            transition: transform 0.08s cubic-bezier(0.215, 0.610, 0.355, 1.000); 
+            z-index: 60;
+            will-change: transform; /* Optimization for smooth movement */
+            transition: transform 0.08s cubic-bezier(0.2, 0.6, 0.4, 1.0);
             display: none;
         }
 
-        /* The visual reticle */
         .neuro-cursor-inner {
             position: absolute;
-            top: 0;
-            left: 0;
-            /* Center the visual on the 0,0 point */
             transform: translate(-50%, -50%);
-            width: 20px;
-            height: 20px;
-            border: 1px solid rgba(212, 175, 55, 1);
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0) 70%);
+            width: 22px;
+            height: 22px;
+            border: 1px solid rgba(212, 175, 55, 0.9);
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.3) 0%, rgba(212, 175, 55, 0) 70%);
             border-radius: 50%;
-            box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
         }
-        
         /* Crosshairs */
-        .neuro-cursor-inner::before { content: ''; position: absolute; top: 2px; bottom: 2px; left: 50%; width: 1px; background: #d4af37; transform: translateX(-50%); }
-        .neuro-cursor-inner::after { content: ''; position: absolute; left: 2px; right: 2px; top: 50%; height: 1px; background: #d4af37; transform: translateY(-50%); }
+        .neuro-cursor-inner::before { content: ''; position: absolute; top: 0; bottom: 0; left: 50%; width: 1px; background: rgba(212, 175, 55, 0.8); transform: translateX(-50%); }
+        .neuro-cursor-inner::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(212, 175, 55, 0.8); transform: translateY(-50%); }
 
-        /* Markers */
         .body-marker {
             position: absolute;
             transform: translate(-50%, -50%);
             border-radius: 50%;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 0 12px rgba(212, 175, 55, 0.6);
-            border: 1px solid rgba(255,255,255,0.9);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.8);
             z-index: 40;
             pointer-events: auto; 
         }
@@ -228,7 +228,7 @@
         </nav>
 
         <div class="px-6 pt-6 pb-4 text-center border-t border-slate-800/50 mt-auto">
-            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 9.7.0</p>
+            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 9.8.0</p>
         </div>
     </aside>
 
@@ -239,11 +239,11 @@
             <div class="flex justify-center">
                 <div class="quote-wrapper max-w-md relative">
                     <svg class="quote-mark start" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21L14.017 18C14.017 16.896 14.321 15.923 14.929 15.081C15.537 14.239 16.357 13.459 17.389 12.741L16.731 10.561C15.039 11.623 14.069 12.878 13.821 14.326C13.821 14.326 13.821 14.326 13.821 14.326C13.545 13.714 13.407 13.052 13.407 12.34C13.407 10.284 14.147 8.528 15.627 7.072C17.107 5.616 18.867 4.888 20.907 4.888C21.787 4.888 22.467 5.568 22.947 6.928C23.427 8.288 23.667 9.528 23.667 10.648C23.667 14.304 22.397 17.754 19.857 21L14.017 21ZM6.007 21L6.007 18C6.007 16.896 6.311 15.923 6.919 15.081C7.527 14.239 8.347 13.459 9.379 12.741L8.721 10.561C7.029 11.623 6.059 12.878 5.811 14.326C5.811 14.326 5.811 14.326 5.811 14.326C5.535 13.714 5.397 13.052 5.397 12.34C5.397 10.284 6.137 8.528 7.617 7.072C9.097 5.616 10.857 4.888 12.897 4.888C13.777 4.888 14.457 5.568 14.937 6.928C15.417 8.288 15.657 9.528 15.657 10.648C15.657 14.304 14.387 17.754 11.847 21L6.007 21Z" /></svg>
-                    <p id="intro-quote-text" class="text-lg text-white font-light leading-relaxed font-serif italic"></p>
+                    <p id="intro-quote-text" class="text-lg text-white font-light leading-relaxed font-serif italic opacity-0 transition-opacity duration-500">Loading...</p>
                     <svg class="quote-mark end" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21L14.017 18C14.017 16.896 14.321 15.923 14.929 15.081C15.537 14.239 16.357 13.459 17.389 12.741L16.731 10.561C15.039 11.623 14.069 12.878 13.821 14.326C13.821 14.326 13.821 14.326 13.821 14.326C13.545 13.714 13.407 13.052 13.407 12.34C13.407 10.284 14.147 8.528 15.627 7.072C17.107 5.616 18.867 4.888 20.907 4.888C21.787 4.888 22.467 5.568 22.947 6.928C23.427 8.288 23.667 9.528 23.667 10.648C23.667 14.304 22.397 17.754 19.857 21L14.017 21ZM6.007 21L6.007 18C6.007 16.896 6.311 15.923 6.919 15.081C7.527 14.239 8.347 13.459 9.379 12.741L8.721 10.561C7.029 11.623 6.059 12.878 5.811 14.326C5.811 14.326 5.811 14.326 5.811 14.326C5.535 13.714 5.397 13.052 5.397 12.34C5.397 10.284 6.137 8.528 7.617 7.072C9.097 5.616 10.857 4.888 12.897 4.888C13.777 4.888 14.457 5.568 14.937 6.928C15.417 8.288 15.657 9.528 15.657 10.648C15.657 14.304 14.387 17.754 11.847 21L6.007 21Z" /></svg>
                 </div>
             </div>
-            <p id="intro-quote-author" class="text-xs text-gold-500 uppercase tracking-[0.25em] font-sans text-center opacity-80 mt-8"></p>
+            <p id="intro-quote-author" class="text-xs text-gold-500 uppercase tracking-[0.25em] font-sans text-center opacity-0 transition-opacity duration-500 delay-100 mt-8"></p>
             <div class="mt-16 animate-pulse opacity-50"><span class="text-[10px] text-slate-400 uppercase tracking-[0.4em]">Tap to Begin</span></div>
         </div>
     </div>
@@ -608,14 +608,48 @@
             { q: "The more we let go, the more loving we become.", a: "David R. Hawkins" },
             { q: "Peace is the natural state of the Self.", a: "David R. Hawkins" },
             { q: "Everything you see happening is the consequence of that which you are.", a: "David R. Hawkins" },
-            { q: "Surrender is a constant process of not resisting or clinging to the moment.", a: "David R. Hawkins" }
+            { q: "Surrender is a constant process of not resisting or clinging to the moment.", a: "David R. Hawkins" },
+            { q: "Love is misunderstood to be an emotion; actually, it is a state of awareness.", a: "David R. Hawkins" },
+            { q: "The letting go technique is a system of eliminating the ego.", a: "David R. Hawkins" },
+            { q: "When you give up the resistance to the feeling, the energy behind it runs out.", a: "David R. Hawkins" },
+            { q: "You are the context in which the content of your life is unfolding.", a: "David R. Hawkins" },
+            { q: "All we have to do is hand it over to God.", a: "David R. Hawkins" },
+            { q: "You are not the feeling; you are the witness of the feeling.", a: "David R. Hawkins" },
+            { q: "What you resist, persists.", a: "David R. Hawkins" },
+            { q: "The energy of the suppressed feeling is the cause of the thought.", a: "David R. Hawkins" },
+            { q: "We are all doing the best we can with what we have at the moment.", a: "David R. Hawkins" },
+            { q: "There is no 'out there'. It is all 'in here'.", a: "David R. Hawkins" },
+            { q: "Love promotes healing. When we hold it for others, we are healing ourselves.", a: "David R. Hawkins" },
+            { q: "The only thing that stands between you and God is a thought.", a: "David R. Hawkins" },
+            { q: "Desire is the energy of 'I want'. Surrender is the energy of 'I have'.", a: "David R. Hawkins" },
+            { q: "Humility is the doorway to the truth.", a: "David R. Hawkins" },
+            { q: "We get what we want when we stop insisting on it.", a: "David R. Hawkins" }
         ];
         const HAWKINS_SCALE = [ { name: "Shame", val: 20 }, { name: "Guilt", val: 30 }, { name: "Apathy", val: 50 }, { name: "Grief", val: 75 }, { name: "Fear", val: 100 }, { name: "Desire", val: 125 }, { name: "Anger", val: 150 }, { name: "Pride", val: 175 }, { name: "Courage", val: 200 }, { name: "Neutrality", val: 250 }, { name: "Willingness", val: 310 }, { name: "Acceptance", val: 350 }, { name: "Reason", val: 400 }, { name: "Love", val: 500 }, { name: "Joy", val: 540 }, { name: "Peace", val: 600 } ];
         const QA_DATA = [ 
             { category: "Beginner / Skeptic", q: "Why aren't I sensing my feelings inside my body?", a: "This numbness is due to ingrained, conditioned resistance. Because the feeling was unpleasant, the mind automatically pushed it out of awareness. It has been repressed for so long that you have lost touch with the physical sensation. Be patient; simply intending to look is the first step." }, 
             { category: "Beginner / Skeptic", q: "Is this just suppressing feelings?", a: "No. Suppression is pushing a feeling down to avoid it. Letting go is the opposite: it is allowing the feeling to come up, acknowledging it, and letting the energy escape." }, 
             { category: "Beginner / Skeptic", q: "Why should I ignore my thoughts?", a: "Thoughts are rationalizations created by the mind to explain the presence of a feeling. They are often repetitive. Focusing on the physical sensation cuts the fuel supply to thoughts." }, 
-            { category: "Beginner / Skeptic", q: "What if the feeling is too strong?", a: "If overwhelmed, surrender to the fear of the feeling first. Acknowledge you are afraid. Let go of resistance to the fear." }
+            { category: "Beginner / Skeptic", q: "What if the feeling is too strong?", a: "If overwhelmed, surrender to the fear of the feeling first. Acknowledge you are afraid. Let go of resistance to the fear." }, 
+            { category: "Beginner / Skeptic", q: "Is there scientific proof for this?", a: "Dr. Hawkins' work correlates vibrational states with muscle testing (kinesiology). While the subjective experience is internal, the physiological benefits of stress reduction are well-documented." }, 
+            { category: "Beginner / Skeptic", q: "How is this different from relaxation?", a: "Relaxation often targets the body directly. Letting go targets the emotional energy *causing* the tension. It is a permanent release rather than a temporary respite." }, 
+            { category: "Beginner / Skeptic", q: "Can I surrender to physical pain?", a: "Yes. Much pain is held in place by resistance. If you stop resisting the sensation and just experience it as pure energy, it often shifts or diminishes." }, 
+            { category: "Novice", q: "Nothing seems to be changing in my life?", a: "Letting Go can be subtle or dramatic, both inwardly and outwardly. Often it is others in our life who notice our change before we do. Like shoveling coal from a pile, we're unaware of the amount we've handled because our focus is on what is at hand." }, 
+            { category: "Novice", q: "I feel stuck. Nothing is happening.", a: "You may be 'wanting' it to change. Wanting is resistance. Can you let go of the desire to change it? Can you allow it to just be?" }, 
+            { category: "Novice", q: "Can I do this in public?", a: "Yes. It's internal. Notice the tension, drop resistance, and let it pass through while walking or in a meeting." }, 
+            { category: "Novice", q: "How do I know if I've let go?", a: "You feel lighter, relieved, or clear. Thoughts stop returning, or lack emotional charge." }, 
+            { category: "Novice", q: "Why do I feel worse sometimes?", a: "This is the 'healing crisis.' As you open the doors, suppressed energy rushes up to be released. It feels intense, but it is actually leaving. Stay with it." }, 
+            { category: "Novice", q: "Is crying okay?", a: "Absolutely. Crying is a natural mechanism of release, especially for Grief. Do not suppress the tears; let them flow until they stop on their own." }, 
+            { category: "Adept", q: "Spiritual Pride", a: "Watch out for the ego claiming credit for your progress. 'Look how spiritual I am' is just another feeling (Pride) to be surrendered." }, 
+            { category: "Adept", q: "Running out of things to surrender?", a: "You may reach periods of peace, but deeper layers often emerge later. Remain vigilant for subtle attachments to comfort or even to the practice itself." }, 
+            { category: "Adept", q: "Handling major crises", a: "In a crisis, the volume of emotion is high. This is actually a golden opportunity. A massive amount of karma can be discharged quickly if you can stay present with the raw energy without resisting." }, 
+            { category: "Adept", q: "Attachment to outcomes", a: "Surrender doesn't mean you don't act; it means you surrender your attachment to the result. You do your best and let go of the rest." }, 
+            { category: "Adept", q: "The dark night of the soul?", a: "This often occurs before a major transition. It feels like abandonment or total despair. It is the ego facing its own demise. Surrender to the despair itself." }, 
+            { category: "Pro", q: "The Witness Trap", a: "At high levels, one can become attached to the 'Observer' role to dissociate from subtle pain. Are you witnessing to avoid feeling? Surrender the position of the witness to become the experience itself, then surrender that." }, 
+            { category: "Pro", q: "Somatic Holding Patterns", a: "When the mind is silent but the body remains tense, you are hitting somatic repression. The energy is no longer generating thoughts but is trapped in the fascia. Drop resistance to the physical tightness itself, without labeling it as 'tension'." }, 
+            { category: "Pro", q: "Surrendering Positive States?", a: "Yes. When you reach joy or ecstasy, surrender the attachment to it. The fear that it will end is 'Fear'. The desire to keep it is 'Desire'. Letting go of the 'high' allows you to settle into the permanent bedrock of Peace." }, 
+            { category: "Pro", q: "Subtle Apathy vs Peace", a: "Apathy feels blank, heavy, and 'I don't care'. Peace feels alive, light, and 'I have everything'. If the silence feels dead, it is Apathy. Look for the subtle resistance to being alive." }, 
+            { category: "Pro", q: "The 'I' Thought", a: "Eventually, you notice that for every feeling, there is a subtle 'me' feeling it. This 'I-ness' is the root. Instead of surrendering the object (the feeling), surrender the subject (the 'I'). Ask 'Who is feeling this?' and surrender the answer." }
         ];
 
         // STATE
@@ -630,13 +664,17 @@
         let globalTouchStartX = 0;
 
         window.onload = function() {
+            // Ensure Intro plays first
             initIntro();
+            
             lucide.createIcons();
             initQA();
             initEmotionPicker();
             initSensationEmotionPicker();
             updateTimerDisplay();
             loadJournal();
+            
+            // If dismissed in session, hide immediately
             if (sessionStorage.getItem('intro_dismissed')) {
                 document.getElementById('intro-screen').style.display = 'none';
             }
@@ -649,8 +687,14 @@
             const quoteObj = INTRO_QUOTES[Math.floor(Math.random()*INTRO_QUOTES.length)];
             const textEl = document.getElementById('intro-quote-text');
             const authEl = document.getElementById('intro-quote-author');
-            if(textEl) textEl.textContent = quoteObj.q;
-            if(authEl) authEl.textContent = "— " + quoteObj.a;
+            if(textEl) {
+                textEl.textContent = quoteObj.q;
+                textEl.style.opacity = '1';
+            }
+            if(authEl) {
+                authEl.textContent = "— " + quoteObj.a;
+                authEl.style.opacity = '0.8';
+            }
         }
         
         function dismissIntro() { 
@@ -1131,15 +1175,14 @@
             const label = document.getElementById('body-part-label');
             
             cursor.style.display = 'block';
-            // Temporarily disable transition for instant jump to start position
             cursor.style.transition = 'none'; 
             
             label.style.opacity = '1';
             updateCursorPosition(e.touches[0]);
             
-            // Restore transition for smooth dragging
+            // Restore transition for smooth dragging after initial jump
             requestAnimationFrame(() => {
-                cursor.style.transition = 'transform 0.08s cubic-bezier(0.215, 0.610, 0.355, 1.000)';
+                cursor.style.transition = 'transform 0.08s cubic-bezier(0.2, 0.6, 0.4, 1.0)';
             });
         }
 
@@ -1396,7 +1439,7 @@
                 const uName = document.getElementById('user-name'), uEmail = document.getElementById('user-email');
 
                 if (user) {
-                    dismissIntro(); 
+                    // Note: removed dismissIntro() so users always see the intro
                     isLoggedIn = true; currentUser = user;
                     if(lOut) lOut.classList.add('hidden');
                     if(lIn) lIn.classList.remove('hidden');
