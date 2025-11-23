@@ -550,6 +550,14 @@
                             <option value="Right Trap">Right Trap</option>
                             <option value="Left Shoulder">Left Shoulder</option>
                             <option value="Right Shoulder">Right Shoulder</option>
+                            <!-- NEW ADDITIONS FOR FRONT -->
+                            <option value="Left Bicep">Left Bicep</option>
+                            <option value="Right Bicep">Right Bicep</option>
+                            <option value="Left Forearm">Left Forearm</option>
+                            <option value="Right Forearm">Right Forearm</option>
+                            <option value="Wrists">Wrists</option>
+                            <option value="Hands">Hands</option>
+                            <!-- END NEW -->
                             <option value="Sternum">Sternum</option>
                             <option value="Chest">Chest</option>
                             <option value="Solar Plexus">Solar Plexus</option>
@@ -579,6 +587,16 @@
                             <option value="Neck / Spine">Neck / Spine</option>
                             <option value="Left Trap">Left Trap</option>
                             <option value="Right Trap">Right Trap</option>
+                            <!-- NEW ADDITIONS FOR BACK -->
+                            <option value="Left Shoulder">Left Shoulder</option>
+                            <option value="Right Shoulder">Right Shoulder</option>
+                            <option value="Left Tricep">Left Tricep</option>
+                            <option value="Right Tricep">Right Tricep</option>
+                            <option value="Left Elbow">Left Elbow</option>
+                            <option value="Right Elbow">Right Elbow</option>
+                            <option value="Left Forearm">Left Forearm</option>
+                            <option value="Right Forearm">Right Forearm</option>
+                            <!-- END NEW -->
                             <option value="Upper Back">Upper Back</option>
                             <option value="Mid Back">Mid Back</option>
                             <option value="Lower Back">Lower Back</option>
@@ -765,6 +783,12 @@
         }
 
         window.dismissIntro = dismissIntro;
+        
+        window.handleGlobalTouchStart = (e) => {
+            // Ignore swipes on form elements to prevent glitches
+            if (['SELECT', 'INPUT', 'TEXTAREA', 'BUTTON'].includes(e.target.tagName)) return;
+            globalTouchStartX = e.touches[0].clientX;
+        };
 
         document.addEventListener('DOMContentLoaded', () => {
             initIntro();
@@ -817,7 +841,7 @@
         window.handleTouchStart = (e, el) => { touchStartX = e.touches[0].clientX; currentSwipeItem = el; el.style.transition = 'none'; isSwiping = false; };
         window.handleTouchMove = (e, el) => { if (!currentSwipeItem) return; const touchX = e.touches[0].clientX; const diff = touchX - touchStartX; if (Math.abs(diff) > 5) isSwiping = true; const isOpen = el.dataset.isOpen === 'true'; let newTranslate = 0; if (!isOpen) { if (diff < 0) newTranslate = Math.max(diff, -80); } else { newTranslate = -80 + diff; newTranslate = Math.max(Math.min(newTranslate, 0), -80); } el.style.transform = `translateX(${newTranslate}px)`; };
         window.handleTouchEnd = (e, el) => { if (!currentSwipeItem) return; el.style.transition = 'transform 0.2s ease-out'; const styleTransform = el.style.transform; const match = /translateX\(([^p]+)px\)/.exec(styleTransform); const currentTranslate = match ? parseFloat(match[1]) : 0; if (currentTranslate < -40) { el.style.transform = 'translateX(-80px)'; el.dataset.isOpen = 'true'; } else { el.style.transform = 'translateX(0)'; el.dataset.isOpen = 'false'; } currentSwipeItem = null; };
-        window.handleGlobalTouchStart = (e) => { globalTouchStartX = e.touches[0].clientX; };
+        // window.handleGlobalTouchStart is defined above
         window.handleGlobalTouchMove = (e) => { const x = e.touches[0].clientX; const isMenuOpen = document.body.classList.contains('side-menu-open'); if (isMenuOpen && (x - globalTouchStartX) > 0) {} };
         window.handleGlobalTouchEnd = (e) => { const diff = e.changedTouches[0].clientX - globalTouchStartX; const width = window.innerWidth; const isMenuOpen = document.body.classList.contains('side-menu-open'); if (!isMenuOpen && globalTouchStartX > width - 50 && diff < -50) { document.body.classList.add('side-menu-open'); } else if (isMenuOpen && diff > 50) { document.body.classList.remove('side-menu-open'); } };
 
