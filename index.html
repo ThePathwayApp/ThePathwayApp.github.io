@@ -120,6 +120,7 @@
             display: flex;
             justify-content: center;
             align-items: center; 
+            background-color: #020617;
             background-image: 
                 linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
@@ -129,9 +130,9 @@
             padding-bottom: 2rem;
         }
 
-        /* The SVG layer - Updated Anatomy */
+        /* The SVG layer - Anatomical Outline */
         .anatomy-svg {
-            height: 90%; /* Optimal size */
+            height: 90%; 
             width: auto;
             max-width: 100%;
             filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.1));
@@ -139,16 +140,20 @@
             z-index: 10;
         }
         
-        /* Path Styles */
+        /* Hover effects for individual parts */
         .anatomy-svg path {
-            transition: fill-opacity 0.3s ease;
+            transition: all 0.3s ease;
+            fill: transparent;
         }
+        
+        /* When cursor (via trackpad logic) is over a part, we might want to highlight it via JS, 
+           but pure CSS hover won't work well with the virtual cursor. 
+           We rely on the gold glow filter already applied to container or stroke. */
 
-        /* The Interactive Layer - Must match SVG aspect ratio perfectly */
         .interactive-layer {
             position: absolute;
-            height: 90%; /* Match SVG height */
-            aspect-ratio: 300 / 700; /* Match SVG ViewBox */
+            height: 90%; 
+            aspect-ratio: 300 / 700; 
             z-index: 50;
             pointer-events: none; 
         }
@@ -178,7 +183,6 @@
             box-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
         }
         
-        /* Crosshairs */
         .neuro-cursor-inner::before { content: ''; position: absolute; top: -6px; bottom: -6px; left: 50%; width: 1px; background: #d4af37; transform: translateX(-50%); opacity: 0.8; }
         .neuro-cursor-inner::after { content: ''; position: absolute; left: -6px; right: -6px; top: 50%; height: 1px; background: #d4af37; transform: translateY(-50%); opacity: 0.8; }
 
@@ -237,7 +241,7 @@
         </nav>
 
         <div class="px-6 pt-6 pb-4 text-center border-t border-slate-800/50 mt-auto">
-            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 9.9.7</p>
+            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 9.9.9</p>
         </div>
     </aside>
 
@@ -439,7 +443,6 @@
                 
                 <div class="neuro-body-container" id="neuro-container">
                     
-                    <!-- NEW ANATOMICAL SVG FROM PROMPT -->
                     <svg id="body-silhouette" class="anatomy-svg" viewBox="0 0 300 700" preserveAspectRatio="xMidYMid meet">
                         <defs>
                             <filter id="gold-glow" x="-20%" y="-20%" width="140%" height="140%">
@@ -447,7 +450,7 @@
                                 <feComposite in="SourceGraphic" in2="blur" operator="over" />
                             </filter>
                         </defs>
-                        <g stroke="#d4af37" stroke-width="1.5" fill="rgba(212, 175, 55, 0.05)">
+                        <g stroke="#d4af37" stroke-width="1.5" fill="rgba(255, 255, 255, 0.02)">
                             <!-- HEAD -->
                             <path id="head" d="M150 40 c -26 0 -44 18 -44 46 c 0 28 18 46 44 46 c 26 0 44 -18 44 -46 c 0 -28 -18 -46 -44 -46z" />
 
@@ -537,6 +540,7 @@
         </section>
     </main>
 
+    <!-- Modals remain unchanged ... -->
     <div id="emotion-picker" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] hidden flex-col justify-end" onclick="if(event.target === this) toggleModal('emotion-picker')">
         <div class="bg-slate-900 border-t border-slate-700 rounded-t-3xl w-full max-w-md mx-auto max-h-[70vh] flex flex-col shadow-2xl">
             <div class="flex justify-between items-center p-6 border-b border-slate-800">
