@@ -8,8 +8,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="The Pathway">
     
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1024 1024' style='background-color: %232a1b1b;'%3E%3Cpath d='M512 928C282.2 928 96 741.8 96 512S282.2 96 512 96s416 186.2 416 416-186.2 416-416 416zm0-768c-194.4 0-352 157.6-352 352s157.6 352 352 352 352-157.6 352-352-157.6-352-352-352zm0 640c-159.1 0-288-128.9-288-288s128.9-288 288-288 288 128.9 288-288 288z' fill='none'/%3E%3Cpath d='M538.6 225.2c-8.4-1.8-17.1 3.6-18.9 12-14.6 68.4-14.6 139.2 0 207.6 1.8 8.4 10.3 13.7 18.7 11.9 8.4-1.8 13.7-10.3 11.9-18.7-12.5-58.6-12.5-119.4 0-178 1.8-8.4-3.6-17.1-11.7-14.8zM380.5 407c-6.6-5.4-16.3-4.4-21.7 2.2-44.2 53.8-44.2 131.8 0 185.6 5.4 6.6 15.1 7.6 21.7 2.2 6.6-5.4 7.6-15.1 2.2-21.7-36.3-44.2-36.3-108.4 0-152.6 5.4-6.6 4.4-16.3-2.2-15.7zM643.5 407c6.6-5.4 16.3-4.4 21.7 2.2 44.2 53.8 44.2 131.8 0 185.6-5.4 6.6-15.1 7.6-21.7 2.2-6.6-5.4-7.6-15.1-2.2-21.7 36.3-44.2 36.3-108.4 0-152.6-5.4-6.6-4.4-16.3 2.2-15.7z' fill='%23d4af37'/%3E%3Cpath d='M512 1024C229.2 1024 0 794.8 0 512S229.2 0 512 0s512 229.2 512 512-229.2 512-512 512zm0-928C282.2 96 96 282.2 96 512s186.2 416 416 416 416-186.2 416-416S741.8 96 512 96z' fill='%23d4af37' opacity='0.1'/%3E%3Cpath d='M512 512m-400 0a400 400 0 1 0 800 0 400 400 0 1 0-800 0Z' fill='none' stroke='%23d4af37' stroke-width='40' stroke-linecap='round' opacity='0.9' stroke-dasharray='1400' stroke-dashoffset='0' transform='rotate(-90 512 512)'/%3E%3Cpath d='M512 512m-250 0a250 250 0 1 0 500 0 250 250 0 1 0-500 0Z' fill='none' stroke='%23d4af37' stroke-width='35' stroke-linecap='round' opacity='0.8' stroke-dasharray='900' stroke-dashoffset='200' transform='rotate(180 512 512)'/%3E%3Cpath d='M512 512m-120 0a120 120 0 1 0 240 0 120 120 0 1 0-240 0Z' fill='none' stroke='%23d4af37' stroke-width='30' stroke-linecap='round' opacity='0.7' stroke-dasharray='400' stroke-dashoffset='100' transform='rotate(90 512 512)'/%3E%3C/svg%3E">
-
     <title>The Pathway</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -113,7 +111,7 @@
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #334155; border-radius: 2px; }
         .shake-error { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; border-color: #ef4444 !important; color: #ef4444 !important; }
 
-        /* --- NEW NEURO-ANATOMY BODY MAP STYLES --- */
+        /* --- UPDATED BODY MAP STYLES --- */
         .neuro-body-container {
             position: relative;
             width: 100%;
@@ -428,26 +426,133 @@
                 
                 <div class="neuro-body-container" id="neuro-container">
                     <svg viewBox="0 0 300 700" class="anatomy-svg" id="body-silhouette">
-                        <defs>
-                            <linearGradient id="skin-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" stop-color="#1e293b" stop-opacity="0.6" />
-                                <stop offset="50%" stop-color="#334155" stop-opacity="0.8" />
-                                <stop offset="100%" stop-color="#1e293b" stop-opacity="0.6" />
-                            </linearGradient>
-                        </defs>
-                        
-                        <g stroke="#d4af37" stroke-width="0.8" fill="url(#skin-gradient)">
-                            <path d="M150,20 C130,20 115,35 115,60 C115,80 125,95 130,100 L130,110 C120,115 100,120 80,135 C60,150 50,170 45,210 C45,240 50,270 55,290 L50,350 C45,380 40,400 35,410 L35,420 C45,420 55,410 60,380 L65,300 L75,300 C75,320 75,360 80,390 C85,420 95,440 100,450 L100,650 C95,670 90,680 80,685 L120,685 C115,670 115,650 115,620 L115,480 L125,480 L125,620 C125,650 125,670 120,685 L180,685 C175,670 175,650 175,620 L175,480 L185,480 L185,620 C185,650 185,670 180,685 L220,685 C210,680 205,670 200,650 L200,450 C205,440 215,420 220,390 C225,360 225,320 225,300 L235,300 L240,380 C245,410 255,420 265,420 L265,410 C260,400 255,380 250,350 L245,290 C250,270 255,240 255,210 C250,170 240,150 220,135 C200,120 180,115 170,110 L170,100 C175,95 185,80 185,60 C185,35 170,20 150,20 Z" />
-                        </g>
-        
-                        <g stroke="#d4af37" stroke-width="0.3" fill="none" opacity="0.3">
-                            <path d="M110,135 Q150,150 190,135" /> <path d="M150,110 L150,450" stroke-dasharray="2,2" /> <path d="M110,180 Q150,200 190,180" /> <path d="M120,250 Q150,220 180,250" /> <path d="M130,290 H170 M130,330 H170 M135,370 H165" /> <circle cx="110" cy="530" r="8" /> <circle cx="190" cy="530" r="8" />
-                        </g>
-                        
-                        <foreignObject x="0" y="0" width="300" height="700" style="pointer-events:none;">
-                             <div id="markers-container" class="w-full h-full relative"></div>
-                             <div id="active-cursor" class="neuro-cursor"><div class="neuro-cursor-inner"></div></div>
-                        </foreignObject>
+                      <defs>
+                        <linearGradient id="skin-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="0%" stop-color="#1e293b" stop-opacity="0.6" />
+                          <stop offset="50%" stop-color="#334155" stop-opacity="0.9" />
+                          <stop offset="100%" stop-color="#1e293b" stop-opacity="0.6" />
+                        </linearGradient>
+                      </defs>
+                    
+                      <g stroke="#d4af37" stroke-width="1" fill="url(#skin-gradient)">
+                        <circle cx="150" cy="55" r="32" />
+                    
+                        <rect x="135" y="87" width="30" height="28" rx="10" />
+                    
+                        <path d="
+                          M 110 115
+                          Q 95 150 95 190
+                          L 95 255
+                          Q 95 300 110 325
+                          Q 150 360 190 325
+                          Q 205 300 205 255
+                          L 205 190
+                          Q 205 150 190 115
+                          Z
+                        " />
+                    
+                        <path d="
+                          M 95 140
+                          Q 70 175 65 215
+                          L 60 280
+                          Q 58 300 62 315
+                          L 65 335
+                          Q 68 350 75 360
+                          Q 82 350 85 335
+                          L 88 315
+                          Q 92 295 90 275
+                          L 88 240
+                          Q 85 190 110 150
+                          Z
+                        " />
+                    
+                        <path d="
+                          M 205 140
+                          Q 230 175 235 215
+                          L 240 280
+                          Q 242 300 238 315
+                          L 235 335
+                          Q 232 350 225 360
+                          Q 218 350 215 335
+                          L 212 315
+                          Q 208 295 210 275
+                          L 212 240
+                          Q 215 190 190 150
+                          Z
+                        " />
+                    
+                        <path d="
+                          M 120 325
+                          Q 150 345 180 325
+                          L 190 340
+                          Q 195 355 195 370
+                          L 195 390
+                          L 105 390
+                          L 105 370
+                          Q 105 355 110 340
+                          Z
+                        " />
+                    
+                        <path d="
+                          M 115 390
+                          L 115 510
+                          Q 115 530 120 550
+                          L 125 580
+                          Q 128 600 126 615
+                          L 122 640
+                          Q 120 655 120 670
+                          L 105 670
+                          Q 100 650 100 630
+                          L 102 610
+                          Q 105 590 102 570
+                          L 98 540
+                          Q 95 520 95 500
+                          L 95 390
+                          Z
+                        " />
+                    
+                        <path d="
+                          M 185 390
+                          L 205 390
+                          L 205 500
+                          Q 205 520 202 540
+                          L 198 570
+                          Q 195 590 198 610
+                          L 200 630
+                          Q 200 650 195 670
+                          L 180 670
+                          Q 180 655 178 640
+                          L 174 615
+                          Q 172 600 175 580
+                          L 180 550
+                          Q 185 530 185 510
+                          Z
+                        " />
+                      </g>
+                    
+                      <g stroke="#d4af37" stroke-width="0.3" fill="none" opacity="0.25">
+                        <line x1="150" y1="20" x2="150" y2="680" stroke-dasharray="4 4" />
+                    
+                        <line x1="100" y1="115" x2="200" y2="115" />
+                        <line x1="90"  y1="190" x2="210" y2="190" />
+                        <line x1="90"  y1="255" x2="210" y2="255" />
+                        <line x1="95"  y1="325" x2="205" y2="325" />
+                        <line x1="95"  y1="390" x2="205" y2="390" />
+                        <line x1="95"  y1="510" x2="205" y2="510" />
+                        <line x1="95"  y1="640" x2="205" y2="640" />
+                      </g>
+                    
+                      <foreignObject x="0" y="0" width="300" height="700" style="pointer-events:none;">
+                        <div xmlns="http://www.w3.org/1999/xhtml"
+                             style="position:relative;width:100%;height:100%;">
+                          <div id="markers-container"
+                               class="w-full h-full relative"></div>
+                    
+                          <div id="active-cursor" class="neuro-cursor">
+                            <div class="neuro-cursor-inner"></div>
+                          </div>
+                        </div>
+                      </foreignObject>
                     </svg>
                 </div>
         
