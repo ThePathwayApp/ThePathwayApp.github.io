@@ -20,7 +20,6 @@
                     colors: {
                         slate: { 850: '#151e2e', 900: '#0f172a', 950: '#020617' },
                         gold: { 500: '#d4af37', 600: '#b5922f', 900: '#423206' },
-                        medical: { 500: '#06b6d4', glow: 'rgba(6, 182, 212, 0.6)' }
                     },
                     fontFamily: {
                         sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
@@ -117,12 +116,10 @@
         .neuro-body-container {
             position: relative;
             width: 100%;
-            /* Subtracting trackpad height to prevent overlap */
             height: calc(100% - 220px); 
             display: flex;
             justify-content: center;
-            align-items: center; /* Centered vertically */
-            /* Subtle grid */
+            align-items: center; 
             background-image: 
                 linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
@@ -134,26 +131,25 @@
 
         /* The SVG layer - Updated Anatomy */
         .anatomy-svg {
-            height: 80%; /* Shrunk from 95% */
+            height: 85%; /* Optimal size */
             width: auto;
             max-width: 100%;
-            filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.1));
+            filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.15));
             position: relative;
             z-index: 10;
             pointer-events: none; 
-            opacity: 0.8;
         }
 
         /* The Interactive Layer - Must match SVG aspect ratio perfectly */
         .interactive-layer {
             position: absolute;
-            height: 80%; /* Match SVG height */
+            height: 85%; /* Match SVG height */
             aspect-ratio: 300 / 700; /* Match SVG ViewBox */
             z-index: 50;
             pointer-events: none; 
         }
 
-        /* Gold Cursor (Updated from Blue) */
+        /* Gold Cursor */
         .neuro-cursor {
             position: absolute;
             top: 0;
@@ -173,14 +169,14 @@
             width: 24px;
             height: 24px;
             border: 1px solid #d4af37; /* Gold */
-            background-color: rgba(212, 175, 55, 0.15);
+            background-color: rgba(212, 175, 55, 0.2);
             border-radius: 50%;
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
         }
         
         /* Crosshairs */
-        .neuro-cursor-inner::before { content: ''; position: absolute; top: -6px; bottom: -6px; left: 50%; width: 1px; background: #d4af37; transform: translateX(-50%); opacity: 0.7; }
-        .neuro-cursor-inner::after { content: ''; position: absolute; left: -6px; right: -6px; top: 50%; height: 1px; background: #d4af37; transform: translateY(-50%); opacity: 0.7; }
+        .neuro-cursor-inner::before { content: ''; position: absolute; top: -6px; bottom: -6px; left: 50%; width: 1px; background: #d4af37; transform: translateX(-50%); opacity: 0.8; }
+        .neuro-cursor-inner::after { content: ''; position: absolute; left: -6px; right: -6px; top: 50%; height: 1px; background: #d4af37; transform: translateY(-50%); opacity: 0.8; }
 
         /* GOLD MARKERS */
         .body-marker {
@@ -237,7 +233,7 @@
         </nav>
 
         <div class="px-6 pt-6 pb-4 text-center border-t border-slate-800/50 mt-auto">
-            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 9.9.4</p>
+            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 9.9.5</p>
         </div>
     </aside>
 
@@ -439,72 +435,47 @@
                 
                 <div class="neuro-body-container" id="neuro-container">
                     
-                    <!-- NEW ANATOMICAL SVG (300x700) -->
+                    <!-- NEW ANATOMICAL SVG (300x700) - A-POSE GEOMETRY -->
                     <svg viewBox="0 0 300 700" class="anatomy-svg" id="body-silhouette">
                         <!-- Definitions for glow effect -->
                         <defs>
                             <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                                <feGaussianBlur stdDeviation="3" result="blur" />
+                                <feGaussianBlur stdDeviation="4" result="blur" />
                                 <feComposite in="SourceGraphic" in2="blur" operator="over" />
                             </filter>
                         </defs>
                         
-                        <!-- Main Body Outline -->
-                        <path d="
-                            M150,30 
-                            C130,30 120,45 120,65  /* Head Left */
-                            C120,80 130,95 135,100 /* Jaw Left */
-                            L135,110               /* Neck Left */
-                            Q110,120 90,135        /* Shoulder Left */
-                            Q80,150 75,180         /* Arm Upper Left */
-                            L65,240                /* Elbow Left */
-                            L55,310                /* Forearm Left */
-                            L40,350                /* Hand Left */
-                            L60,350                /* Hand Inner Left */
-                            L70,310                /* Forearm Inner Left */
-                            L80,240                /* Elbow Inner Left */
-                            Q85,200 100,160        /* Armpit Left */
-                            L100,320               /* Torso Side Left */
-                            Q95,350 90,380         /* Hip Left */
-                            L90,520                /* Knee Left */
-                            L85,650                /* Ankle Left */
-                            L110,660               /* Foot Left */
-                            L120,650               /* Ankle Inner Left */
-                            L125,520               /* Knee Inner Left */
-                            L135,390               /* Crotch Left */
+                        <g stroke="#d4af37" stroke-width="1.5" fill="rgba(255,255,255,0.03)" stroke-linecap="round" stroke-linejoin="round">
+                            <!-- Head -->
+                            <path d="M150,25 Q180,25 180,60 Q180,90 165,100 L165,110 L135,110 L135,100 Q120,90 120,60 Q120,25 150,25 Z" />
                             
-                            L165,390               /* Crotch Right */
-                            L175,520               /* Knee Inner Right */
-                            L180,650               /* Ankle Inner Right */
-                            L190,660               /* Foot Right */
-                            L215,650               /* Ankle Right */
-                            L210,520               /* Knee Right */
-                            L210,380               /* Hip Right */
-                            Q205,350 200,320       /* Torso Side Right */
-                            L200,160               /* Armpit Right */
-                            Q215,200 220,240       /* Elbow Inner Right */
-                            L230,310               /* Forearm Inner Right */
-                            L240,350               /* Hand Inner Right */
-                            L260,350               /* Hand Right */
-                            L245,310               /* Forearm Right */
-                            L235,240               /* Elbow Right */
-                            Q230,150 210,135       /* Arm Upper Right */
-                            Q190,120 165,110       /* Shoulder Right */
-                            L165,100               /* Neck Right */
-                            C170,95 180,80 180,65  /* Jaw Right */
-                            C180,45 170,30 150,30  /* Head Right */
-                            Z" 
-                            stroke="#06b6d4" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.8" />
+                            <!-- Shoulders to Arms (Left) -->
+                            <path d="M135,110 L100,115 Q80,120 75,150 L60,230 L50,300 L30,320 L50,330 L65,300 L75,230 L90,160" />
                             
-                        <!-- Internal Details (Subtle) -->
-                        <path d="M135,100 Q150,110 165,100" stroke="#06b6d4" stroke-width="0.5" fill="none" opacity="0.4" /> <!-- Collarbone -->
-                        <path d="M150,110 L150,390" stroke="#06b6d4" stroke-width="0.5" fill="none" stroke-dasharray="2,4" opacity="0.2" /> <!-- Center Line -->
-                        <path d="M120,320 Q150,330 180,320" stroke="#06b6d4" stroke-width="0.5" fill="none" opacity="0.2" /> <!-- Waist -->
+                            <!-- Shoulders to Arms (Right) -->
+                            <path d="M165,110 L200,115 Q220,120 225,150 L240,230 L250,300 L270,320 L250,330 L235,300 L225,230 L210,160" />
+                            
+                            <!-- Torso -->
+                            <path d="M100,115 L100,160 L105,320 Q100,350 95,380" /> <!-- Left Side -->
+                            <path d="M200,115 L200,160 L195,320 Q200,350 205,380" /> <!-- Right Side -->
+                            
+                            <!-- Legs (Left) -->
+                            <path d="M95,380 L90,520 L85,650 L75,660 L110,660 L120,650 L125,520 L135,390" />
+                            
+                            <!-- Legs (Right) -->
+                            <path d="M205,380 L210,520 L215,650 L225,660 L190,660 L180,650 L175,520 L165,390" />
+                            
+                            <!-- Crotch Connect -->
+                            <path d="M135,390 L165,390" stroke-width="1" opacity="0.5" />
+                        </g>
                         
-                        <!-- Chakras/Centers (Subtle) -->
-                        <circle cx="150" cy="60" r="2" fill="#06b6d4" opacity="0.3" /> <!-- Third Eye -->
-                        <circle cx="150" cy="180" r="2" fill="#06b6d4" opacity="0.3" /> <!-- Heart -->
-                        <circle cx="150" cy="270" r="2" fill="#06b6d4" opacity="0.3" /> <!-- Solar Plexus -->
+                        <!-- Subtle Internal Markers -->
+                        <g fill="#d4af37" opacity="0.2">
+                            <circle cx="150" cy="60" r="2" /> <!-- Third Eye -->
+                            <circle cx="150" cy="180" r="2" /> <!-- Heart -->
+                            <circle cx="150" cy="270" r="2" /> <!-- Solar Plexus -->
+                            <circle cx="150" cy="340" r="2" /> <!-- Sacral -->
+                        </g>
                     </svg>
 
                     <div id="interactive-layer" class="interactive-layer">
@@ -587,7 +558,7 @@
                         <span class="text-lg font-mono text-gold-500 w-6 text-center" id="sens-int-val">5</span>
                     </div>
                 </div>
-                <button onclick="confirmBodyPoint()" class="w-full py-3 bg-medical-500 hover:bg-cyan-400 text-white rounded-xl transition font-medium mt-2">Add Spot</button>
+                <button onclick="confirmBodyPoint()" class="w-full py-3 bg-gold-600 hover:bg-gold-500 text-white rounded-xl transition font-medium mt-2">Add Spot</button>
             </div>
         </div>
     </div>
@@ -1215,7 +1186,7 @@
         window.finishProcess = () => { stopProcessTimer(); stopAmbience(); nextStep(5); };
         window.resetProcess = () => { stopProcessTimer(); stopAmbience(); document.querySelectorAll('.process-step').forEach(e=>e.classList.add('hidden')); document.getElementById('process-step-0').classList.remove('hidden'); document.getElementById('process-reset-btn').classList.add('hidden'); };
         
-        // --- UPDATED BODY MAP LOGIC WITH IMPROVED TRACKING ---
+        // --- UPDATED BODY MAP LOGIC WITH NEW A-POSE SVG ---
 
         const BODY_WIDTH = 300;
         const BODY_HEIGHT = 700;
@@ -1227,13 +1198,11 @@
             const label = document.getElementById('body-part-label');
             
             cursor.style.display = 'block';
-            // Temporarily disable transition for instant jump to start position
             cursor.style.transition = 'none'; 
             
             label.style.opacity = '1';
             updateCursorPosition(e.touches[0]);
             
-            // Restore transition for smooth dragging
             requestAnimationFrame(() => {
                 cursor.style.transition = 'transform 0.06s linear';
             });
@@ -1257,22 +1226,18 @@
             const pad = document.getElementById('sensation-trackpad');
             const padRect = pad.getBoundingClientRect();
             
-            // 1. Get Normalised Coordinates (0 to 1)
             let tx = (touch.clientX - padRect.left) / padRect.width;
             let ty = (touch.clientY - padRect.top) / padRect.height;
             
             tx = Math.max(0, Math.min(1, tx));
             ty = Math.max(0, Math.min(1, ty));
 
-            // 2. Map Trackpad to SVG Coordinates
             const bodyX = tx * BODY_WIDTH;
             const bodyY = ty * BODY_HEIGHT;
 
-            // 3. Move Cursor using TRANSFORM (Hardware Accelerated, No Traces)
             const cursor = document.getElementById('active-cursor');
             cursor.style.transform = `translate3d(${bodyX}px, ${bodyY}px, 0)`;
 
-            // 4. Identify Region (New Logic matched to new SVG)
             const region = identifyBodyRegion(bodyX, bodyY);
             const label = document.getElementById('body-part-label');
             
@@ -1285,71 +1250,70 @@
         }
 
         function identifyBodyRegion(x, y) {
-            // Updated Logic for the new Anatomical Silhouette (300x700)
+            // Updated Logic for A-Pose Silhouette (300x700)
+            // Central Column is roughly X=110 to X=190
             
-            // HEAD (0 - 90)
-            if (y < 90) {
-                if (y < 45) return "Crown";
+            // HEAD AREA
+            if (y < 100) {
+                if (y < 40) return "Crown";
                 if (y < 65) return "Forehead";
-                if (x > 130 && x < 170) return "Face / Nose";
-                if (x < 130) return "Left Temple";
-                if (x > 170) return "Right Temple";
-                return "Jaw / Mouth";
+                if (x > 135 && x < 165) return "Face / Nose";
+                if (x < 135) return "Left Temple";
+                return "Right Temple";
             }
             
-            // NECK (90 - 110)
-            if (y < 115) {
-                if (x > 135 && x < 165) return "Throat";
-                return "Neck";
-            }
+            // NECK
+            if (y < 120 && x > 120 && x < 180) return "Throat / Neck";
 
-            // SHOULDERS & UPPER CHEST (115 - 150)
-            if (y < 150) {
-                if (x < 100 || x > 200) return "Shoulder";
-                return "Collarbone / Upper Chest";
-            }
-
-            // CHEST / ARMS SPLIT (150 - 240)
-            if (y < 240) {
-                // Arms are on the outside
-                if (x < 90 || x > 210) return "Upper Arm";
-                
-                // Torso Center
-                if (y < 190) {
-                    if (x > 140 && x < 160) return "Heart Center";
-                    return "Chest";
+            // SHOULDERS / ARMS (Upper Body Split)
+            if (y < 350) {
+                // Left Arm (x < 110)
+                if (x < 110) {
+                    if (y < 150) return "Left Shoulder";
+                    if (y < 220) return "Left Upper Arm";
+                    if (y < 250) return "Left Elbow";
+                    if (y < 300) return "Left Forearm";
+                    return "Left Hand";
                 }
-                return "Solar Plexus"; // 190-240 Center
-            }
-
-            // MID SECTION / ARMS (240 - 320)
-            if (y < 320) {
-                // Arms/Elbows
-                if (x < 90 || x > 210) {
-                    if (y < 260) return "Elbow";
-                    return "Forearm";
+                // Right Arm (x > 190)
+                else if (x > 190) {
+                    if (y < 150) return "Right Shoulder";
+                    if (y < 220) return "Right Upper Arm";
+                    if (y < 250) return "Right Elbow";
+                    if (y < 300) return "Right Forearm";
+                    return "Right Hand";
                 }
-                
-                // Torso
-                if (x > 140 && x < 160) return "Navel";
-                return "Stomach / Gut";
+                // Central Torso (110 < x < 190)
+                else {
+                    if (y < 150) return "Collarbone";
+                    if (y < 190) return "Heart Center";
+                    if (y < 230) return "Solar Plexus";
+                    if (y < 280) return "Navel / Stomach";
+                    return "Lower Abdomen";
+                }
             }
 
-            // HIPS / HANDS (320 - 390)
+            // HIPS / LEGS (Lower Body)
+            // Hips/Groin
             if (y < 390) {
-                // Hands (Very low on this model)
-                if (x < 80 || x > 220) return "Hand / Fingers";
-                
-                // Hips
-                if (x < 110 || x > 190) return "Hip";
-                return "Pelvis / Root";
+                if (x > 130 && x < 170) return "Root / Pelvis";
+                return (x < 150) ? "Left Hip" : "Right Hip";
             }
 
-            // LEGS (390+)
-            if (y < 520) return "Thigh";
-            if (y < 560) return "Knee";
-            if (y < 640) return "Shin / Calf";
-            return "Foot / Ankle";
+            // Legs Split
+            if (x < 150) {
+                // Left Leg
+                if (y < 500) return "Left Thigh";
+                if (y < 540) return "Left Knee";
+                if (y < 640) return "Left Shin/Calf";
+                return "Left Foot";
+            } else {
+                // Right Leg
+                if (y < 500) return "Right Thigh";
+                if (y < 540) return "Right Knee";
+                if (y < 640) return "Right Shin/Calf";
+                return "Right Foot";
+            }
         }
 
         function confirmBodyPoint() {
