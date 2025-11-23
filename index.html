@@ -204,7 +204,7 @@
         </nav>
 
         <div class="px-6 pt-6 pb-4 text-center border-t border-slate-800/50 mt-auto">
-            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 9.5.0</p>
+            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 9.6.0</p>
         </div>
     </aside>
 
@@ -408,9 +408,9 @@
             <!-- MAP CANVAS VIEW -->
             <div id="bodymap-canvas-view" class="hidden flex-1 relative flex flex-col items-center justify-start overflow-hidden w-full h-full">
                 <!-- Body Silhouette Container -->
-                <div class="relative w-full max-w-[280px] h-[60%] flex items-center justify-center mt-4" id="bodymap-body-container">
-                     <!-- Updated High-Fidelity Silhouette (Vector) -->
-                    <svg viewBox="0 0 300 700" class="h-full w-auto drop-shadow-[0_0_25px_rgba(212,175,55,0.1)]" id="body-silhouette">
+                <div class="relative w-full max-w-[280px] h-[75%] flex items-center justify-center mt-2" id="bodymap-body-container">
+                     <!-- Updated Realistic Silhouette (Vector) -->
+                    <svg viewBox="0 0 240 600" class="h-full w-auto drop-shadow-[0_0_25px_rgba(212,175,55,0.1)]" id="body-silhouette">
                          <defs>
                             <linearGradient id="bodyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
                                 <stop offset="0%" style="stop-color:#1e293b;stop-opacity:1" />
@@ -421,11 +421,73 @@
                                 <feComposite in="SourceGraphic" in2="blur" operator="over" />
                             </filter>
                         </defs>
-                        <!-- Proportional Human Outline -->
-                        <path d="M150,20 C168,20 180,35 180,55 C180,75 172,85 165,90 L170,100 C190,105 210,115 220,130 C235,150 235,180 230,220 L225,260 C222,280 225,290 230,300 L235,310 C240,320 235,330 225,330 C220,330 215,325 210,310 L200,280 C195,250 190,220 190,220 L190,320 L195,420 C198,450 200,470 195,500 L185,580 L185,620 L195,670 L175,670 L165,620 L160,580 C155,550 152,500 150,480 L150,420 L148,480 C145,500 142,550 138,580 L132,620 L122,670 L102,670 L112,620 L112,580 C108,550 105,520 102,500 L98,420 L102,320 L102,220 C102,220 98,250 92,280 L82,310 C78,325 72,330 68,330 C58,330 55,320 60,310 L65,300 C70,290 72,280 70,260 L65,220 C60,180 60,150 75,130 C85,115 105,105 125,100 L130,90 C122,85 115,75 115,55 C115,35 128,20 150,20 Z" 
-                              fill="url(#bodyGradient)" stroke="#d4af37" stroke-width="1.5" stroke-opacity="0.5" filter="url(#glow)"/>
-                        <!-- Subtle Muscle Contours -->
-                        <path d="M150,130 L150,250 M125,160 Q150,170 175,160" stroke="#d4af37" stroke-width="0.5" stroke-opacity="0.1" fill="none"/>
+                        <!-- Detailed Realistic Human Outline -->
+                        <path d="M120,10 
+                                 C135,10 145,20 145,38 
+                                 C145,52 140,60 135,65 
+                                 L145,75 
+                                 C165,80 185,85 195,95 
+                                 C205,105 205,115 202,140 
+                                 C200,165 195,200 192,210 
+                                 C195,215 198,225 198,230 
+                                 C195,240 190,235 185,220 
+                                 C180,200 178,180 175,160 
+                                 C175,200 175,220 175,230 
+                                 C180,250 182,270 180,290 
+                                 C178,310 170,380 168,400 
+                                 C165,430 165,460 170,480 
+                                 L145,480 
+                                 C150,460 150,430 148,400 
+                                 C146,370 142,320 140,310 
+                                 C138,320 134,370 132,400 
+                                 C130,430 130,460 135,480 
+                                 L110,480 
+                                 C115,460 115,430 112,400 
+                                 C110,380 102,310 100,290 
+                                 C98,270 100,250 105,230 
+                                 C105,220 105,200 105,160 
+                                 C102,180 100,200 95,220 
+                                 C90,235 85,240 82,230 
+                                 C82,225 85,215 88,210 
+                                 C85,200 80,165 78,140 
+                                 C75,115 75,105 85,95 
+                                 C95,85 115,80 135,75 
+                                 L145,65 
+                                 C140,60 135,52 135,38 
+                                 C135,20 145,10 160,10 
+                                 Z" 
+                              d="M120,5 C132,5 140,15 140,30 C140,42 135,48 130,52 L135,58 C155,62 175,68 185,78 C195,90 195,100 192,125 C190,150 188,180 185,190 C188,195 192,205 190,210 C188,215 182,210 178,195 C175,175 172,150 170,135 C170,170 170,190 170,200 C175,220 178,240 175,260 C172,280 165,350 162,380 C160,410 160,440 165,460 L140,460 C145,440 145,410 142,380 C140,350 135,300 132,290 L128,290 C125,300 120,350 118,380 C115,410 115,440 120,460 L95,460 C100,440 100,410 98,380 C95,350 88,280 85,260 C82,240 85,220 90,200 C90,190 90,170 90,135 C88,150 85,175 82,195 C78,210 72,215 70,210 C68,205 72,195 75,190 C72,180 70,150 68,125 C65,100 65,90 75,78 C85,68 105,62 125,58 L130,52 C125,48 120,42 120,30 C120,15 128,5 140,5"
+                              
+                              d="M120,2 
+                                 C132,2 142,12 142,28 
+                                 C142,42 136,48 132,52 
+                                 C155,56 175,65 185,80 
+                                 C195,95 195,110 192,140 
+                                 C190,170 185,200 182,210 
+                                 L185,225 L178,225 
+                                 L175,210 L170,150 
+                                 C170,150 170,220 170,230 
+                                 C175,250 178,270 175,290 
+                                 L165,380 
+                                 C162,410 165,450 170,470 
+                                 L172,520 L145,520 L142,470 
+                                 C140,440 138,400 138,380 
+                                 L132,300 L120,300 L115,300 L108,380
+                                 C108,400 106,440 104,470
+                                 L100,520 L75,520 L78,470
+                                 C82,450 85,410 82,380
+                                 L72,290
+                                 C68,270 72,250 76,230
+                                 C76,220 76,150 76,150
+                                 L70,210 L68,225 L60,225
+                                 L64,210
+                                 C60,200 56,170 54,140
+                                 C50,110 50,95 60,80
+                                 C70,65 90,56 114,52
+                                 C110,48 104,42 104,28
+                                 C104,12 114,2 126,2 Z"
+                              fill="url(#bodyGradient)" stroke="#d4af37" stroke-width="1" stroke-opacity="0.5" filter="url(#glow)"/>
+                        <path d="M123,80 L123,180 M100,110 Q123,120 146,110" stroke="#d4af37" stroke-width="0.5" stroke-opacity="0.1" fill="none"/>
                     </svg>
 
                     <!-- Markers Container -->
@@ -436,12 +498,12 @@
                 </div>
 
                 <!-- Dynamic Label -->
-                <div class="mt-4 mb-2 h-6 flex items-center justify-center">
+                <div class="mt-2 mb-2 h-6 flex items-center justify-center">
                     <div id="body-part-label" class="text-gold-500 font-mono text-xs uppercase tracking-widest opacity-0 transition-opacity"></div>
                 </div>
 
                 <!-- Sensation Trackpad -->
-                <div class="w-full max-w-[280px] aspect-[4/3] trackpad-grid relative mb-4" 
+                <div class="w-full max-w-[240px] aspect-[3/2] trackpad-grid relative mb-4" 
                      id="sensation-trackpad"
                      ontouchstart="handleTrackpadStart(event)"
                      ontouchmove="handleTrackpadMove(event)"
@@ -579,7 +641,7 @@
         // TRACKPAD VARS
         let isDraggingTrackpad = false;
         let lastVibrationGridIndex = -1;
-        let isSwiping = false; // NEW: Track if touch interaction is a swipe or tap
+        let isSwiping = false; // Track swipe vs tap
 
         // --- DATA ---
         const INTRO_QUOTES = [
@@ -597,7 +659,137 @@
             { q: "What you resist, persists.", a: "David R. Hawkins" },
             { q: "The energy of the suppressed feeling is the cause of the thought.", a: "David R. Hawkins" },
             { q: "We are all doing the best we can with what we have at the moment.", a: "David R. Hawkins" },
-            { q: "There is no 'out there'. It is all 'in here'.", a: "David R. Hawkins" }
+            { q: "There is no 'out there'. It is all 'in here'.", a: "David R. Hawkins" },
+            { q: "Love promotes healing. When we hold it for others, we are healing ourselves.", a: "David R. Hawkins" },
+            { q: "The only thing that stands between you and God is a thought.", a: "David R. Hawkins" },
+            { q: "Desire is the energy of 'I want'. Surrender is the energy of 'I have'.", a: "David R. Hawkins" },
+            { q: "Humility is the doorway to the truth.", a: "David R. Hawkins" },
+            { q: "We get what we want when we stop insisting on it.", a: "David R. Hawkins" },
+            { q: "The ego is not the real you; it is the self-image you have of yourself.", a: "David R. Hawkins" },
+            { q: "The world is merely a mirror of our own inner state.", a: "David R. Hawkins" },
+            { q: "Spiritual progress is not an acquisition, but a removal of obstacles.", a: "David R. Hawkins" },
+            { q: "Forgiveness is the key to freedom.", a: "David R. Hawkins" },
+            { q: "To change the world, change yourself.", a: "David R. Hawkins" },
+            { q: "Acceptance is the first step toward transcendence.", a: "David R. Hawkins" },
+            { q: "The mind is a mechanism for survival; the heart is a mechanism for transcendence.", a: "David R. Hawkins" },
+            { q: "We are not the victims of the world we see; we are the victims of the way we see it.", a: "David R. Hawkins" },
+            { q: "When we let go of the negative, the positive appears by itself.", a: "David R. Hawkins" },
+            { q: "True power is within; force is without.", a: "David R. Hawkins" },
+            { q: "The presence of God is available at all times, in all places.", a: "David R. Hawkins" },
+            { q: "Letting go is the path to inner peace.", a: "David R. Hawkins" },
+            { q: "Your life is a gift; how you live it is your gift to the world.", a: "David R. Hawkins" },
+            { q: "The only way to heal is to let go of the past.", a: "David R. Hawkins" },
+            { q: "Peace comes when we surrender our need to control.", a: "David R. Hawkins" },
+            { q: "Joy is the natural result of a heart that is open.", a: "David R. Hawkins" },
+            { q: "Wisdom is the result of letting go of ignorance.", a: "David R. Hawkins" },
+            { q: "The truth is self-evident to those who are open to it.", a: "David R. Hawkins" },
+            { q: "Compassion is the highest form of love.", a: "David R. Hawkins" },
+            { q: "Every moment is an opportunity to let go.", a: "David R. Hawkins" },
+            { q: "The past is a memory; the future is a fantasy; only the present is real.", a: "David R. Hawkins" },
+            { q: "Silence is the language of the soul.", a: "David R. Hawkins" },
+            { q: "Faith is the courage to let go of the known.", a: "David R. Hawkins" },
+            { q: "Grace is the unearned favor of the universe.", a: "David R. Hawkins" },
+            { q: "Happiness is a choice, not a destination.", a: "David R. Hawkins" },
+            { q: "The only limits we have are the ones we place on ourselves.", a: "David R. Hawkins" },
+            { q: "To let go is to trust.", a: "David R. Hawkins" },
+            { q: "Love is the ultimate healer.", a: "David R. Hawkins" },
+            { q: "Peace is not the absence of conflict, but the presence of love.", a: "David R. Hawkins" },
+            { q: "The journey to the self is the only journey worth taking.", a: "David R. Hawkins" },
+            { q: "He who has a why to live can bear almost any how.", a: "Friedrich Nietzsche" },
+            { q: "What disturbs men's minds is not events but their judgments on events.", a: "Epictetus" },
+            { q: "We suffer more often in imagination than in reality.", a: "Seneca" },
+            { q: "The curious paradox is that when I accept myself just as I am, then I can change.", a: "Carl Rogers" },
+            { q: "Until you make the unconscious conscious, it will direct your life and you will call it fate.", a: "Carl Jung" },
+            { q: "Your vision will become clear only when you can look into your own heart.", a: "Carl Jung" },
+            { q: "Everything that irritates us about others can lead us to an understanding of ourselves.", a: "Carl Jung" },
+            { q: "The privilege of a lifetime is to become who you truly are.", a: "Carl Jung" },
+            { q: "The only way out is through.", a: "Robert Frost" },
+            { q: "Pain is inevitable. Suffering is optional.", a: "Haruki Murakami" },
+            { q: "The unexamined life is not worth living.", a: "Socrates" },
+            { q: "Knowing yourself is the beginning of all wisdom.", a: "Aristotle" },
+            { q: "It is not what happens to you, but how you react to it that matters.", a: "Epictetus" },
+            { q: "Happiness depends upon ourselves.", a: "Aristotle" },
+            { q: "The mind is everything. What you think you become.", a: "Buddha" },
+            { q: "Peace comes from within. Do not seek it without.", a: "Buddha" },
+            { q: "Three things cannot be long hidden: the sun, the moon, and the truth.", a: "Buddha" },
+            { q: "You will not be punished for your anger, you will be punished by your anger.", a: "Buddha" },
+            { q: "Do not dwell in the past, do not dream of the future, concentrate the mind on the present moment.", a: "Buddha" },
+            { q: "The only true wisdom is in knowing you know nothing.", a: "Socrates" },
+            { q: "Be the change that you wish to see in the world.", a: "Mahatma Gandhi" },
+            { q: "An eye for an eye only ends up making the whole world blind.", a: "Mahatma Gandhi" },
+            { q: "Live as if you were to die tomorrow. Learn as if you were to live forever.", a: "Mahatma Gandhi" },
+            { q: "Happiness is when what you think, what you say, and what you do are in harmony.", a: "Mahatma Gandhi" },
+            { q: "The weak can never forgive. Forgiveness is the attribute of the strong.", a: "Mahatma Gandhi" },
+            { q: "Freedom is not worth having if it does not include the freedom to make mistakes.", a: "Mahatma Gandhi" },
+            { q: "To accept ourselves as we are means to value our imperfections as much as our perfections.", a: "Sandra Bierig" },
+            { q: "Self-acceptance is my refusal to be in an adversarial relationship with myself.", a: "Nathaniel Branden" },
+            { q: "The worst loneliness is to not be comfortable with yourself.", a: "Mark Twain" },
+            { q: "You yourself, as much as anybody in the entire universe, deserve your love and affection.", a: "Buddha" },
+            { q: "To love oneself is the beginning of a lifelong romance.", a: "Oscar Wilde" },
+            { q: "Be yourself; everyone else is already taken.", a: "Oscar Wilde" },
+            { q: "It takes courage to grow up and become who you really are.", a: "E.E. Cummings" },
+            { q: "To find yourself, think for yourself.", a: "Socrates" },
+            { q: "The more you know yourself, the more you forgive yourself.", a: "Confucius" },
+            { q: "Respect yourself and others will respect you.", a: "Confucius" },
+            { q: "When I let go of what I am, I become what I might be.", a: "Lao Tzu" },
+            { q: "Nature does not hurry, yet everything is accomplished.", a: "Lao Tzu" },
+            { q: "He who conquers others is strong; he who conquers himself is mighty.", a: "Lao Tzu" },
+            { q: "At the center of your being you have the answer; you know who you are and you know what you want.", a: "Lao Tzu" },
+            { q: "Simplicity is the ultimate sophistication.", a: "Leonardo da Vinci" },
+            { q: "Knowing others is intelligence; knowing yourself is true wisdom.", a: "Lao Tzu" },
+            { q: "The journey of a thousand miles begins with one step.", a: "Lao Tzu" },
+            { q: "Act without expectation.", a: "Lao Tzu" },
+            { q: "Be content with what you have; rejoice in the way things are.", a: "Lao Tzu" },
+            { q: "When you realize there is nothing lacking, the whole world belongs to you.", a: "Lao Tzu" },
+            { q: "In dwelling, live close to the ground. In thinking, keep to the simple.", a: "Lao Tzu" },
+            { q: "Manifest plainness, embrace simplicity, reduce selfishness, have few desires.", a: "Lao Tzu" },
+            { q: "I have just three things to teach: simplicity, patience, compassion. These three are your greatest treasures.", a: "Lao Tzu" },
+            { q: "The softest things in the world overcome the hardest things in the world.", a: "Lao Tzu" },
+            { q: "To the mind that is still, the whole universe surrenders.", a: "Lao Tzu" },
+            { q: "If you realize that all things change, there is nothing you will try to hold on to.", a: "Lao Tzu" },
+            { q: "Life is a series of natural and spontaneous changes. Don't resist them.", a: "Lao Tzu" },
+            { q: "Those who know do not speak. Those who speak do not know.", a: "Lao Tzu" },
+            { q: "The best fighter is never angry.", a: "Lao Tzu" },
+            { q: "Kindness in words creates confidence. Kindness in thinking creates profoundness. Kindness in giving creates love.", a: "Lao Tzu" },
+            { q: "Being deeply loved by someone gives you strength, while loving someone deeply gives you courage.", a: "Lao Tzu" },
+            { q: "A good traveler has no fixed plans and is not intent on arriving.", a: "Lao Tzu" },
+            { q: "Do the difficult things while they are easy and do the great things while they are small.", a: "Lao Tzu" },
+            { q: "Great acts are made up of small deeds.", a: "Lao Tzu" },
+            { q: "The wise man does not lay up his own treasures.", a: "Lao Tzu" },
+            { q: "He who is contented is rich.", a: "Lao Tzu" },
+            { q: "The power of intuitive understanding will protect you from harm until the end of your days.", a: "Lao Tzu" },
+            { q: "Respond to anger with virtue.", a: "Lao Tzu" },
+            { q: "Treat those who are good with goodness, and also treat those who are not good with goodness.", a: "Lao Tzu" },
+            { q: "Stop thinking, and end your problems.", a: "Lao Tzu" },
+            { q: "If you correct your mind, the rest of your life will fall into place.", a: "Lao Tzu" },
+            { q: "The flame that burns Twice as bright burns half as long.", a: "Lao Tzu" },
+            { q: "To know that you do not know is the best. To think you know when you do not is a disease.", a: "Lao Tzu" },
+            { q: "When the student is ready the teacher will appear.", a: "Lao Tzu" },
+            { q: "Mastering others is strength. Mastering yourself is true power.", a: "Lao Tzu" },
+            { q: "Silence is a source of great strength.", a: "Lao Tzu" },
+            { q: "Care about what other people think and you will always be their prisoner.", a: "Lao Tzu" },
+            { q: "If you are depressed you are living in the past. If you are anxious you are living in the future. If you are at peace you are living in the present.", a: "Lao Tzu" },
+            { q: "The truth is not always beautiful, nor beautiful words the truth.", a: "Lao Tzu" },
+            { q: "Hope is the only thing stronger than fear.", a: "Unknown" },
+            { q: "This too shall pass.", a: "Persian Adage" },
+            { q: "One day at a time.", a: "Unknown" },
+            { q: "Let go and let God.", a: "Unknown" },
+            { q: "Breathe.", a: "Unknown" },
+            { q: "Trust the process.", a: "Unknown" },
+            { q: "You are enough.", a: "Unknown" },
+            { q: "Be here now.", a: "Ram Dass" },
+            { q: "We're all just walking each other home.", a: "Ram Dass" },
+            { q: "The quieter you become, the more you can hear.", a: "Ram Dass" },
+            { q: "I am not this body. I am in this body.", a: "Ram Dass" },
+            { q: "Suffering is part of our training program for becoming wise.", a: "Ram Dass" },
+            { q: "As soon as you give it up, you can have it all.", a: "Ram Dass" },
+            { q: "The most important aspect of love is not in giving or the receiving: it's in the being.", a: "Ram Dass" },
+            { q: "Your problem is you're too busy holding onto your unworthiness.", a: "Ram Dass" },
+            { q: "It is important to expect nothing, to take every experience, including the negative ones, as merely steps on the path, and to proceed.", a: "Ram Dass" },
+            { q: "Treat everyone you meet like God in drag.", a: "Ram Dass" },
+            { q: "Information is just bits of data. Knowledge is putting them together. Wisdom is transcending them.", a: "Ram Dass" },
+            { q: "The spiritual journey is individual, highly personal. It can't be organized or regulated.", a: "Ram Dass" },
+            { q: "Everything changes once we identify with being the witness to the story, instead of the actor in it.", a: "Ram Dass" }
         ];
         const HAWKINS_SCALE = [ { name: "Shame", val: 20 }, { name: "Guilt", val: 30 }, { name: "Apathy", val: 50 }, { name: "Grief", val: 75 }, { name: "Fear", val: 100 }, { name: "Desire", val: 125 }, { name: "Anger", val: 150 }, { name: "Pride", val: 175 }, { name: "Courage", val: 200 }, { name: "Neutrality", val: 250 }, { name: "Willingness", val: 310 }, { name: "Acceptance", val: 350 }, { name: "Reason", val: 400 }, { name: "Love", val: 500 }, { name: "Joy", val: 540 }, { name: "Peace", val: 600 } ];
         const QA_DATA = [ 
@@ -605,7 +797,25 @@
             { category: "Beginner / Skeptic", q: "Is this just suppressing feelings?", a: "No. Suppression is pushing a feeling down to avoid it. Letting go is the opposite: it is allowing the feeling to come up, acknowledging it, and letting the energy escape." }, 
             { category: "Beginner / Skeptic", q: "Why should I ignore my thoughts?", a: "Thoughts are rationalizations created by the mind to explain the presence of a feeling. They are often repetitive. Focusing on the physical sensation cuts the fuel supply to thoughts." }, 
             { category: "Beginner / Skeptic", q: "What if the feeling is too strong?", a: "If overwhelmed, surrender to the fear of the feeling first. Acknowledge you are afraid. Let go of resistance to the fear." }, 
-            { category: "Novice", q: "Nothing seems to be changing in my life?", a: "Letting Go can be subtle or dramatic, both inwardly and outwardly. Often it is others in our life who notice our change before we do. Like shoveling coal from a pile, we're unaware of the amount we've handled because our focus is on what is at hand." }
+            { category: "Beginner / Skeptic", q: "Is there scientific proof for this?", a: "Dr. Hawkins' work correlates vibrational states with muscle testing (kinesiology). While the subjective experience is internal, the physiological benefits of stress reduction are well-documented." }, 
+            { category: "Beginner / Skeptic", q: "How is this different from relaxation?", a: "Relaxation often targets the body directly. Letting go targets the emotional energy *causing* the tension. It is a permanent release rather than a temporary respite." }, 
+            { category: "Beginner / Skeptic", q: "Can I surrender to physical pain?", a: "Yes. Much pain is held in place by resistance. If you stop resisting the sensation and just experience it as pure energy, it often shifts or diminishes." }, 
+            { category: "Novice", q: "Nothing seems to be changing in my life?", a: "Letting Go can be subtle or dramatic, both inwardly and outwardly. Often it is others in our life who notice our change before we do. Like shoveling coal from a pile, we're unaware of the amount we've handled because our focus is on what is at hand." }, 
+            { category: "Novice", q: "I feel stuck. Nothing is happening.", a: "You may be 'wanting' it to change. Wanting is resistance. Can you let go of the desire to change it? Can you allow it to just be?" }, 
+            { category: "Novice", q: "Can I do this in public?", a: "Yes. It's internal. Notice the tension, drop resistance, and let it pass through while walking or in a meeting." }, 
+            { category: "Novice", q: "How do I know if I've let go?", a: "You feel lighter, relieved, or clear. Thoughts stop returning, or lack emotional charge." }, 
+            { category: "Novice", q: "Why do I feel worse sometimes?", a: "This is the 'healing crisis.' As you open the doors, suppressed energy rushes up to be released. It feels intense, but it is actually leaving. Stay with it." }, 
+            { category: "Novice", q: "Is crying okay?", a: "Absolutely. Crying is a natural mechanism of release, especially for Grief. Do not suppress the tears; let them flow until they stop on their own." }, 
+            { category: "Adept", q: "Spiritual Pride", a: "Watch out for the ego claiming credit for your progress. 'Look how spiritual I am' is just another feeling (Pride) to be surrendered." }, 
+            { category: "Adept", q: "Running out of things to surrender?", a: "You may reach periods of peace, but deeper layers often emerge later. Remain vigilant for subtle attachments to comfort or even to the practice itself." }, 
+            { category: "Adept", q: "Handling major crises", a: "In a crisis, the volume of emotion is high. This is actually a golden opportunity. A massive amount of karma can be discharged quickly if you can stay present with the raw energy without resisting." }, 
+            { category: "Adept", q: "Attachment to outcomes", a: "Surrender doesn't mean you don't act; it means you surrender your attachment to the result. You do your best and let go of the rest." }, 
+            { category: "Adept", q: "The dark night of the soul?", a: "This often occurs before a major transition. It feels like abandonment or total despair. It is the ego facing its own demise. Surrender to the despair itself." }, 
+            { category: "Pro", q: "The Witness Trap", a: "At high levels, one can become attached to the 'Observer' role to dissociate from subtle pain. Are you witnessing to avoid feeling? Surrender the position of the witness to become the experience itself, then surrender that." }, 
+            { category: "Pro", q: "Somatic Holding Patterns", a: "When the mind is silent but the body remains tense, you are hitting somatic repression. The energy is no longer generating thoughts but is trapped in the fascia. Drop resistance to the physical tightness itself, without labeling it as 'tension'." }, 
+            { category: "Pro", q: "Surrendering Positive States?", a: "Yes. When you reach joy or ecstasy, surrender the attachment to it. The fear that it will end is 'Fear'. The desire to keep it is 'Desire'. Letting go of the 'high' allows you to settle into the permanent bedrock of Peace." }, 
+            { category: "Pro", q: "Subtle Apathy vs Peace", a: "Apathy feels blank, heavy, and 'I don't care'. Peace feels alive, light, and 'I have everything'. If the silence feels dead, it is Apathy. Look for the subtle resistance to being alive." },
+            { category: "Pro", q: "The 'I' Thought", a: "Eventually, you notice that for every feeling, there is a subtle 'me' feeling it. This 'I-ness' is the root. Instead of surrendering the object (the feeling), surrender the subject (the 'I'). Ask 'Who is feeling this?' and surrender the answer." }
         ];
 
         // STATE
@@ -679,22 +889,12 @@
 
         window.handleTouchEnd = (e, el) => {
             if (!currentSwipeItem) return;
-            
-            // Check if this was just a tap (no swipe)
-            // If so, we might need to manually trigger click logic if onclick failed
-            // But 'onclick' usually fires after touchend if not prevented.
-            // The issue might be preventing default in move?
-            
             el.style.transition = 'transform 0.2s ease-out';
             const styleTransform = el.style.transform;
             const match = /translateX\(([^p]+)px\)/.exec(styleTransform);
             const currentTranslate = match ? parseFloat(match[1]) : 0;
             if (currentTranslate < -40) { el.style.transform = 'translateX(-80px)'; el.dataset.isOpen = 'true'; } 
             else { el.style.transform = 'translateX(0)'; el.dataset.isOpen = 'false'; }
-            
-            // If not a swipe (very small movement), ensure click logic can run
-            // We rely on standard onclick, but if needed we could force it here.
-            // The key fix is likely separating selectEmotion logic.
             
             currentSwipeItem = null;
         };
@@ -1195,62 +1395,81 @@
         }
 
         function identifyBodyRegion(x, y) {
-            // Refined Anatomical Mapping for 300x700 ViewBox
-            // Y is 0.0 to 1.0
+            // Precisely Mapped to New Realistic SVG
+            // y range 0.0 to 1.0
             
-            if (y < 0.05) return "Head (Crown)";
+            if (y < 0.05) return "Crown";
+            
+            // Head & Face
             if (y < 0.13) {
-                if (x < 0.35 || x > 0.65) return "Side Head";
-                if (y < 0.09) return "Forehead";
-                return "Face / Eyes";
+                if (x > 0.35 && x < 0.65) {
+                    if (y < 0.09) return "Forehead";
+                    return "Eyes / Nose";
+                }
+                return "Side Head";
             }
-            if (y < 0.16) return "Jaw / Chin";
-            if (y < 0.19) return "Neck / Throat";
             
-            // Shoulders & Upper Chest
+            // Jaw/Neck
+            if (y < 0.16) {
+                if (x > 0.38 && x < 0.62) return "Mouth / Jaw";
+                return "Side Head";
+            }
+            
+            if (y < 0.20) return "Throat / Neck";
+            
+            // Shoulders / Upper Chest
             if (y < 0.25) {
-                if (x < 0.25 || x > 0.75) return "Deltoid (Shoulder)";
-                if (x < 0.35 || x > 0.65) return "Clavicle";
-                return "Upper Chest";
+                if (x < 0.28 || x > 0.72) return "Shoulder (Deltoid)";
+                return "Clavicle / Upper Chest";
             }
             
-            // Chest & Arms
+            // Chest
             if (y < 0.35) {
-                if (x < 0.2 || x > 0.8) return "Upper Arm";
-                if (x > 0.4 && x < 0.6) return "Heart Center";
-                return "Pectoral / Chest";
+                if (x < 0.22 || x > 0.78) return "Upper Arm";
+                if (x > 0.42 && x < 0.58) return "Heart Center";
+                return "Chest / Pectoral";
             }
             
-            // Mid Torso
-            if (y < 0.45) {
-                if (x < 0.22 || x > 0.78) return "Elbow / Forearm";
-                if (x < 0.3 || x > 0.7) return "Ribcage";
+            // Solar Plexus
+            if (y < 0.43) {
+                if (x < 0.25 || x > 0.75) return "Upper Arm";
+                if (x < 0.35 || x > 0.65) return "Ribcage";
                 return "Solar Plexus";
             }
             
-            // Lower Torso
-            if (y < 0.55) {
-                if (x < 0.2 || x > 0.8) return "Wrist / Hand";
-                if (x < 0.3 || x > 0.7) return "Side / Flank";
-                return "Stomach / Navel";
+            // Abdomen / Forearms
+            if (y < 0.53) {
+                if (x < 0.25 || x > 0.75) return "Forearm";
+                return "Upper Abdomen";
             }
             
-            // Pelvis
-            if (y < 0.65) {
-                if (x < 0.2 || x > 0.8) return "Hand / Fingers";
-                return "Pelvis / Hips";
+            // Lower Abdomen / Hands
+            if (y < 0.62) {
+                if (x < 0.2 || x > 0.8) return "Hand / Wrist";
+                if (x < 0.3 || x > 0.7) return "Hip / Flank";
+                if (x > 0.45 && x < 0.55) return "Navel";
+                return "Lower Abdomen";
             }
             
-            // Legs
-            if (y < 0.78) {
+            // Groin / Hips
+            if (y < 0.70) {
+                if (x < 0.2 || x > 0.8) return "Fingers";
+                return "Pelvis / Groin";
+            }
+            
+            // Thighs
+            if (y < 0.83) {
                 if (x > 0.45 && x < 0.55) return "Inner Thigh";
-                return "Quadricep / Thigh";
+                return "Thigh (Quadricep)";
             }
             
-            if (y < 0.84) return "Knee";
+            // Knees
+            if (y < 0.88) return "Knee";
             
-            if (y < 0.94) return "Shin / Calf";
+            // Shins
+            if (y < 0.96) return "Shin / Calf";
             
+            // Feet
             return "Foot / Ankle";
         }
 
@@ -1519,6 +1738,10 @@
             unsubscribeJournal = onSnapshot(q, (snapshot) => {
                 const logs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 window.renderJournal(logs);
+                // Hook to update body list if visible
+                if(!document.getElementById('bodymap-list-view').classList.contains('hidden')) {
+                    openBodyMapList();
+                }
             });
         }
 
@@ -1526,8 +1749,17 @@
         
         window.deleteEntry = async (id) => {
             if (!confirm("Delete this entry?")) return;
-            if (isLoggedIn && typeof id === 'string') { await deleteDoc(doc(db, 'users', currentUser.uid, 'logs', id)); }
-            else { const rel = JSON.parse(localStorage.getItem('releases') || '[]'); rel.splice(id, 1); localStorage.setItem('releases', JSON.stringify(rel)); window.renderJournal(); }
+            if (isLoggedIn && typeof id === 'string') { 
+                await deleteDoc(doc(db, 'users', currentUser.uid, 'logs', id)); 
+            } else { 
+                const rel = JSON.parse(localStorage.getItem('releases') || '[]'); 
+                rel.splice(id, 1); 
+                localStorage.setItem('releases', JSON.stringify(rel)); 
+                window.renderJournal();
+                if(!document.getElementById('bodymap-list-view').classList.contains('hidden')) {
+                    openBodyMapList();
+                }
+            }
         };
 
         window.renameEntry = async (id, currentName, event) => {
