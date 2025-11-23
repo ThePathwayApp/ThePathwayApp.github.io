@@ -1,3 +1,11 @@
+Here is the complete, updated code. I have meticulously integrated the requested features while preserving your existing structure and styling.
+Summary of Changes Implemented:
+ * Log Section Visuals/Function: The Log/History section now uses the Swipe-to-Delete mechanic (Red background revealed on swipe) identical to the BodyMap list. The old trash can icon is removed.
+ * Log Navigation: Tapping a log entry (that isn't being swiped) still correctly navigates to the Charts section for that specific emotion.
+ * Check-in Separation: "Check-in" sessions (created via BodyMap) are now hidden from the main Log/History view. They only appear in the BodyMap list.
+ * Cursor Fix: I removed the CSS transition delay on the BodyMap cursor during movement. It is now 1:1 raw input, removing the "floaty" lag and "traces" when moving fast.
+ * Glitchy Buttons: I added robust event stopping (stopPropagation) to the dropdowns in the "Describe Sensation" modal to prevent touch conflicts with the modal background.
+<!-- end list -->
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
@@ -524,7 +532,7 @@
                 <div class="flex gap-3">
                     <div class="w-1/2">
                         <label class="text-xs text-slate-500 uppercase tracking-wider mb-2 block">Front</label>
-                        <select id="body-part-front" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white text-xs focus:border-gold-500 outline-none" onchange="document.getElementById('body-part-back').value=''; event.stopPropagation();" onclick="event.stopPropagation();" ontouchstart="event.stopPropagation();">
+                        <select id="body-part-front" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white text-xs focus:border-gold-500 outline-none" onmousedown="event.stopPropagation();" onchange="document.getElementById('body-part-back').value=''; event.stopPropagation();" onclick="event.stopPropagation();" ontouchstart="event.stopPropagation();">
                             <option value="" disabled selected>-</option>
                             <option value="Crown">Crown</option>
                             <option value="Forehead">Forehead</option>
@@ -565,7 +573,7 @@
                     </div>
                     <div class="w-1/2">
                         <label class="text-xs text-slate-500 uppercase tracking-wider mb-2 block">Back</label>
-                        <select id="body-part-back" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white text-xs focus:border-gold-500 outline-none" onchange="document.getElementById('body-part-front').value=''; event.stopPropagation();" onclick="event.stopPropagation();" ontouchstart="event.stopPropagation();">
+                        <select id="body-part-back" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white text-xs focus:border-gold-500 outline-none" onmousedown="event.stopPropagation();" onchange="document.getElementById('body-part-front').value=''; event.stopPropagation();" onclick="event.stopPropagation();" ontouchstart="event.stopPropagation();">
                             <option value="" disabled selected>-</option>
                             <option value="Crown">Crown</option>
                             <option value="Back of Head">Back of Head</option>
@@ -598,7 +606,7 @@
 
                 <div>
                     <label class="text-xs text-slate-500 uppercase tracking-wider mb-2 block">Sensation</label>
-                    <select id="sensation-type" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:border-gold-500 outline-none" onchange="event.stopPropagation();" onclick="event.stopPropagation();" ontouchstart="event.stopPropagation();">
+                    <select id="sensation-type" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:border-gold-500 outline-none" onmousedown="event.stopPropagation();" onchange="event.stopPropagation();" onclick="event.stopPropagation();" ontouchstart="event.stopPropagation();">
                         <option value="Tightness">Tightness</option>
                         <option value="Heat">Heat</option>
                         <option value="Pressure">Pressure</option>
@@ -613,14 +621,14 @@
                 </div>
                 <div id="sensation-emotion-container">
                     <label class="text-xs text-slate-500 uppercase tracking-wider mb-2 block">Associated Emotion</label>
-                    <select id="sensation-emotion" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:border-gold-500 outline-none" onchange="event.stopPropagation();" onclick="event.stopPropagation();" ontouchstart="event.stopPropagation();">
+                    <select id="sensation-emotion" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:border-gold-500 outline-none" onmousedown="event.stopPropagation();" onchange="event.stopPropagation();" onclick="event.stopPropagation();" ontouchstart="event.stopPropagation();">
                         </select>
                 </div>
                 <div>
                     <label class="text-xs text-slate-500 uppercase tracking-wider mb-2 block">Sensation Intensity (1-10)</label>
                     <div class="flex items-center gap-3">
                         <span class="text-xs text-slate-500">1</span>
-                        <input type="range" min="1" max="10" value="5" class="flex-1" id="sensation-intensity" oninput="document.getElementById('sens-int-val').textContent = this.value">
+                        <input type="range" min="1" max="10" value="5" class="flex-1" id="sensation-intensity" oninput="document.getElementById('sens-int-val').textContent = this.value" onmousedown="event.stopPropagation();" ontouchstart="event.stopPropagation();">
                         <span class="text-lg font-mono text-gold-500 w-6 text-center" id="sens-int-val">5</span>
                     </div>
                 </div>
@@ -1094,33 +1102,39 @@
             lucide.createIcons();
         }
 
-        // LOAD JOURNAL - UPDATED WITH DELETE BUTTON
+        // LOAD JOURNAL - UPDATED WITH SWIPE DELETE AND EXCLUDING CHECK-INS
         function loadJournal() {
             const container = document.getElementById('journal-list');
             if (!container) return;
             
-            if (globalLogData.length === 0) {
+            // Filter out Check-ins for the Journal View
+            const journalLogs = globalLogData.filter(e => e.emotion !== "Check-in");
+            
+            if (journalLogs.length === 0) {
                 container.innerHTML = `<div class="text-center py-12"><p class="text-slate-600 text-sm">No sessions recorded yet.</p></div>`;
                 return;
             }
             
-            container.innerHTML = globalLogData.map((e, i) => {
+            container.innerHTML = journalLogs.map((e, i) => {
+                const realIndex = globalLogData.indexOf(e); // Use actual index for deletion
                 const hasBody = e.bodyPoints && e.bodyPoints.length > 0;
-                // Clicking log takes you to Chart for that emotion
-                return `<div class="glass-panel rounded-xl p-5 mb-3 animate-fade-in flex justify-between items-center cursor-pointer hover:bg-slate-800/50 transition group" onclick="openLogChart('${e.emotion}')">
-                            <div>
-                                <h3 class="text-white font-medium text-lg">${e.emotion}</h3>
-                                <p class="text-xs text-slate-500 mt-1">${e.date} • ${e.time}</p>
-                            </div>
-                            <div class="flex items-center gap-4">
-                                <div class="text-right">
-                                    <div class="text-xs font-mono text-gold-500">${e.duration > 60 ? Math.floor(e.duration/60) + 'm' : e.duration + 's'}</div>
-                                    ${e.intensity ? `<div class="text-[10px] text-slate-500 mt-1">Int: ${e.intensity}</div>` : ''}
-                                    ${hasBody ? `<div class="text-[10px] text-emerald-500 mt-1 flex items-center justify-end gap-1"><i data-lucide="activity" class="w-3 h-3"></i> Map</div>` : ''}
+                
+                return `<div class="relative overflow-hidden rounded-xl mb-3 animate-fade-in swipe-container" style="animation-delay: ${i*50}ms">
+                        <div class="delete-action bg-red-600 text-white" onclick="deleteEntry(${realIndex})"><i data-lucide="trash-2" class="w-5 h-5"></i></div>
+                        <div class="glass-panel p-5 flex justify-between items-center swipe-item" ontouchstart="handleTouchStart(event, this)" ontouchmove="handleTouchMove(event, this)" ontouchend="handleTouchEnd(event, this)" onclick="if(!isSwiping) openLogChart('${e.emotion}')">
+                                <div>
+                                    <h3 class="text-white font-medium text-lg">${e.emotion}</h3>
+                                    <p class="text-xs text-slate-500 mt-1">${e.date} • ${e.time}</p>
                                 </div>
-                                <button onclick="event.stopPropagation(); deleteEntry(${i})" class="p-2 text-slate-600 hover:text-red-500 transition opacity-0 group-hover:opacity-100 focus:opacity-100 active:opacity-100"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                            </div>
-                        </div>`;
+                                <div class="flex items-center gap-4">
+                                    <div class="text-right">
+                                        <div class="text-xs font-mono text-gold-500">${e.duration > 60 ? Math.floor(e.duration/60) + 'm' : e.duration + 's'}</div>
+                                        ${e.intensity ? `<div class="text-[10px] text-slate-500 mt-1">Int: ${e.intensity}</div>` : ''}
+                                        ${hasBody ? `<div class="text-[10px] text-emerald-500 mt-1 flex items-center justify-end gap-1"><i data-lucide="activity" class="w-3 h-3"></i> Map</div>` : ''}
+                                    </div>
+                                </div>
+                        </div>
+                    </div>`;
             }).join('');
             lucide.createIcons();
         }
@@ -1269,20 +1283,23 @@
             isDraggingTrackpad = true;
             const cursor = document.getElementById('active-cursor');
             cursor.style.display = 'block';
+            // FIXED: Remove transition immediately for 1:1 control (no floaty glitch)
             cursor.style.transition = 'none'; 
             updateCursorPosition(e.touches[0]);
-            requestAnimationFrame(() => { cursor.style.transition = 'transform 0.06s linear'; });
         }
 
         function handleTrackpadMove(e) {
             e.preventDefault();
             if(!isDraggingTrackpad) return;
+            // FIXED: Direct update without re-adding transition
             updateCursorPosition(e.touches[0]);
         }
 
         function handleTrackpadEnd(e) {
             e.preventDefault();
             isDraggingTrackpad = false;
+            // Add transition back only for the click/modal effects if needed later
+            // document.getElementById('active-cursor').style.transition = 'transform 0.06s linear';
             if(pendingPoint) {
                 toggleModal('sensation-modal');
             }
@@ -1496,3 +1513,4 @@
     </script>
 </body>
 </html>
+
