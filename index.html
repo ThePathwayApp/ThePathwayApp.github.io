@@ -114,12 +114,6 @@
         .shake-error { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; border-color: #ef4444 !important; color: #ef4444 !important; }
 
         /* BODY MAP STYLES */
-        .body-grid-overlay {
-            background-image: linear-gradient(rgba(212, 175, 55, 0.2) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(212, 175, 55, 0.2) 1px, transparent 1px);
-            background-size: 20px 20px;
-            pointer-events: none;
-        }
         .body-marker {
             position: absolute;
             background: rgba(212, 175, 55, 0.8);
@@ -129,6 +123,38 @@
             box-shadow: 0 0 10px rgba(212, 175, 55, 0.6);
             pointer-events: none;
             z-index: 20;
+        }
+
+        .trackpad-grid {
+            background-image: radial-gradient(#475569 1.5px, transparent 1.5px);
+            background-size: 20px 20px;
+            background-color: rgba(15, 23, 42, 0.6);
+            border-radius: 1rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            touch-action: none;
+        }
+        
+        .body-cursor {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #d4af37;
+            background-color: rgba(212, 175, 55, 0.2);
+            border-radius: 50%;
+            position: absolute;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 50;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+            display: none;
+        }
+        .body-cursor::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 4px; height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
         }
     </style>
 </head>
@@ -167,13 +193,13 @@
             <button onclick="switchTab('process')" id="menu-process" class="menu-link w-full text-left py-3 px-2 text-lg font-light text-slate-300 hover:text-white transition flex items-center gap-4"><i data-lucide="layers" class="w-5 h-5 opacity-70"></i> Work</button>
             <button onclick="switchTab('timer')" id="menu-timer" class="menu-link w-full text-left py-3 px-2 text-lg font-light text-slate-300 hover:text-white transition flex items-center gap-4"><i data-lucide="clock" class="w-5 h-5 opacity-70"></i> Timer</button>
             <button onclick="switchTab('journal')" id="menu-journal" class="menu-link w-full text-left py-3 px-2 text-lg font-light text-slate-300 hover:text-white transition flex items-center gap-4"><i data-lucide="archive" class="w-5 h-5 opacity-70"></i> Log</button>
-            <!-- New Insights Tab, Charts removed from sidebar -->
-            <button onclick="switchTab('insights')" id="menu-insights" class="menu-link w-full text-left py-3 px-2 text-lg font-light text-slate-300 hover:text-white transition flex items-center gap-4"><i data-lucide="layout-grid" class="w-5 h-5 opacity-70"></i> Insights</button>
+            <!-- New Insights Tab, Icon Changed to Eye -->
+            <button onclick="switchTab('insights')" id="menu-insights" class="menu-link w-full text-left py-3 px-2 text-lg font-light text-slate-300 hover:text-white transition flex items-center gap-4"><i data-lucide="eye" class="w-5 h-5 opacity-70"></i> Insights</button>
             <button onclick="switchTab('qa')" id="menu-qa" class="menu-link w-full text-left py-3 px-2 text-lg font-light text-slate-300 hover:text-white transition flex items-center gap-4"><i data-lucide="help-circle" class="w-5 h-5 opacity-70"></i> Q&A</button>
         </nav>
 
         <div class="px-6 pt-6 pb-4 text-center border-t border-slate-800/50 mt-auto">
-            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 9.0.0</p>
+            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 9.1.0</p>
         </div>
     </aside>
 
@@ -298,7 +324,7 @@
             </div>
         </section>
 
-        <!-- NEW INSIGHTS VIEW -->
+        <!-- INSIGHTS VIEW -->
         <section id="view-insights" class="view-section hidden h-full overflow-y-auto p-4">
             <h2 class="text-2xl font-light text-white mb-6">Insights</h2>
             <div class="grid grid-cols-2 gap-4">
@@ -311,13 +337,13 @@
                     <span class="text-sm font-medium text-slate-200">Charts</span>
                 </button>
 
-                <!-- Emotional Heatmap (Future) -->
-                <button class="glass-panel rounded-2xl p-6 aspect-square flex flex-col items-center justify-center text-center gap-3 opacity-60 cursor-not-allowed relative overflow-hidden">
-                    <div class="w-12 h-12 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-slate-500">
-                        <i data-lucide="thermometer" class="w-6 h-6"></i>
+                <!-- BodyMap (Previously Heatmap) -->
+                <button onclick="openBodyMap()" class="glass-panel rounded-2xl p-6 aspect-square flex flex-col items-center justify-center text-center gap-3 hover:bg-slate-800/80 transition group relative overflow-hidden">
+                    <div class="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                    <div class="w-12 h-12 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition duration-300">
+                        <i data-lucide="activity" class="w-6 h-6"></i>
                     </div>
-                    <span class="text-sm font-medium text-slate-500">Heatmap</span>
-                    <span class="absolute top-3 right-3 text-[9px] uppercase tracking-wider text-slate-600 border border-slate-700 px-1 rounded">Soon</span>
+                    <span class="text-sm font-medium text-slate-200">BodyMap</span>
                 </button>
 
                 <!-- Mechanism Coach (Future) -->
@@ -340,7 +366,7 @@
             </div>
         </section>
 
-        <!-- CHARTS VIEW (Now hidden, accessed via Insights) -->
+        <!-- CHARTS VIEW (Hidden, accessed via Insights) -->
         <section id="view-charts" class="view-section hidden h-full overflow-hidden flex flex-col p-4">
             <div class="mb-4 flex justify-between items-center">
                 <button onclick="switchTab('insights')" class="p-2 text-slate-400 hover:text-white transition rounded-full bg-slate-800"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
@@ -359,26 +385,55 @@
             </div>
         </section>
 
-        <!-- NEW BODYMAP VIEW -->
-        <section id="view-bodymap" class="view-section hidden h-full overflow-hidden flex flex-col p-4 relative">
-             <div class="flex justify-between items-center mb-2 z-30">
-                <h2 class="text-xl font-light text-white">Somatic Map</h2>
+        <!-- UPDATED BODYMAP VIEW -->
+        <section id="view-bodymap" class="view-section hidden h-full overflow-hidden flex flex-col p-4 relative bg-slate-950">
+             <div class="flex justify-between items-center mb-2 z-30 flex-none">
+                <div class="flex items-center gap-2">
+                    <button onclick="switchTab('insights')" id="bodymap-back-btn" class="p-1 text-slate-400 hover:text-white transition rounded-full hidden"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+                    <h2 class="text-xl font-light text-white">Somatic Map</h2>
+                </div>
                 <button onclick="finalizeSession()" class="text-xs bg-gold-600 hover:bg-gold-500 text-white px-3 py-1.5 rounded-lg transition font-medium">Save Session</button>
             </div>
-            <p class="text-xs text-slate-400 text-center mb-4 z-30">Tap where you felt the sensation.</p>
             
-            <div class="flex-1 relative flex items-center justify-center" id="bodymap-container">
-                <!-- SVG Silhouette -->
-                <svg viewBox="0 0 300 600" class="h-full w-auto opacity-80" id="body-silhouette" onclick="handleBodyTap(event)">
-                    <!-- Simple Human Silhouette Path -->
-                    <path d="M150,50 C130,50 115,65 115,85 C115,95 120,105 128,112 L110,125 C90,135 80,160 85,180 L70,250 C65,270 80,290 100,290 L110,290 L110,400 L90,550 C88,570 100,585 120,585 L145,585 L148,450 L152,450 L155,585 L180,585 C200,585 212,570 210,550 L190,400 L190,290 L200,290 C220,290 235,270 230,250 L215,180 C220,160 210,135 190,125 L172,112 C180,105 185,95 185,85 C185,65 170,50 150,50 Z" fill="#1e293b" stroke="#d4af37" stroke-width="2"/>
-                </svg>
+            <div class="flex-1 relative flex flex-col items-center justify-start overflow-hidden w-full">
+                
+                <!-- Body Silhouette Container -->
+                <div class="relative w-full max-w-[280px] h-[60%] flex items-center justify-center mt-4" id="bodymap-body-container">
+                     <!-- Improved Anatomical Silhouette -->
+                    <svg viewBox="0 0 200 500" class="h-full w-auto drop-shadow-[0_0_15px_rgba(255,255,255,0.05)]" id="body-silhouette">
+                         <defs>
+                            <linearGradient id="bodyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#334155;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#1e293b;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <path d="M100,20 C115,20 125,32 125,48 C125,62 118,72 112,75 C130,80 145,85 155,95 C165,105 165,115 162,140 C160,165 155,200 152,210 C155,215 158,225 158,230 C155,240 150,235 145,220 C140,200 138,180 135,160 C135,200 135,220 135,230 C140,250 142,270 140,290 C138,310 130,380 128,400 C125,430 125,460 130,480 L105,480 C110,460 110,430 108,400 C106,370 102,320 100,310 C98,320 94,370 92,400 C90,430 90,460 95,480 L70,480 C75,460 75,430 72,400 C70,380 62,310 60,290 C58,270 60,250 65,230 C65,220 65,200 65,160 C62,180 60,200 55,220 C50,235 45,240 42,230 C42,225 45,215 48,210 C45,200 40,165 38,140 C35,115 35,105 45,95 C55,85 70,80 88,75 C82,72 75,62 75,48 C75,32 85,20 100,20 Z" 
+                              fill="url(#bodyGradient)" stroke="#94a3b8" stroke-width="1.5" stroke-opacity="0.3"/>
+                    </svg>
 
-                <!-- Grid Overlay (Hidden by default) -->
-                <div id="grid-overlay" class="hidden absolute inset-0 body-grid-overlay z-10" onclick="handleGridTap(event)"></div>
+                    <!-- Markers Container (Points already saved) -->
+                    <div id="markers-container" class="absolute inset-0 pointer-events-none w-full h-full"></div>
 
-                <!-- Markers Container -->
-                <div id="markers-container" class="absolute inset-0 pointer-events-none w-full h-full"></div>
+                    <!-- The Cursor (Controlled by trackpad) -->
+                    <div id="active-cursor" class="body-cursor"></div>
+                </div>
+
+                <!-- Dynamic Label -->
+                <div class="mt-4 mb-2 h-6 flex items-center justify-center">
+                    <div id="body-part-label" class="text-gold-500 font-mono text-xs uppercase tracking-widest opacity-0 transition-opacity"></div>
+                </div>
+
+                <!-- Sensation Trackpad -->
+                <div class="w-full max-w-[280px] aspect-[4/3] trackpad-grid relative mb-4" 
+                     id="sensation-trackpad"
+                     ontouchstart="handleTrackpadStart(event)"
+                     ontouchmove="handleTrackpadMove(event)"
+                     ontouchend="handleTrackpadEnd(event)">
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <span class="text-[10px] text-slate-500 uppercase tracking-widest opacity-50">Sensation Trackpad</span>
+                    </div>
+                </div>
+                
             </div>
         </section>
 
@@ -448,7 +503,6 @@
                 <div class="text-center text-gold-500 font-mono mt-2 text-xl" id="timer-intensity-val">5</div>
             </div>
             <div class="space-y-3">
-                <!-- CHANGED: Now goes to BodyMap -->
                 <button onclick="transitionToBodyMapFromTimer()" class="w-full py-3 bg-gold-600 hover:bg-gold-500 text-white rounded-xl transition font-medium">Continue to BodyMap</button>
                 <button onclick="closeCompleteModal()" class="w-full py-3 border border-slate-700 text-slate-400 hover:text-white rounded-xl transition">Discard</button>
             </div>
@@ -492,6 +546,10 @@
         var pendingSessionData = null; // Stores data before final save
         var currentBodyPoints = []; // Stores points for current session
         var pendingPoint = null; // Temp store for x,y while selecting sensation
+        
+        // TRACKPAD VARS
+        let isDraggingTrackpad = false;
+        let lastVibrationGridIndex = -1;
 
         // --- DATA ---
         const INTRO_QUOTES = [
@@ -867,9 +925,15 @@
             } else { if(next) { next.classList.remove('hidden'); next.classList.add('active-view'); } }
         }
 
-        function openCharts() {
-            // Helper to open charts from Insights grid
-            switchTab('charts');
+        function openCharts() { switchTab('charts'); }
+        function openBodyMap() { 
+            // When opening from grid, we don't have session data, just view mode
+            document.querySelectorAll('.view-section').forEach(v => { v.classList.remove('active-view'); v.classList.add('hidden'); });
+            const bm = document.getElementById('view-bodymap');
+            bm.classList.remove('hidden');
+            setTimeout(() => bm.classList.add('active-view'), 10);
+            document.getElementById('bodymap-back-btn').classList.remove('hidden');
+            renderBodyMarkers();
         }
 
         // BRIDGE FUNCTIONS
@@ -892,36 +956,92 @@
         
         // --- BODY MAP LOGIC ---
 
-        function handleBodyTap(e) {
-            const rect = e.target.getBoundingClientRect();
-            const x = (e.clientX - rect.left) / rect.width;
-            const y = (e.clientY - rect.top) / rect.height;
-            
-            // Simple Region Detection (Approximate)
-            let region = "Body";
-            if (y < 0.15) region = "Head";
-            else if (y < 0.25) region = "Throat/Neck";
-            else if (y < 0.35) { region = (x < 0.3 || x > 0.7) ? "Shoulders" : "Chest"; }
-            else if (y < 0.50) { region = (x < 0.3 || x > 0.7) ? "Arms" : "Solar Plexus/Stomach"; }
-            else if (y < 0.60) region = "Hips/Pelvis";
-            else if (y < 0.85) region = "Legs";
-            else region = "Feet";
-
-            pendingPoint = { x, y, region };
-            
-            // Show grid for precise tap
-            document.getElementById('grid-overlay').classList.remove('hidden');
+        function handleTrackpadStart(e) {
+            e.preventDefault();
+            isDraggingTrackpad = true;
+            document.getElementById('active-cursor').style.display = 'block';
+            document.getElementById('body-part-label').style.opacity = '1';
+            updateCursorPosition(e.touches[0]);
         }
 
-        function handleGridTap(e) {
-            if(!pendingPoint) return;
-            const rect = e.target.getBoundingClientRect();
-            // Update to precise grid click
-            pendingPoint.x = (e.clientX - rect.left) / rect.width;
-            pendingPoint.y = (e.clientY - rect.top) / rect.height;
+        function handleTrackpadMove(e) {
+            e.preventDefault();
+            if(!isDraggingTrackpad) return;
+            updateCursorPosition(e.touches[0]);
+        }
 
-            // Open Sensation Modal
-            toggleModal('sensation-modal');
+        function handleTrackpadEnd(e) {
+            e.preventDefault();
+            isDraggingTrackpad = false;
+            // Trigger selection logic
+            if(pendingPoint) {
+                toggleModal('sensation-modal');
+            }
+        }
+
+        function updateCursorPosition(touch) {
+            const pad = document.getElementById('sensation-trackpad');
+            const padRect = pad.getBoundingClientRect();
+            
+            // Calculate relative position within trackpad (0 to 1)
+            let x = (touch.clientX - padRect.left) / padRect.width;
+            let y = (touch.clientY - padRect.top) / padRect.height;
+            
+            // Clamp values
+            x = Math.max(0, Math.min(1, x));
+            y = Math.max(0, Math.min(1, y));
+
+            // Haptic Feedback Simulation (Grid Texture)
+            // Divide grid into 20x20 cells
+            const gridSize = 20;
+            const currentGridIndex = Math.floor(x * gridSize) + (Math.floor(y * gridSize) * gridSize);
+            
+            if (currentGridIndex !== lastVibrationGridIndex) {
+                if (navigator.vibrate) navigator.vibrate(5); // Ultra short tick
+                lastVibrationGridIndex = currentGridIndex;
+            }
+
+            // Map to Body Container
+            // Since Trackpad is 4:3 and Body is tall, we map absolute X/Y directly to percentage
+            const cursor = document.getElementById('active-cursor');
+            cursor.style.left = (x * 100) + '%';
+            cursor.style.top = (y * 100) + '%';
+
+            // Identify Region
+            const region = identifyBodyRegion(x, y);
+            const label = document.getElementById('body-part-label');
+            if (label.textContent !== region) {
+                label.style.opacity = '0';
+                setTimeout(() => {
+                    label.textContent = region;
+                    label.style.opacity = '1';
+                }, 100);
+            }
+
+            // Update Pending Point
+            pendingPoint = { x, y, region };
+        }
+
+        function identifyBodyRegion(x, y) {
+            // Mapping for the new Anatomical SVG
+            // SVG viewBox 0 0 200 500
+            // y goes 0 to 1
+            if (y < 0.15) return "Head";
+            if (y < 0.19) return "Throat";
+            if (y < 0.32) {
+                if (x < 0.25 || x > 0.75) return "Shoulder";
+                return "Chest";
+            }
+            if (y < 0.48) {
+                 if (x < 0.25 || x > 0.75) return "Arm";
+                 return "Solar Plexus";
+            }
+            if (y < 0.60) {
+                 if (x < 0.2 || x > 0.8) return "Hand";
+                 return "Stomach / Gut";
+            }
+            if (y < 0.95) return "Leg";
+            return "Foot";
         }
 
         function confirmBodyPoint() {
@@ -940,13 +1060,15 @@
             }
             
             toggleModal('sensation-modal');
-            document.getElementById('grid-overlay').classList.add('hidden');
+            document.getElementById('active-cursor').style.display = 'none';
+            document.getElementById('body-part-label').style.opacity = '0';
             pendingPoint = null;
         }
 
         function cancelBodyPoint() {
             toggleModal('sensation-modal');
-            document.getElementById('grid-overlay').classList.add('hidden');
+            document.getElementById('active-cursor').style.display = 'none';
+            document.getElementById('body-part-label').style.opacity = '0';
             pendingPoint = null;
         }
 
@@ -985,18 +1107,12 @@
             currentBodyPoints = [];
             renderBodyMarkers();
             
-            // UI Switch
             document.getElementById('complete-modal').classList.add('hidden'); 
             document.getElementById('complete-modal').classList.remove('flex');
-            resetTimer(); // Reset timer UI in bg
+            resetTimer(); 
+            document.getElementById('bodymap-back-btn').classList.add('hidden'); // Hide back button in flow mode
             
-            // Show BodyMap View directly (bypass regular switchTab to keep history clean/modal feel)
-            // But we can use switchTab to make it a distinct step
-            // We need to temporarily un-hide view-bodymap manually or use logic
-            document.querySelectorAll('.view-section').forEach(v => {
-                v.classList.remove('active-view');
-                v.classList.add('hidden');
-            });
+            document.querySelectorAll('.view-section').forEach(v => { v.classList.remove('active-view'); v.classList.add('hidden'); });
             const bm = document.getElementById('view-bodymap');
             bm.classList.remove('hidden');
             setTimeout(() => bm.classList.add('active-view'), 10);
@@ -1016,14 +1132,10 @@
 
             currentBodyPoints = [];
             renderBodyMarkers();
+            resetProcess();
+            document.getElementById('bodymap-back-btn').classList.add('hidden'); // Hide back button in flow mode
 
-            resetProcess(); // Reset process UI in bg
-
-            // Switch to BodyMap
-            document.querySelectorAll('.view-section').forEach(v => {
-                v.classList.remove('active-view');
-                v.classList.add('hidden');
-            });
+            document.querySelectorAll('.view-section').forEach(v => { v.classList.remove('active-view'); v.classList.add('hidden'); });
             const bm = document.getElementById('view-bodymap');
             bm.classList.remove('hidden');
             setTimeout(() => bm.classList.add('active-view'), 10);
@@ -1033,19 +1145,11 @@
 
         window.finalizeSession = async () => {
             if(!pendingSessionData) { switchTab('journal'); return; }
-            
-            // Add body points to data
             pendingSessionData.bodyPoints = currentBodyPoints;
 
-            // Save to DB
             if (isLoggedIn && currentUser) { 
                 try { 
-                    // Need to import/use addDoc here, accessed via global window or module scope?
-                    // Since module script is below, we need a bridge. 
-                    // We'll call a global function defined in the module.
-                    if(window.saveSessionToFirebase) {
-                        await window.saveSessionToFirebase(pendingSessionData);
-                    }
+                    if(window.saveSessionToFirebase) { await window.saveSessionToFirebase(pendingSessionData); }
                 } catch (e) { alert("Error saving: " + e.message); } 
             } else { 
                 const rel = JSON.parse(localStorage.getItem('releases') || '[]'); 
@@ -1057,7 +1161,6 @@
             currentBodyPoints = [];
             switchTab('journal');
         };
-
 
         window.loadChart = (em) => { const ctx = document.getElementById('progressChart'); if(!ctx) return; document.getElementById('chart-placeholder').classList.add('hidden'); let data = globalLogData.filter(r => r.emotion === em && r.intensity).reverse(); if(data.length===0) { if(progressChart) progressChart.destroy(); document.getElementById('chart-placeholder').classList.remove('hidden'); document.getElementById('chart-placeholder').textContent = `No data yet for "${em}"`; return; } const lbl = data.map(x => x.date), val = data.map(x => parseInt(x.intensity)); if(progressChart) progressChart.destroy(); progressChart = new Chart(ctx, { type: 'line', data: { labels: lbl, datasets: [{ label: 'Intensity', data: val, borderColor: '#d4af37', backgroundColor: 'rgba(212, 175, 55, 0.1)', tension: 0.4, fill: true, pointBackgroundColor: '#d4af37' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 10, grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } }, x: { grid: { display: false }, ticks: { color: '#94a3b8' } } }, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#0f172a', borderColor: '#334155', borderWidth: 1 } } } }); };
         window.closeCompleteModal = () => { document.getElementById('complete-modal').classList.add('hidden'); document.getElementById('complete-modal').classList.remove('flex'); resetTimer(); };
