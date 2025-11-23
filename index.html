@@ -126,7 +126,6 @@
             overflow: hidden; 
         }
 
-        /* The SVG layer - purely visual */
         .anatomy-svg {
             height: 85%; 
             width: auto;
@@ -135,19 +134,12 @@
             margin-top: 2rem;
             position: relative;
             z-index: 10;
-            pointer-events: none; /* Clicks go through to layer below? No, we handle clicks on trackpad */
+            /* IMPORTANT: Ensure SVG does not capture pointer events, let them fall through to trackpad IF needed, 
+               BUT here we actually control cursor via trackpad overlay at bottom. */
+            pointer-events: none; 
         }
 
-        /* The Cursor Layer - sits exactly on top of SVG coordinates */
-        .interactive-layer {
-            position: absolute;
-            top: 2rem; /* Matches anatomy-svg margin-top */
-            height: 85%; /* Matches anatomy-svg height */
-            aspect-ratio: 300 / 700; /* Enforce SVG viewBox ratio */
-            z-index: 50;
-            pointer-events: none; /* Let clicks pass through, trackpad controls cursor */
-        }
-
+        /* Cursor Container inside SVG ForeignObject needs to be visible */
         .neuro-cursor {
             position: absolute;
             top: 0;
@@ -156,7 +148,8 @@
             height: 0;
             pointer-events: none;
             z-index: 60;
-            will-change: transform; /* Optimization for smooth movement */
+            will-change: transform; 
+            /* Smooth, laser-like movement */
             transition: transform 0.08s cubic-bezier(0.2, 0.6, 0.4, 1.0);
             display: none;
         }
@@ -228,7 +221,7 @@
         </nav>
 
         <div class="px-6 pt-6 pb-4 text-center border-t border-slate-800/50 mt-auto">
-            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 9.8.0</p>
+            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 9.9.0</p>
         </div>
     </aside>
 
@@ -432,36 +425,82 @@
                     
                     <svg viewBox="0 0 300 700" class="anatomy-svg" id="body-silhouette">
                         <defs>
-                            <linearGradient id="body-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" stop-color="#1e293b" stop-opacity="0.9" />
-                                <stop offset="50%" stop-color="#334155" stop-opacity="1" />
-                                <stop offset="100%" stop-color="#1e293b" stop-opacity="0.9" />
+                            <radialGradient id="body-core" cx="50%" cy="35%" r="60%">
+                                <stop offset="0%" stop-color="#d4af37" stop-opacity="0.9" />
+                                <stop offset="40%" stop-color="#d4af37" stop-opacity="0.25" />
+                                <stop offset="100%" stop-color="#0f172a" stop-opacity="0" />
+                            </radialGradient>
+                            <linearGradient id="body-stroke" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#facc6b" />
+                                <stop offset="50%" stop-color="#d4af37" />
+                                <stop offset="100%" stop-color="#a16207" />
                             </linearGradient>
-                            <filter id="glow-filter" x="-20%" y="-20%" width="140%" height="140%">
-                                <feGaussianBlur stdDeviation="3" result="blur" />
-                                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                            <filter id="body-glow" x="-30%" y="-30%" width="160%" height="160%">
+                                <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
+                                <feColorMatrix in="blur" type="matrix"
+                                    values="1 0 0 0 0
+                                            0 1 0 0 0
+                                            0 0 1 0 0
+                                            0 0 0 0.8 0" result="glow"/>
+                                <feMerge>
+                                    <feMergeNode in="glow" />
+                                    <feMergeNode in="SourceGraphic" />
+                                </feMerge>
                             </filter>
                         </defs>
-                        
-                        <path d="M150,25 C135,25 122,38 122,58 C122,75 128,85 135,90 L135,100 C115,105 95,110 80,125 C65,140 60,160 58,190 C57,210 60,230 62,245 L60,290 C55,315 50,330 45,335 C55,345 65,335 70,315 L75,250 L85,250 C85,270 85,300 90,320 C95,340 105,360 110,370 L110,520 C105,540 102,550 95,555 L135,555 C130,545 128,530 128,500 L128,400 L135,400 L135,500 C135,530 135,545 130,555 L170,555 C162,550 160,540 155,520 L155,370 C160,360 170,340 175,320 C180,300 180,270 180,250 L190,250 L195,315 C200,335 210,345 220,335 C215,330 210,315 205,290 L202,245 C205,230 208,210 207,190 C205,160 200,140 185,125 C170,110 150,105 130,100 L130,90 C138,85 142,75 142,58 C142,38 130,25 115,25 Z" 
-                              transform="translate(18, 0)"
-                              fill="url(#body-gradient)" 
-                              stroke="#d4af37" 
-                              stroke-width="0.5" 
-                              filter="url(#glow-filter)" />
-                              
-                        <g transform="translate(18, 0)" stroke="#d4af37" stroke-width="0.2" fill="none" opacity="0.3">
-                            <path d="M122,125 Q150,135 178,125" /> <path d="M150,100 L150,370" stroke-dasharray="2,2" /> <path d="M122,160 Q150,180 178,160" /> <path d="M130,230 Q150,210 170,230" /> <circle cx="128" cy="430" r="5" /> <circle cx="172" cy="430" r="5" />
+                    
+                        <circle cx="150" cy="260" r="180" fill="url(#body-core)" opacity="0.55" />
+                    
+                        <g id="hologram-body" stroke="url(#body-stroke)" stroke-width="2.2" fill="none" filter="url(#body-glow)">
+                            <path d="M 150 40 C 130 40 115 58 115 80 C 115 105 130 125 150 125 C 170 125 185 105 185 80 C 185 58 170 40 150 40 Z" />
+                            <path d="M 138 125 L 138 148  M 162 125 L 162 148" />
+                            <path d="M 115 148 Q 105 175 102 205 Q 100 225 100 250 Q 100 295 115 325 Q 135 360 150 370 Q 165 360 185 325 Q 200 295 200 250 Q 200 225 198 205 Q 195 175 185 148 Z" />
+                            <path d="M 115 152 Q 150 140 185 152" />
+                            <path d="M 118 185 Q 150 200 182 185" />
+                            <path d="M 120 210 Q 150 225 180 210" />
+                            <path d="M 122 240 Q 150 235 178 240" />
+                            <path d="M 124 268 Q 150 278 176 268" />
+                            <circle cx="150" cy="285" r="3" />
+                            <path d="M 120 320 Q 150 340 180 320 Q 192 330 196 345 Q 200 360 200 375 L 100 375 Q 100 360 104 345 Q 108 330 120 320 Z" />
+                            <path d="M 150 130 L 150 360" stroke-dasharray="6 6" />
+                            <path d="M 115 158 Q 92 175 82 205 L 70 250 Q 66 265 66 280 L 64 315 Q 64 335 70 350 Q 78 368 88 375 L 94 368 Q 88 355 86 342 L 84 318 Q 83 300 86 282 L 92 248 Q 100 210 120 175 Z" />
+                            <path d="M 185 158 Q 208 175 218 205 L 230 250 Q 234 265 234 280 L 236 315 Q 236 335 230 350 Q 222 368 212 375 L 206 368 Q 212 355 214 342 L 216 318 Q 217 300 214 282 L 208 248 Q 200 210 180 175 Z" />
+                            <path d="M 118 375 L 118 470 Q 118 495 112 520 L 108 545 Q 104 565 104 585 L 103 610 Q 103 635 108 655 L 120 655 Q 125 635 126 615 L 127 590 Q 128 570 132 550 L 136 520 Q 140 495 140 470 L 140 375 Z" />
+                            <path d="M 182 375 L 182 470 Q 182 495 188 520 L 192 545 Q 196 565 196 585 L 197 610 Q 197 635 192 655 L 180 655 Q 175 635 174 615 L 173 590 Q 172 570 168 550 L 164 520 Q 160 495 160 470 L 160 375 Z" />
+                            <circle cx="130" cy="515" r="3" />
+                            <circle cx="170" cy="515" r="3" />
+                            <circle cx="128" cy="650" r="3" />
+                            <circle cx="172" cy="650" r="3" />
+                            <path d="M 118 655 Q 124 670 135 675" />
+                            <path d="M 182 655 Q 176 670 165 675" />
                         </g>
+                    
+                        <g stroke="#d4af37" stroke-width="0.6" opacity="0.35">
+                            <path d="M 135 140 L 135 640" stroke-dasharray="5 6" />
+                            <path d="M 150 135 L 150 640" stroke-dasharray="3 5" />
+                            <path d="M 165 140 L 165 640" stroke-dasharray="5 6" />
+                            <path d="M 110 170 L 190 170" />
+                            <path d="M 106 200 L 194 200" />
+                            <path d="M 104 230 L 196 230" />
+                            <path d="M 102 260 L 198 260" />
+                            <path d="M 100 295 L 200 295" />
+                            <path d="M 100 330 L 200 330" />
+                            <path d="M 102 365 L 198 365" />
+                            <path d="M 108 430 L 192 430" />
+                            <path d="M 110 500 L 190 500" />
+                            <path d="M 112 570 L 188 570" />
+                            <path d="M 115 635 L 185 635" />
+                        </g>
+                    
+                        <foreignObject x="0" y="0" width="300" height="700" style="pointer-events:none;">
+                            <div xmlns="http://www.w3.org/1999/xhtml" style="position:relative;width:100%;height:100%;">
+                                <div id="markers-container" class="w-full h-full relative"></div>
+                                <div id="active-cursor" class="neuro-cursor">
+                                    <div class="neuro-cursor-inner"></div>
+                                </div>
+                            </div>
+                        </foreignObject>
                     </svg>
-
-                    <div id="interactive-layer" class="interactive-layer">
-                        <div id="markers-container" class="w-full h-full relative"></div>
-                        <div id="active-cursor" class="neuro-cursor">
-                            <div class="neuro-cursor-inner"></div>
-                        </div>
-                    </div>
-
                 </div>
         
                 <div class="absolute bottom-10 left-1/2 -translate-x-1/2 w-64 h-48 z-50 mb-safe">
@@ -1175,12 +1214,13 @@
             const label = document.getElementById('body-part-label');
             
             cursor.style.display = 'block';
+            // Temporarily disable transition for instant jump to start position
             cursor.style.transition = 'none'; 
             
             label.style.opacity = '1';
             updateCursorPosition(e.touches[0]);
             
-            // Restore transition for smooth dragging after initial jump
+            // Restore transition for smooth dragging
             requestAnimationFrame(() => {
                 cursor.style.transition = 'transform 0.08s cubic-bezier(0.2, 0.6, 0.4, 1.0)';
             });
@@ -1232,7 +1272,7 @@
         }
 
         function identifyBodyRegion(x, y) {
-            // Accurate Mapping for the new 300x700 silhouette
+            // Accurate Mapping for the new 300x700 hologram silhouette
             if (y < 85) return "Head";
             if (y < 110) return "Neck";
             if (y < 160) return "Shoulders";
