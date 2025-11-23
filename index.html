@@ -499,7 +499,7 @@
                 </div>
 
                 <!-- DETAILS PANEL: Visible when viewing old logs -->
-                <div id="bodymap-details-panel" class="absolute bottom-0 left-0 right-0 z-50 bg-slate-900/95 border-t border-slate-800 p-6 rounded-t-3xl shadow-2xl hidden pb-safe">
+                <div id="bodymap-details-panel" class="absolute bottom-0 left-0 right-0 z-50 p-6 hidden pb-safe">
                     <h3 class="text-gold-500 text-sm uppercase tracking-widest mb-4">Sensation Details</h3>
                     <div id="bodymap-details-content" class="space-y-3 max-h-48 overflow-y-auto text-sm text-slate-300"></div>
                 </div>
@@ -545,7 +545,7 @@
                             <option value="Nose">Nose</option>
                             <option value="Mouth">Mouth</option>
                             <option value="Chin">Chin</option>
-                            <option value="Neck">Neck</option>
+                            <option value="Throat / Neck">Throat / Neck</option>
                             <option value="Left Trap">Left Trap</option>
                             <option value="Right Trap">Right Trap</option>
                             <option value="Left Shoulder">Left Shoulder</option>
@@ -1048,7 +1048,7 @@
             switchToCanvasMode();
         }
 
-        // UPDATED: Improved Details Panel Styling
+        // UPDATED: Improved Details Panel Styling (Clean text list, no box)
         function loadBodySession(index) {
             let session = globalLogData[index];
             if(!session) return;
@@ -1067,7 +1067,7 @@
             
             if (currentBodyPoints.length > 0) {
                 detailsContent.innerHTML = currentBodyPoints.map(p => 
-                    `<div class="bg-slate-800/50 rounded-lg p-3 mb-2 flex justify-between items-start border border-slate-700/50">
+                    `<div class="flex justify-between items-start py-2 border-b border-slate-800/30 last:border-0">
                         <div>
                             <div class="text-white font-medium text-sm">${p.region}</div>
                             <div class="text-xs text-slate-400 mt-0.5">${p.sensation} • <span class="text-emerald-400">${p.relatedEmotion}</span></div>
