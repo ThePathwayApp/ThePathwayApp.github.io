@@ -27,8 +27,8 @@
                     },
                     animation: {
                         'breathe': 'breathe 8s infinite ease-in-out',
-                        'fade-in': 'fadeIn 0.3s ease-out forwards', 
-                        'fade-out': 'fadeOut 0.3s ease-in forwards', 
+                        'fade-in': 'fadeIn 0.5s ease-out forwards', 
+                        'fade-out': 'fadeOut 0.5s ease-in forwards', 
                         'slide-up': 'slideUp 0.3s ease-out forwards',
                         'slide-down': 'slideDown 0.25s ease-in forwards',
                         'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
@@ -165,11 +165,11 @@
         /* HOTSPOT STYLES */
         .hotspot {
             position: absolute;
-            /* Uncomment border to debug positions */
-            /* border: 1px solid rgba(255, 0, 0, 0.5); */
             z-index: 20;
-            /* Pointer events allowed for debug, but our trackpad uses coordinates */
+            /* Pointer events none because we use coordinate tracking, not direct clicks/hovers */
             pointer-events: none; 
+            /* DEBUGGING: Uncomment the line below to see the boxes and adjust them! */
+            /* border: 1px solid rgba(255, 0, 0, 0.5); background: rgba(255, 0, 0, 0.1); */
         }
 
         .interactive-layer {
@@ -269,16 +269,20 @@
         </div>
     </aside>
 
-    <div id="intro-screen" onclick="dismissIntro()" class="fixed inset-0 z-[80] bg-slate-950 flex flex-col items-center justify-center p-8 text-center cursor-pointer transition-opacity duration-1000">
+    <!-- INTRO SCREEN: Adjusted for smoother fade and fix for missing quotes -->
+    <div id="intro-screen" onclick="dismissIntro()" class="fixed inset-0 z-[80] bg-slate-950 flex flex-col items-center justify-center p-8 text-center cursor-pointer transition-opacity duration-1000 opacity-100">
         <div class="animate-fade-in max-w-lg mx-auto flex flex-col h-full justify-center relative w-full">
             <div class="mb-8 text-gold-500/30 mx-auto"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
             <h1 class="text-5xl md:text-6xl font-serif italic text-gold-500 mb-16 tracking-wider drop-shadow-[0_0_25px_rgba(212,175,55,0.2)]">The Pathway</h1>
             <div class="flex justify-center">
                 <div class="quote-wrapper max-w-md relative">
                     <svg class="quote-mark start" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21L14.017 18C14.017 16.896 14.321 15.923 14.929 15.081C15.537 14.239 16.357 13.459 17.389 12.741L16.731 10.561C15.039 11.623 14.069 12.878 13.821 14.326C13.821 14.326 13.821 14.326 13.821 14.326C13.545 13.714 13.407 13.052 13.407 12.34C13.407 10.284 14.147 8.528 15.627 7.072C17.107 5.616 18.867 4.888 20.907 4.888C21.787 4.888 22.467 5.568 22.947 6.928C23.427 8.288 23.667 9.528 23.667 10.648C23.667 14.304 22.397 17.754 19.857 21L14.017 21ZM6.007 21L6.007 18C6.007 16.896 6.311 15.923 6.919 15.081C7.527 14.239 8.347 13.459 9.379 12.741L8.721 10.561C7.029 11.623 6.059 12.878 5.811 14.326C5.811 14.326 5.811 14.326 5.811 14.326C5.535 13.714 5.397 13.052 5.397 12.34C5.397 10.284 6.137 8.528 7.617 7.072C9.097 5.616 10.857 4.888 12.897 4.888C13.777 4.888 14.457 5.568 14.937 6.928C15.417 8.288 15.657 9.528 15.657 10.648C15.657 14.304 14.387 17.754 11.847 21L6.007 21Z" /></svg>
+                    <!-- Removed opacity-0 to let JS handle it or default to visible once JS runs -->
+                    <p id="intro-quote-text" class="text-lg text-white font-light leading-relaxed font-serif italic transition-opacity duration-500 opacity-0">...</p>
+                    <svg class="quote-mark end" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21L14.017 18C14.017 16.896 14.321 15.923 14.929 15.081C15.537 14.239 16.357 13.459 17.389 12.741L16.731 10.561C15.039 11.623 14.069 12.878 13.821 14.326C13.821 14.326 13.821 14.326 13.821 14.326C13.545 13.714 13.407 13.052 13.407 12.34C13.407 10.284 14.147 8.528 15.627 7.072C17.107 5.616 18.867 4.888 20.907 4.888C21.787 4.888 22.467 5.568 22.947 6.928C23.427 8.288 23.667 9.528 23.667 10.648C23.667 14.304 22.397 17.754 19.857 21L14.017 21ZM6.007 21L6.007 18C6.007 16.896 6.311 15.923 6.919 15.081C7.527 14.239 8.347 13.459 9.379 12.741L8.721 10.561C7.029 11.623 6.059 12.878 5.811 14.326C5.811 14.326 5.811 14.326 5.811 14.326C5.535 13.714 5.397 13.052 5.397 12.34C5.397 10.284 6.137 8.528 7.617 7.072C9.097 5.616 10.857 4.888 12.897 4.888C13.777 4.888 14.457 5.568 14.937 6.928C15.417 8.288 15.657 9.528 15.657 10.648C15.657 14.304 14.387 17.754 11.847 21L6.007 21Z" /></svg>
                 </div>
             </div>
-            <p id="intro-quote-author" class="text-xs text-gold-500 uppercase tracking-[0.25em] font-sans text-center opacity-0 transition-opacity duration-500 delay-100 mt-8">— David R. Hawkins</p>
+            <p id="intro-quote-author" class="text-xs text-gold-500 uppercase tracking-[0.25em] font-sans text-center opacity-0 transition-opacity duration-500 delay-100 mt-8">...</p>
             <div class="mt-16 animate-pulse opacity-50"><span class="text-[10px] text-slate-400 uppercase tracking-[0.4em]">Tap to Begin</span></div>
         </div>
     </div>
@@ -349,7 +353,10 @@
                     <h2 class="text-3xl font-light mb-2 text-white">Released</h2>
                     <p class="text-slate-300 mb-8 font-light">You have surrendered a layer of "<span class="current-emotion font-normal text-white"></span>".</p>
                     <div class="mb-8"><p class="text-sm text-slate-400 mb-3">Peak Emotion Intensity</p><input type="range" min="1" max="10" value="5" class="w-full" id="process-intensity-slider" oninput="document.getElementById('process-intensity-val').textContent = this.value"><div class="text-center text-gold-500 font-mono mt-2 text-xl" id="process-intensity-val">5</div></div>
-                    <button onclick="transitionToBodyMapFromProcess()" class="w-full py-4 bg-gold-600 hover:bg-gold-500 text-white font-medium rounded-xl transition btn-primary shadow-lg shadow-gold-900/20">Continue to BodyMap</button>
+                    <div class="space-y-3">
+                        <button onclick="transitionToBodyMapFromProcess()" class="w-full py-4 bg-gold-600 hover:bg-gold-500 text-white font-medium rounded-xl transition btn-primary shadow-lg shadow-gold-900/20">Continue to BodyMap</button>
+                        <button onclick="saveAndCloseProcess()" class="w-full py-4 border border-slate-700 hover:bg-slate-800 text-white font-medium rounded-xl transition btn-primary">Save & Close</button>
+                    </div>
                 </div>
                 <button onclick="resetProcess()" class="absolute top-0 right-0 p-4 text-slate-600 hover:text-slate-400 hidden" id="process-reset-btn"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
@@ -478,22 +485,26 @@
                             onerror="alert('Error: image.jpg not found. Please ensure the file is named exactly image.jpg and is in the same folder as this HTML file.')"
                         />
 
-                        <!-- HOTSPOTS -->
-                        <!-- These are invisible boxes over the image for hit detection -->
-                        <div class="hotspot" style="top: 5%; left: 40%; width: 20%; height: 12%;" data-name="Head"></div>
-                        <div class="hotspot" style="top: 17%; left: 42%; width: 16%; height: 5%;" data-name="Throat"></div>
-                        <div class="hotspot" style="top: 22%; left: 35%; width: 30%; height: 12%;" data-name="Chest"></div>
-                        <div class="hotspot" style="top: 34%; left: 38%; width: 24%; height: 8%;" data-name="Solar Plexus"></div>
-                        <div class="hotspot" style="top: 42%; left: 35%; width: 30%; height: 10%;" data-name="Stomach"></div>
-                        <div class="hotspot" style="top: 52%; left: 35%; width: 30%; height: 10%;" data-name="Pelvis"></div>
+                        <!-- HOTSPOTS: PERCENTAGE BASED HIT ZONES -->
+                        <!-- Adjust these percentages if the tracking is still slightly off -->
+                        
+                        <!-- Head Area -->
+                        <div class="hotspot" style="top: 5%; left: 42%; width: 16%; height: 12%;" data-name="Head"></div>
+                        <div class="hotspot" style="top: 17%; left: 44%; width: 12%; height: 5%;" data-name="Throat"></div>
+                        
+                        <!-- Torso -->
+                        <div class="hotspot" style="top: 22%; left: 35%; width: 30%; height: 15%;" data-name="Chest"></div>
+                        <div class="hotspot" style="top: 37%; left: 38%; width: 24%; height: 10%;" data-name="Solar Plexus"></div>
+                        <div class="hotspot" style="top: 47%; left: 35%; width: 30%; height: 10%;" data-name="Stomach"></div>
+                        <div class="hotspot" style="top: 57%; left: 35%; width: 30%; height: 10%;" data-name="Pelvis"></div>
                         
                         <!-- Arms -->
-                        <div class="hotspot" style="top: 22%; left: 15%; width: 15%; height: 35%;" data-name="Left Arm"></div>
-                        <div class="hotspot" style="top: 22%; left: 70%; width: 15%; height: 35%;" data-name="Right Arm"></div>
+                        <div class="hotspot" style="top: 22%; left: 15%; width: 18%; height: 35%;" data-name="Left Arm"></div>
+                        <div class="hotspot" style="top: 22%; left: 67%; width: 18%; height: 35%;" data-name="Right Arm"></div>
                         
                         <!-- Legs -->
-                        <div class="hotspot" style="top: 60%; left: 25%; width: 20%; height: 35%;" data-name="Left Leg"></div>
-                        <div class="hotspot" style="top: 60%; left: 55%; width: 20%; height: 35%;" data-name="Right Leg"></div>
+                        <div class="hotspot" style="top: 65%; left: 25%; width: 22%; height: 30%;" data-name="Left Leg"></div>
+                        <div class="hotspot" style="top: 65%; left: 53%; width: 22%; height: 30%;" data-name="Right Leg"></div>
 
 
                         <!-- 3. Interactive Marker Container -->
@@ -572,7 +583,8 @@
                         </select>
                 </div>
                 <div>
-                    <label class="text-xs text-slate-500 uppercase tracking-wider mb-2 block">Intensity (1-10)</label>
+                    <!-- UPDATED LABEL: Sensation Intensity -->
+                    <label class="text-xs text-slate-500 uppercase tracking-wider mb-2 block">Sensation Intensity (1-10)</label>
                     <div class="flex items-center gap-3">
                         <span class="text-xs text-slate-500">1</span>
                         <input type="range" min="1" max="10" value="5" class="flex-1" id="sensation-intensity" oninput="document.getElementById('sens-int-val').textContent = this.value">
@@ -596,7 +608,9 @@
             </div>
             <div class="space-y-3">
                 <button onclick="transitionToBodyMapFromTimer()" class="w-full py-3 bg-gold-600 hover:bg-gold-500 text-white rounded-xl transition font-medium">Continue to BodyMap</button>
-                <button onclick="closeCompleteModal()" class="w-full py-3 border border-slate-700 text-slate-400 hover:text-white rounded-xl transition">Discard</button>
+                <!-- ADDED SAVE & CLOSE -->
+                <button onclick="saveAndCloseTimer()" class="w-full py-3 border border-slate-700 hover:bg-slate-800 text-white rounded-xl transition font-medium">Save & Close</button>
+                <button onclick="closeCompleteModal()" class="w-full py-3 text-xs text-slate-500 hover:text-slate-300 mt-2">Discard</button>
             </div>
         </div>
     </div>
@@ -723,8 +737,9 @@
         // EXPORT TO GLOBAL SCOPE IMMEDIATELY
         window.dismissIntro = dismissIntro;
 
-        window.onload = function() {
-            // Ensure Intro plays first
+        // USE DOMContentLoaded to ensure smoother start
+        document.addEventListener('DOMContentLoaded', () => {
+            // Ensure Intro plays first and smoothly
             initIntro();
            
             lucide.createIcons();
@@ -737,23 +752,37 @@
             // If dismissed in session, hide immediately
             if (sessionStorage.getItem('intro_dismissed')) {
                 document.getElementById('intro-screen').style.display = 'none';
+            } else {
+                // Slight delay to ensure animation plays after load
+                setTimeout(() => {
+                    const textEl = document.getElementById('intro-quote-text');
+                    const authEl = document.getElementById('intro-quote-author');
+                    if(textEl) textEl.classList.remove('opacity-0');
+                    if(authEl) authEl.classList.remove('opacity-0');
+                }, 500);
             }
            
             document.addEventListener('click', unlockAudio, { once: true });
             document.addEventListener('touchstart', unlockAudio, { once: true });
-        };
+        });
 
         function initIntro() { 
-            const quoteObj = INTRO_QUOTES[Math.floor(Math.random()*INTRO_QUOTES.length)];
+            // NEW LOGIC: Quote of the Day (based on date)
+            const today = new Date();
+            const start = new Date(today.getFullYear(), 0, 0);
+            const diff = today - start;
+            const oneDay = 1000 * 60 * 60 * 24;
+            const day = Math.floor(diff / oneDay);
+            const quoteIndex = day % INTRO_QUOTES.length;
+            const quoteObj = INTRO_QUOTES[quoteIndex];
+
             const textEl = document.getElementById('intro-quote-text');
             const authEl = document.getElementById('intro-quote-author');
             if(textEl) {
                 textEl.textContent = quoteObj.q;
-                textEl.style.opacity = '1';
             }
             if(authEl) {
                 authEl.textContent = "— " + quoteObj.a;
-                authEl.style.opacity = '0.8';
             }
         }
        
@@ -1404,9 +1433,13 @@
            
             document.getElementById('complete-modal').classList.add('hidden'); 
             document.getElementById('complete-modal').classList.remove('flex');
-            resetTimer(); 
+            
+            // SMOOTH TRANSITION FIX: Wait for fade out before resetting timer UI
             switchTab('bodymap');
-            setTimeout(() => switchToCanvasMode(), 50); 
+            setTimeout(() => {
+                resetTimer(); 
+                switchToCanvasMode();
+            }, 300); 
         };
 
         window.transitionToBodyMapFromProcess = () => {
@@ -1423,13 +1456,72 @@
 
             currentBodyPoints = [];
             bodyMapSource = 'process';
-            resetProcess();
-
+            
+            // SMOOTH TRANSITION FIX
             switchTab('bodymap');
-            setTimeout(() => switchToCanvasMode(), 50);
+            setTimeout(() => {
+                resetProcess();
+                switchToCanvasMode();
+            }, 300);
         };
 
-        // --- FINAL SAVE ---
+        // --- NEW SAVE & CLOSE FUNCTIONS ---
+        window.saveAndCloseTimer = () => {
+            const intensity = document.getElementById('timer-intensity-slider').value;
+            const emotion = window.currentSelectedEmotion || "Meditation";
+            
+            const sessionData = {
+                emotion: emotion,
+                date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}),
+                time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+                duration: window.currentTimerSessionLength,
+                intensity: intensity,
+                timestamp: Date.now(),
+                bodyPoints: [] // No points for quick save
+            };
+            
+            saveSessionDirectly(sessionData);
+            document.getElementById('complete-modal').classList.add('hidden'); 
+            document.getElementById('complete-modal').classList.remove('flex');
+            
+            switchTab('journal');
+            setTimeout(() => resetTimer(), 300);
+        };
+
+        window.saveAndCloseProcess = () => {
+            const intensity = document.getElementById('process-intensity-slider').value;
+            
+            const sessionData = {
+                emotion: window.currentProcessEmotion,
+                date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}),
+                time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+                duration: window.processSeconds,
+                intensity: intensity,
+                timestamp: Date.now(),
+                bodyPoints: []
+            };
+
+            saveSessionDirectly(sessionData);
+            
+            switchTab('journal');
+            setTimeout(() => resetProcess(), 300);
+        };
+
+        function saveSessionDirectly(data) {
+            if (window.isLoggedIn && window.currentUser) { 
+                try { 
+                    if (window.saveSessionToFirebase) {
+                        window.saveSessionToFirebase(data);
+                    }
+                } catch (e) { alert("Error saving: " + e.message); } 
+            } else { 
+                const rel = JSON.parse(localStorage.getItem('releases') || '[]'); 
+                rel.unshift(data); 
+                localStorage.setItem('releases', JSON.stringify(rel));
+            }
+        }
+
+        // --- FINAL SAVE (BodyMap) ---
 
         window.finalizeSession = async () => {
             if(!pendingSessionData) { 
@@ -1461,6 +1553,7 @@
             pendingSessionData = null;
             currentBodyPoints = [];
 
+            // SMOOTH RETURN TRANSITION
             if(bodyMapSource === 'timer') {
                 switchTab('timer');
             } else if (bodyMapSource === 'process') {
