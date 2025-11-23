@@ -68,36 +68,36 @@
     </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Merriweather:ital,wght@0,300;0,400;1,300&display=swap');
-       
+        
         html, body { height: 100%; min-height: 100vh; width: 100%; margin: 0; background-color: #020617; color: #e2e8f0; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; overflow: hidden; overscroll-behavior: none; overscroll-behavior-y: none; }
         @supports (height: 100dvh) { body { min-height: 100dvh; } }
         body { display: flex; flex-direction: column; }
-       
+        
         /* Gold Selection Theme */
         ::selection { background-color: #d4af37; color: white; }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
-       
+        
         .glass-panel { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
         .btn-primary { transition: all 0.2s ease; }
         .btn-primary:active { transform: scale(0.96); }
         .pb-safe { padding-bottom: 0; }
         .pt-safe { padding-top: env(safe-area-inset-top, 20px); }
         .mb-safe { margin-bottom: 0; }
-       
+        
         .view-section { opacity: 0; transition: opacity 0.25s ease-in-out; padding-bottom: calc(env(safe-area-inset-bottom) + 2rem); overscroll-behavior-y: contain; }
         .view-section.active-view { opacity: 1; }
         .faq-answer { display: none; }
         .faq-answer.active { display: block; animation: slideUp 0.3s ease-out forwards; }
         .faq-icon { transition: transform 0.3s ease; }
         .faq-icon.active { transform: rotate(180deg); }
-       
+        
         .quote-wrapper { position: relative; display: inline-block; padding: 2rem 3rem; max-width: 100%; }
         .quote-mark { position: absolute; width: 2.5rem; height: 2.5rem; color: rgba(212, 175, 55, 0.4); }
         .quote-mark.start { top: 0; left: 0; }
         .quote-mark.end { bottom: 0; right: 0; transform: rotate(180deg); }
-       
+        
         .side-menu-open #side-menu-backdrop { display: block; opacity: 1; }
         .side-menu-open #side-menu { transform: translateX(0); }
         .menu-link { transition: color 0.3s ease; }
@@ -106,7 +106,7 @@
         .swipe-container { position: relative; overflow: hidden; border-radius: 0.75rem; margin-bottom: 0.75rem; }
         .swipe-item { transition: transform 0.2s ease-out; position: relative; z-index: 10; background: rgba(15, 23, 42, 0.9); touch-action: pan-y; }
         .delete-action { position: absolute; right: 0; top: 0; bottom: 0; width: 80px; display: flex; align-items: center; justify-content: center; z-index: 0; }
-       
+        
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%; background: #d4af37; cursor: pointer; margin-top: -8px; box-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #334155; border-radius: 2px; }
@@ -175,7 +175,7 @@
 
         /* GOLD MARKERS */
         .body-marker { position: absolute; transform: translate(-50%, -50%); border-radius: 50%; box-shadow: 0 0 8px rgba(212, 175, 55, 0.9); border: 1px solid #fff; z-index: 40; pointer-events: auto; background-color: rgba(212, 175, 55, 0.8); }
-       
+        
         select { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right 0.5rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em; }
 
         /* INTRO FIXES */
@@ -185,7 +185,6 @@
 </head>
 <body class="selection:bg-gold-500 selection:text-white" ontouchstart="handleGlobalTouchStart(event)" ontouchmove="handleGlobalTouchMove(event)" ontouchend="handleGlobalTouchEnd(event)">
 
-    <!-- FAST INTRO CHECK SCRIPT -->
     <script>
         if (sessionStorage.getItem('intro_dismissed')) {
             document.write('<style>#intro-screen { display: none !important; }</style>');
@@ -204,8 +203,7 @@
             <div class="mt-6 pt-6 border-t border-slate-800/50" id="auth-container">
                 <div id="logged-out-view">
                     <button onclick="login()" class="w-full py-3 bg-white hover:bg-gray-100 text-slate-900 rounded-xl transition font-medium flex items-center justify-center gap-3 shadow-lg border border-transparent relative group">
-                         <!-- Google Logo SVG -->
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                         <svg class="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
                             <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
                             <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
@@ -241,7 +239,6 @@
         </div>
     </aside>
 
-    <!-- INTRO SCREEN: Strict opacity 1 start -->
     <div id="intro-screen" onclick="dismissIntro()" class="fixed inset-0 flex flex-col items-center justify-center p-8 text-center cursor-pointer transition-opacity duration-700 ease-out">
         <div class="animate-fade-in max-w-lg mx-auto flex flex-col h-full justify-center relative w-full">
             <div class="mb-8 text-gold-500/30 mx-auto"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
@@ -249,7 +246,6 @@
             <div class="flex justify-center">
                 <div class="quote-wrapper max-w-md relative">
                     <svg class="quote-mark start" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21L14.017 18C14.017 16.896 14.321 15.923 14.929 15.081C15.537 14.239 16.357 13.459 17.389 12.741L16.731 10.561C15.039 11.623 14.069 12.878 13.821 14.326C13.821 14.326 13.821 14.326 13.821 14.326C13.545 13.714 13.407 13.052 13.407 12.34C13.407 10.284 14.147 8.528 15.627 7.072C17.107 5.616 18.867 4.888 20.907 4.888C21.787 4.888 22.467 5.568 22.947 6.928C23.427 8.288 23.667 9.528 23.667 10.648C23.667 14.304 22.397 17.754 19.857 21L14.017 21ZM6.007 21L6.007 18C6.007 16.896 6.311 15.923 6.919 15.081C7.527 14.239 8.347 13.459 9.379 12.741L8.721 10.561C7.029 11.623 6.059 12.878 5.811 14.326C5.811 14.326 5.811 14.326 5.811 14.326C5.535 13.714 5.397 13.052 5.397 12.34C5.397 10.284 6.137 8.528 7.617 7.072C9.097 5.616 10.857 4.888 12.897 4.888C13.777 4.888 14.457 5.568 14.937 6.928C15.417 8.288 15.657 9.528 15.657 10.648C15.657 14.304 14.387 17.754 11.847 21L6.007 21Z" /></svg>
-                    <!-- Removed opacity-0 to let JS handle it or default to visible once JS runs -->
                     <p id="intro-quote-text" class="text-lg text-white font-light leading-relaxed font-serif italic transition-opacity duration-500">...</p>
                     <svg class="quote-mark end" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21L14.017 18C14.017 16.896 14.321 15.923 14.929 15.081C15.537 14.239 16.357 13.459 17.389 12.741L16.731 10.561C15.039 11.623 14.069 12.878 13.821 14.326C13.821 14.326 13.821 14.326 13.821 14.326C13.545 13.714 13.407 13.052 13.407 12.34C13.407 10.284 14.147 8.528 15.627 7.072C17.107 5.616 18.867 4.888 20.907 4.888C21.787 4.888 22.467 5.568 22.947 6.928C23.427 8.288 23.667 9.528 23.667 10.648C23.667 14.304 22.397 17.754 19.857 21L14.017 21ZM6.007 21L6.007 18C6.007 16.896 6.311 15.923 6.919 15.081C7.527 14.239 8.347 13.459 9.379 12.741L8.721 10.561C7.029 11.623 6.059 12.878 5.811 14.326C5.811 14.326 5.811 14.326 5.811 14.326C5.535 13.714 5.397 13.052 5.397 12.34C5.397 10.284 6.137 8.528 7.617 7.072C9.097 5.616 10.857 4.888 12.897 4.888C13.777 4.888 14.457 5.568 14.937 6.928C15.417 8.288 15.657 9.528 15.657 10.648C15.657 14.304 14.387 17.754 11.847 21L6.007 21Z" /></svg>
                 </div>
@@ -265,9 +261,8 @@
     </header>
 
     <main id="app-content" class="flex-1 relative w-full overflow-hidden">
-       
+        
         <section id="view-guide" class="view-section active-view h-full overflow-y-auto p-4">
-            <!-- Guide content ... -->
             <div class="glass-panel p-6 rounded-2xl shadow-lg mb-8">
                 <h2 class="text-2xl font-light mb-4 text-white">The Mechanism</h2>
                 <p class="text-slate-300 leading-relaxed mb-4">Letting go involves being aware of a feeling, letting it come up, staying with it, and letting it run its course without wanting to make it different or do anything about it.</p>
@@ -313,7 +308,7 @@
                     <div class="absolute inset-0 flex items-center justify-center -z-10 opacity-20 pointer-events-none"><div class="w-64 h-64 bg-gold-500 rounded-full blur-3xl animate-breathe"></div></div>
                     <h2 class="text-xl font-light mb-2 text-white">Stay with it</h2>
                     <div class="text-6xl font-extralight text-white mb-8 font-serif tabular-nums tracking-tight" id="process-timer">00:00</div>
-                   
+                    
                     <div class="flex justify-center gap-4 mb-8">
                         <button onclick="toggleModal('bell-modal')" class="flex items-center gap-2 px-3 py-2 bg-slate-900/80 border border-slate-800 rounded-full text-[10px] text-slate-400 hover:text-gold-500 transition"><i data-lucide="bell" class="w-3 h-3"></i> <span>Interval</span><div id="process-bell-status" class="w-1 h-1 bg-gold-500 rounded-full hidden ml-1"></div></button>
                         <button onclick="toggleModal('ambience-modal')" class="flex items-center gap-2 px-3 py-2 bg-slate-900/80 border border-slate-800 rounded-full text-[10px] text-slate-400 hover:text-emerald-500 transition"><i data-lucide="waves" class="w-3 h-3"></i> <span>Sound</span><div id="process-ambience-status" class="w-1 h-1 bg-emerald-500 rounded-full hidden ml-1"></div></button>
@@ -342,7 +337,7 @@
                         <span id="timer-emotion-display">Select Emotion...</span><i data-lucide="chevron-down" class="w-4 h-4 opacity-50"></i>
                     </button>
                 </div>
-              
+               
                 <div class="relative w-64 h-64 mx-auto mb-10 flex items-center justify-center z-10">
                     <div id="breath-circle" class="absolute inset-0 bg-slate-800 rounded-full opacity-50 scale-100 transition-transform duration-1000"></div>
                     <div id="breath-circle-inner" class="absolute w-40 h-40 bg-slate-700/50 rounded-full blur-2xl"></div>
@@ -429,25 +424,23 @@
                         <button onclick="openBodyMapList()" id="bodymap-back-btn" class="p-2 text-slate-400 hover:text-white transition rounded-full bg-slate-900/50 backdrop-blur border border-slate-800 hidden"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
                         <button onclick="switchTab('insights')" id="bodymap-exit-btn" class="p-2 text-slate-400 hover:text-white transition rounded-full bg-slate-900/50 backdrop-blur border border-slate-800"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
                         <div>
-                            <!-- REMOVED "BodyScan" TITLE, kept only scanner status if needed or empty -->
                             <div id="body-part-label" class="text-gold-500 font-mono text-[10px] uppercase tracking-[0.2em] h-4 opacity-0 transition-opacity duration-300"></div>
                         </div>
                     </div>
                     <button id="bodymap-save-btn" disabled onclick="finalizeSession()" class="hidden text-xs bg-gold-600 hover:bg-gold-500 text-white px-4 py-2 rounded-lg transition font-medium shadow-lg shadow-gold-900/30 disabled:opacity-50 disabled:cursor-not-allowed">Save</button>
                 </div>
             </div>
-       
+        
             <div id="bodymap-list-view" class="flex-1 overflow-y-auto pt-24 px-4 pb-safe">
                 <div id="bodymap-log-container" class="space-y-3 pb-8"></div>
             </div>
-       
+        
             <div id="bodymap-canvas-view" class="hidden flex-1 relative w-full h-full">
-              
+               
                 <div class="neuro-body-container" id="neuro-container">
-                   
-                    <!-- STAGE -->
+                    
                     <div class="body-stage bg-slate-900/50 rounded-2xl relative">
-                       
+                        
                         <img 
                             src="image.jpg" 
                             id="body-image" 
@@ -456,29 +449,19 @@
                             onerror="alert('Error: image.jpg not found. Please ensure the file is named exactly image.jpg and is in the same folder as this HTML file.')"
                         />
 
-                        <!-- HOTSPOTS: RE-CALIBRATED FOR PROVIDED IMAGE -->
-                        <!-- Head: Top center -->
                         <div class="hotspot" style="top: 3%; left: 42%; width: 16%; height: 12%;" data-name="Head"></div>
-                        <!-- Throat -->
                         <div class="hotspot" style="top: 15%; left: 44%; width: 12%; height: 5%;" data-name="Throat"></div>
-                        <!-- Chest -->
                         <div class="hotspot" style="top: 20%; left: 35%; width: 30%; height: 13%;" data-name="Chest"></div>
-                        <!-- Solar Plexus -->
                         <div class="hotspot" style="top: 33%; left: 38%; width: 24%; height: 8%;" data-name="Solar Plexus"></div>
-                        <!-- Stomach -->
                         <div class="hotspot" style="top: 42%; left: 36%; width: 28%; height: 10%;" data-name="Stomach"></div>
-                        <!-- Pelvis -->
                         <div class="hotspot" style="top: 53%; left: 36%; width: 28%; height: 10%;" data-name="Pelvis"></div>
                         
-                        <!-- Arms (Widened) -->
                         <div class="hotspot" style="top: 21%; left: 12%; width: 22%; height: 35%;" data-name="Left Arm"></div>
                         <div class="hotspot" style="top: 21%; left: 66%; width: 22%; height: 35%;" data-name="Right Arm"></div>
                         
-                        <!-- Legs (Widened) -->
                         <div class="hotspot" style="top: 60%; left: 25%; width: 22%; height: 38%;" data-name="Left Leg"></div>
                         <div class="hotspot" style="top: 60%; left: 53%; width: 22%; height: 38%;" data-name="Right Leg"></div>
 
-                        <!-- 3. Interactive Marker Container -->
                         <div id="interactive-layer" class="layer interactive-layer">
                             <div id="markers-container" class="w-full h-full relative"></div>
                             <div id="active-cursor" class="neuro-cursor">
@@ -489,16 +472,15 @@
 
                 </div>
                 
-                <!-- TRACKPAD: Will be visible only when creating new map -->
                 <div id="sensation-trackpad-container" class="absolute bottom-6 left-1/2 -translate-x-1/2 w-64 h-48 z-50 mb-safe">
                     <div class="w-full h-full rounded-2xl border border-slate-700 bg-slate-900/90 backdrop-blur-xl shadow-2xl relative overflow-hidden ring-1 ring-gold-500/20"
                           id="sensation-trackpad"
                           ontouchstart="handleTrackpadStart(event)"
                           ontouchmove="handleTrackpadMove(event)"
                           ontouchend="handleTrackpadEnd(event)">
-                           
+                        
                           <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#d4af37 1px, transparent 1px); background-size: 10px 10px;"></div>
-                           
+                        
                           <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none opacity-60">
                               <i data-lucide="fingerprint" class="w-8 h-8 text-gold-500 mb-2"></i>
                               <span class="text-[9px] uppercase tracking-widest text-gold-500">Touch & Drag</span>
@@ -506,7 +488,6 @@
                     </div>
                 </div>
 
-                <!-- DETAILS PANEL: Visible when viewing old logs -->
                 <div id="bodymap-details-panel" class="absolute bottom-0 left-0 right-0 z-50 p-6 hidden pb-safe">
                     <h3 class="text-gold-500 text-sm uppercase tracking-widest mb-4">Sensation Details</h3>
                     <div id="bodymap-details-content" class="space-y-3 max-h-48 overflow-y-auto text-sm text-slate-300"></div>
@@ -526,7 +507,6 @@
         </section>
     </main>
 
-    <!-- Modals -->
     <div id="emotion-picker" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] hidden flex-col justify-end" onclick="if(event.target === this) toggleModal('emotion-picker')">
         <div class="bg-slate-900 border-t border-slate-700 rounded-t-3xl w-full max-w-md mx-auto max-h-[70vh] flex flex-col shadow-2xl">
             <div class="flex justify-between items-center p-6 border-b border-slate-800">
@@ -541,7 +521,6 @@
         <div class="bg-slate-900 border border-slate-700 p-6 rounded-2xl max-w-sm w-full shadow-2xl mb-safe sm:mb-0">
             <div class="flex justify-between items-center mb-4"><h3 class="text-lg text-white font-medium">Describe Sensation</h3><button onclick="cancelBodyPoint()" class="text-slate-500"><i data-lucide="x" class="w-5 h-5"></i></button></div>
             <div class="space-y-4">
-                <!-- NEW FRONT/BACK DROPDOWNS -->
                 <div class="flex gap-3">
                     <div class="w-1/2">
                         <label class="text-xs text-slate-500 uppercase tracking-wider mb-2 block">Front</label>
@@ -558,14 +537,12 @@
                             <option value="Right Trap">Right Trap</option>
                             <option value="Left Shoulder">Left Shoulder</option>
                             <option value="Right Shoulder">Right Shoulder</option>
-                            <!-- NEW ADDITIONS FOR FRONT -->
                             <option value="Left Bicep">Left Bicep</option>
                             <option value="Right Bicep">Right Bicep</option>
                             <option value="Left Forearm">Left Forearm</option>
                             <option value="Right Forearm">Right Forearm</option>
                             <option value="Wrists">Wrists</option>
                             <option value="Hands">Hands</option>
-                            <!-- END NEW -->
                             <option value="Sternum">Sternum</option>
                             <option value="Chest">Chest</option>
                             <option value="Solar Plexus">Solar Plexus</option>
@@ -595,7 +572,6 @@
                             <option value="Neck / Spine">Neck / Spine</option>
                             <option value="Left Trap">Left Trap</option>
                             <option value="Right Trap">Right Trap</option>
-                            <!-- NEW ADDITIONS FOR BACK -->
                             <option value="Left Shoulder">Left Shoulder</option>
                             <option value="Right Shoulder">Right Shoulder</option>
                             <option value="Left Tricep">Left Tricep</option>
@@ -605,7 +581,6 @@
                             <option value="Left Forearm">Left Forearm</option>
                             <option value="Right Forearm">Right Forearm</option>
                             <option value="Hands">Hands</option>
-                            <!-- END NEW -->
                             <option value="Upper Back">Upper Back</option>
                             <option value="Mid Back">Mid Back</option>
                             <option value="Lower Back">Lower Back</option>
@@ -639,7 +614,6 @@
                 <div id="sensation-emotion-container">
                     <label class="text-xs text-slate-500 uppercase tracking-wider mb-2 block">Associated Emotion</label>
                     <select id="sensation-emotion" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:border-gold-500 outline-none" onchange="event.stopPropagation();" onclick="event.stopPropagation();" ontouchstart="event.stopPropagation();">
-                        <!-- Options populated via JS including "Unsure ?" -->
                         </select>
                 </div>
                 <div>
@@ -673,7 +647,6 @@
         </div>
     </div>
 
-    <!-- Bell/Ambience Modals same as before ... -->
     <div id="bell-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60] hidden items-end sm:items-center justify-center p-4 animate-fade-in" onclick="if(event.target === this) toggleModal('bell-modal')">
         <div class="bg-slate-900 border border-slate-700 p-6 rounded-2xl max-w-xs w-full shadow-2xl mb-safe sm:mb-0">
             <div class="flex justify-between items-center mb-4"><h3 class="text-lg text-white font-medium">Interval Bell</h3><button onclick="toggleModal('bell-modal')" class="text-slate-500"><i data-lucide="x" class="w-5 h-5"></i></button></div>
@@ -700,82 +673,108 @@
     </div>
 
     <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
-        import { getAuth, signInWithPopup, GoogleAuthProvider, signInAnonymously, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
-        import { getFirestore, collection, addDoc, query, where, orderBy, onSnapshot, deleteDoc, doc } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+        // --- FIREBASE CONFIGURATION & LOGIC ---
+        // Using version 11.0.2 as requested, plus Firestore for database features
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
 
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app';
+        // Firebase config — do not change these values
+        const firebaseConfig = {
+            apiKey: "AIzaSyBc1FA6RTM0sTktO3hhMxWxhYp50CsKJ0I",
+            authDomain: "letting-go-app.firebaseapp.com",
+            projectId: "letting-go-app",
+            storageBucket: "letting-go-app.firebasestorage.app",
+            messagingSenderId: "43093477154",
+            appId: "1:43093477154:web:60cd1b6da597de2830077b",
+            measurementId: "G-K5CDP81Y0T"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app); // Required for logs
+        const provider = new GoogleAuthProvider();
         
-        let auth, db, currentUser = null;
+        let currentUser = null;
+        let unsubscribeLogs = null;
 
-        if (firebaseConfig) {
+        // Login function
+        window.login = async function () {
             try {
-                const app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-                
-                window.login = async () => {
-                    try {
-                        const provider = new GoogleAuthProvider();
-                        await signInWithPopup(auth, provider);
-                    } catch (e) {
-                        console.error("Login failed", e);
-                        alert("Login failed: " + e.message);
-                    }
-                };
+                const result = await signInWithPopup(auth, provider);
+                console.log("Signed in:", result.user);
+            } catch (error) {
+                console.error("Login error:", error);
+                alert("Login failed: " + error.message);
+            }
+        };
 
-                window.logout = async () => {
-                    try {
-                        await signOut(auth);
-                        window.location.reload();
-                    } catch (e) { console.error(e); }
-                };
+        // Logout function
+        window.logout = async () => {
+            try {
+                await signOut(auth);
+                if(unsubscribeLogs) unsubscribeLogs();
+                window.location.reload();
+            } catch (e) { console.error("Logout error:", e); }
+        };
+        
+        // Auth State Listener: Handles UI updates and Data Sync
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            window.currentUser = user;
+            
+            const loggedOutView = document.getElementById('logged-out-view');
+            const loggedInView = document.getElementById('logged-in-view');
+            const nameEl = document.getElementById('user-name');
+            const emailEl = document.getElementById('user-email');
+
+            if (user) {
+                if(loggedOutView) loggedOutView.classList.add('hidden');
+                if(loggedInView) loggedInView.classList.remove('hidden');
+                if(nameEl) nameEl.textContent = user.displayName || 'User';
+                if(emailEl) emailEl.textContent = user.email;
                 
-                // Expose auth state listener
-                onAuthStateChanged(auth, (user) => {
-                    currentUser = user;
-                    window.currentUser = user; // Global access
-                    const loggedOutView = document.getElementById('logged-out-view');
-                    const loggedInView = document.getElementById('logged-in-view');
-                    if (user) {
-                         if(loggedOutView) loggedOutView.classList.add('hidden');
-                         if(loggedInView) loggedInView.classList.remove('hidden');
-                         const nameEl = document.getElementById('user-name');
-                         const emailEl = document.getElementById('user-email');
-                         if(nameEl) nameEl.textContent = user.displayName || 'User';
-                         if(emailEl) emailEl.textContent = user.email;
-                         // Load specific user data if needed
-                    } else {
-                        // Auto sign in anonymously if not logged in, for data access
-                        // signInAnonymously(auth).catch(console.error); 
-                         if(loggedOutView) loggedOutView.classList.remove('hidden');
-                         if(loggedInView) loggedInView.classList.add('hidden');
-                    }
+                // Real-time Sync from Firestore
+                const logsRef = collection(db, 'users', user.uid, 'logs');
+                const q = query(logsRef, orderBy('timestamp', 'desc'));
+                
+                unsubscribeLogs = onSnapshot(q, (snapshot) => {
+                    const logs = snapshot.docs.map(doc => ({
+                        firestoreId: doc.id,
+                        ...doc.data()
+                    }));
+                    window.globalLogData = logs;
+                    
+                    if(typeof window.loadJournal === 'function') window.loadJournal();
+                    if(typeof window.openBodyMapList === 'function' && !document.getElementById('bodymap-list-view').classList.contains('hidden')) window.openBodyMapList();
                 });
 
-                // Override saving if firebase is active
-                window.saveSessionToFirebase = async (data) => {
-                     if (!currentUser || !db) return;
-                     try {
-                         // Note: Using user-specific path as per instructions would be ideal, 
-                         // but for quick compliance with existing logic, we just log it.
-                         // Real implementation: collection(db, 'artifacts', appId, 'users', currentUser.uid, 'logs')
-                         // Since this is a single file without user ID prop drilled everywhere, we stick to local for now 
-                         // OR basic console log if no strict requirement. 
-                         // Actually, prompt requires strict paths. 
-                         await addDoc(collection(db, 'artifacts', appId, 'users', currentUser.uid, 'logs'), data);
-                     } catch (e) { console.error("Firebase save error", e); }
-                };
-
-            } catch (e) {
-                console.warn("Firebase init error", e);
+            } else {
+                if(loggedOutView) loggedOutView.classList.remove('hidden');
+                if(loggedInView) loggedInView.classList.add('hidden');
+                if(unsubscribeLogs) unsubscribeLogs();
+                
+                const storedLogs = localStorage.getItem('releases');
+                window.globalLogData = storedLogs ? JSON.parse(storedLogs) : [];
+                if(typeof window.loadJournal === 'function') window.loadJournal();
             }
-        } else {
-            // Fallback login for UI demo if no config
-            window.login = () => alert("Firebase not configured in this preview.");
-            window.logout = () => window.location.reload();
-            window.saveSessionToFirebase = null;
+        });
+
+        // Save to Firebase
+        window.saveSessionToFirebase = async (data) => {
+            if (!currentUser || !db) return;
+            try {
+                await addDoc(collection(db, 'users', currentUser.uid, 'logs'), data);
+            } catch (e) { console.error("Firebase save error", e); }
+        };
+
+        // Delete from Firebase
+        window.deleteLogFromFirebase = async (docId) => {
+            if (!currentUser || !db || !docId) return;
+            try {
+                await deleteDoc(doc(db, 'users', currentUser.uid, 'logs', docId));
+            } catch (e) { console.error("Firebase delete error", e); }
         }
     </script>
 
@@ -786,14 +785,14 @@
         var currentSelectedEmotion = "";
         var currentTimerSessionLength = 600;
         var globalLogData = [];
-       
+        
         // BODY MAP VARS
         var pendingSessionData = null; 
         var currentBodyPoints = []; 
         var pendingPoint = null; 
         var bodyMapSource = ''; 
         var chartsSource = ''; 
-       
+        
         // TRACKPAD VARS
         let isDraggingTrackpad = false;
         let lastVibrationGridIndex = -1;
@@ -855,7 +854,7 @@
         let bellInterval = 0, currentAmbience = 'none', audioContext, noiseNode, modOsc, birdInterval, chimeInterval;
         let processInterval, processStartTime = 0, pickerCallback, progressChart;
         let lastBellMinute = -1, halfwayBellPlayed = false;
-       
+        
         // TOUCH VARS
         let touchStartX = 0, currentSwipeItem = null;
         let globalTouchStartX = 0;
@@ -886,14 +885,14 @@
             if (storedLogs) {
                 globalLogData = JSON.parse(storedLogs);
             }
-           
+            
             lucide.createIcons();
             initQA();
             initEmotionPicker();
             initSensationEmotionPicker();
             updateTimerDisplay();
             loadJournal();
-           
+            
             if (sessionStorage.getItem('intro_dismissed')) {
                 document.getElementById('intro-screen').style.display = 'none';
             } else {
@@ -903,7 +902,7 @@
                 if(textEl) textEl.classList.remove('opacity-0');
                 if(authEl) authEl.classList.remove('opacity-0');
             }
-           
+            
             document.addEventListener('click', unlockAudio, { once: true });
             document.addEventListener('touchstart', unlockAudio, { once: true });
         });
@@ -922,7 +921,7 @@
             if(textEl) textEl.textContent = quoteObj.q;
             if(authEl) authEl.textContent = "— " + quoteObj.a;
         }
-       
+        
         function toggleMenu() { document.body.classList.toggle('side-menu-open'); }
 
         // Swipe logic (same as before) ...
@@ -1022,9 +1021,9 @@
                 s.innerHTML = html;
             }
         }
-       
+        
         function selectEmotion(n) { setCurrentEmotion(n); toggleModal('emotion-picker'); }
-       
+        
         function setCurrentEmotion(n) {
             currentSelectedEmotion=n;
             if(pickerCallback) { pickerCallback(n); pickerCallback=null; } else { 
@@ -1039,7 +1038,7 @@
         }
 
         function openPickerFor(ctx) { toggleModal('emotion-picker'); if(ctx==='process') pickerCallback=n=>{ const el=document.getElementById('process-emotion-display'); el.textContent=n; el.classList.remove('text-slate-400'); el.classList.add('text-white'); }; else if(ctx==='timer') pickerCallback=n=>{ const el=document.getElementById('timer-emotion-display'); el.textContent=n; el.classList.add('text-gold-500'); }; else if(ctx==='chart') pickerCallback=n=>{ document.getElementById('chart-emotion-display').textContent=n; loadChart(n); }; }
-       
+        
         function switchTab(id) {
             const current = document.querySelector('.view-section.active-view');
             const next = document.getElementById(`view-${id}`);
@@ -1067,10 +1066,10 @@
             document.getElementById('bodymap-back-btn').classList.add('hidden');
             document.getElementById('bodymap-exit-btn').classList.remove('hidden');
             document.getElementById('bodymap-save-btn').classList.add('hidden');
-           
+            
             const bodyLogs = globalLogData.filter(l => l.bodyPoints && l.bodyPoints.length > 0);
             const container = document.getElementById('bodymap-log-container');
-           
+            
             if (bodyLogs.length === 0) {
                 container.innerHTML = `<div class="text-center py-16 animate-fade-in"><div class="text-slate-800 mb-4"><i data-lucide="activity" class="w-16 h-16 mx-auto"></i></div><p class="text-slate-600 text-sm">No somatic maps recorded.</p><button onclick="startNewMapSession()" class="mt-6 text-gold-500 text-xs uppercase tracking-widest border border-slate-800 px-4 py-2 rounded-lg hover:bg-slate-800 transition">New Scan</button></div>`;
             } else {
@@ -1095,7 +1094,7 @@
             lucide.createIcons();
         }
 
-        // LOAD JOURNAL
+        // LOAD JOURNAL - UPDATED WITH DELETE BUTTON
         function loadJournal() {
             const container = document.getElementById('journal-list');
             if (!container) return;
@@ -1108,15 +1107,18 @@
             container.innerHTML = globalLogData.map((e, i) => {
                 const hasBody = e.bodyPoints && e.bodyPoints.length > 0;
                 // Clicking log takes you to Chart for that emotion
-                return `<div class="glass-panel rounded-xl p-5 mb-3 animate-fade-in flex justify-between items-center cursor-pointer hover:bg-slate-800/50 transition" onclick="openLogChart('${e.emotion}')">
+                return `<div class="glass-panel rounded-xl p-5 mb-3 animate-fade-in flex justify-between items-center cursor-pointer hover:bg-slate-800/50 transition group" onclick="openLogChart('${e.emotion}')">
                             <div>
                                 <h3 class="text-white font-medium text-lg">${e.emotion}</h3>
                                 <p class="text-xs text-slate-500 mt-1">${e.date} • ${e.time}</p>
                             </div>
-                            <div class="text-right">
-                                <div class="text-xs font-mono text-gold-500">${e.duration > 60 ? Math.floor(e.duration/60) + 'm' : e.duration + 's'}</div>
-                                ${e.intensity ? `<div class="text-[10px] text-slate-500 mt-1">Int: ${e.intensity}</div>` : ''}
-                                ${hasBody ? `<div class="text-[10px] text-emerald-500 mt-1 flex items-center justify-end gap-1"><i data-lucide="activity" class="w-3 h-3"></i> Map</div>` : ''}
+                            <div class="flex items-center gap-4">
+                                <div class="text-right">
+                                    <div class="text-xs font-mono text-gold-500">${e.duration > 60 ? Math.floor(e.duration/60) + 'm' : e.duration + 's'}</div>
+                                    ${e.intensity ? `<div class="text-[10px] text-slate-500 mt-1">Int: ${e.intensity}</div>` : ''}
+                                    ${hasBody ? `<div class="text-[10px] text-emerald-500 mt-1 flex items-center justify-end gap-1"><i data-lucide="activity" class="w-3 h-3"></i> Map</div>` : ''}
+                                </div>
+                                <button onclick="event.stopPropagation(); deleteEntry(${i})" class="p-2 text-slate-600 hover:text-red-500 transition opacity-0 group-hover:opacity-100 focus:opacity-100 active:opacity-100"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                             </div>
                         </div>`;
             }).join('');
@@ -1130,19 +1132,37 @@
 
         window.deleteEntry = (index) => {
             if (confirm("Delete this session?")) {
-                globalLogData.splice(index, 1);
-                localStorage.setItem('releases', JSON.stringify(globalLogData));
-                openBodyMapList();
-                loadJournal();
+                const item = globalLogData[index];
+                
+                // If user is logged in and item has firestore ID, delete from cloud
+                if (window.currentUser && item.firestoreId) {
+                    if (window.deleteLogFromFirebase) {
+                        window.deleteLogFromFirebase(item.firestoreId);
+                        // Note: UI will update automatically via onSnapshot listener
+                    }
+                } else {
+                    // Fallback for local delete or logged out state
+                    globalLogData.splice(index, 1);
+                    localStorage.setItem('releases', JSON.stringify(globalLogData));
+                    if(!document.getElementById('bodymap-list-view').classList.contains('hidden')) {
+                        openBodyMapList();
+                    } else {
+                        loadJournal();
+                    }
+                }
             }
         };
 
         window.clearJournal = () => {
             if(confirm("Clear all history?")) {
+                // Note: This currently only clears local storage or memory array. 
+                // Batch delete from Firestore is complex and usually requires cloud functions or client-side looping.
+                // For safety in this snippet, we only clear the view/local state unless we implemented loop deletion.
                 globalLogData = [];
                 localStorage.removeItem('releases');
                 loadJournal();
                 openBodyMapList(); 
+                alert("Local history cleared.");
             }
         };
 
@@ -1164,7 +1184,7 @@
         function loadBodySession(index) {
             let session = globalLogData[index];
             if(!session) return;
-           
+            
             // READ-ONLY MODE
             currentBodyPoints = session.bodyPoints || [];
             renderBodyMarkers();
@@ -1204,7 +1224,7 @@
         function switchToCanvasMode() {
             document.getElementById('bodymap-list-view').classList.add('hidden');
             document.getElementById('bodymap-canvas-view').classList.remove('hidden');
-           
+            
             if (bodyMapSource === 'insights_new' || bodyMapSource === 'insights_view') {
                 document.getElementById('bodymap-back-btn').classList.remove('hidden');
                 document.getElementById('bodymap-exit-btn').classList.add('hidden');
@@ -1212,7 +1232,7 @@
                 document.getElementById('bodymap-back-btn').classList.add('hidden'); 
                 document.getElementById('bodymap-exit-btn').classList.add('hidden'); 
             }
-           
+            
             // Show trackpad for new sessions
             document.getElementById('sensation-trackpad-container').classList.remove('hidden');
             document.getElementById('bodymap-details-panel').classList.add('hidden');
@@ -1238,7 +1258,7 @@
         window.stopProcessTimer = () => { if(processInterval) clearInterval(processInterval); };
         window.finishProcess = () => { stopProcessTimer(); stopAmbience(); nextStep(5); };
         window.resetProcess = () => { stopProcessTimer(); stopAmbience(); document.querySelectorAll('.process-step').forEach(e=>e.classList.add('hidden')); document.getElementById('process-step-0').classList.remove('hidden'); document.getElementById('process-reset-btn').classList.add('hidden'); };
-       
+        
         // --- UPDATED BODY MAP LOGIC WITH HIT TESTING ---
 
         const BODY_WIDTH = 300;
@@ -1332,7 +1352,7 @@
                 });
                 renderBodyMarkers();
             }
-           
+            
             toggleModal('sensation-modal');
             document.getElementById('active-cursor').style.display = 'none';
             pendingPoint = null;
@@ -1446,9 +1466,15 @@
         };
 
         function saveSessionDirectly(data) {
-            globalLogData.unshift(data);
-            localStorage.setItem('releases', JSON.stringify(globalLogData));
-            loadJournal();
+            // Check if we can save to firebase
+            if(window.saveSessionToFirebase && window.currentUser) {
+                window.saveSessionToFirebase(data);
+                // Local UI update handled by onSnapshot
+            } else {
+                globalLogData.unshift(data);
+                localStorage.setItem('releases', JSON.stringify(globalLogData));
+                loadJournal();
+            }
         }
 
         window.finalizeSession = async () => {
