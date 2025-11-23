@@ -116,38 +116,41 @@
         /* BODY MAP STYLES */
         .body-marker {
             position: absolute;
-            background: rgba(212, 175, 55, 0.8);
+            background: rgba(212, 175, 55, 0.9);
             border: 1px solid #fff;
             border-radius: 50%;
             transform: translate(-50%, -50%);
-            box-shadow: 0 0 10px rgba(212, 175, 55, 0.6);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.8);
             z-index: 20;
             cursor: pointer;
             pointer-events: auto;
         }
 
         .trackpad-grid {
-            background-image: radial-gradient(#475569 1.5px, transparent 1.5px);
+            background-image: radial-gradient(#64748b 1.5px, transparent 1.5px);
             background-size: 20px 20px;
-            background-color: rgba(15, 23, 42, 0.6);
-            border-radius: 1rem;
+            background-color: rgba(15, 23, 42, 0.8);
+            border-radius: 1.5rem;
             border: 1px solid rgba(255,255,255,0.1);
             touch-action: none;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
         }
         
         .body-cursor {
             width: 24px;
             height: 24px;
             border: 2px solid #d4af37;
-            background-color: rgba(212, 175, 55, 0.2);
+            background-color: rgba(212, 175, 55, 0.3);
             border-radius: 50%;
             position: absolute;
             transform: translate(-50%, -50%);
             pointer-events: none;
             z-index: 50;
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
             display: none;
+            transition: width 0.1s, height 0.1s;
         }
+        .body-cursor.active { width: 18px; height: 18px; background-color: rgba(212, 175, 55, 0.6); }
         .body-cursor::after {
             content: '';
             position: absolute;
@@ -201,7 +204,7 @@
         </nav>
 
         <div class="px-6 pt-6 pb-4 text-center border-t border-slate-800/50 mt-auto">
-            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 9.2.0</p>
+            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 9.4.0</p>
         </div>
     </aside>
 
@@ -330,7 +333,7 @@
             <h2 class="text-2xl font-light text-white mb-6">Insights</h2>
             <div class="grid grid-cols-2 gap-4">
                 <!-- Charts Feature -->
-                <button onclick="openCharts()" class="glass-panel rounded-2xl p-6 aspect-square flex flex-col items-center justify-center text-center gap-3 hover:bg-slate-800/80 transition group relative overflow-hidden">
+                <button onclick="openCharts('insights')" class="glass-panel rounded-2xl p-6 aspect-square flex flex-col items-center justify-center text-center gap-3 hover:bg-slate-800/80 transition group relative overflow-hidden">
                     <div class="absolute inset-0 bg-gold-500/5 opacity-0 group-hover:opacity-100 transition duration-500"></div>
                     <div class="w-12 h-12 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-gold-500 group-hover:scale-110 transition duration-300">
                         <i data-lucide="bar-chart-2" class="w-6 h-6"></i>
@@ -370,7 +373,7 @@
         <!-- CHARTS VIEW -->
         <section id="view-charts" class="view-section hidden h-full overflow-hidden flex flex-col p-4">
             <div class="mb-4 flex justify-between items-center">
-                <button onclick="switchTab('insights')" class="p-2 text-slate-400 hover:text-white transition rounded-full bg-slate-800"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+                <button onclick="exitCharts()" class="p-2 text-slate-400 hover:text-white transition rounded-full bg-slate-800"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
                 <h2 class="text-xl font-light text-white">Progress Charts</h2>
                 <div class="w-9"></div>
             </div>
@@ -406,17 +409,70 @@
             <div id="bodymap-canvas-view" class="hidden flex-1 relative flex flex-col items-center justify-start overflow-hidden w-full h-full">
                 <!-- Body Silhouette Container -->
                 <div class="relative w-full max-w-[280px] h-[60%] flex items-center justify-center mt-4" id="bodymap-body-container">
-                     <!-- Updated Anatomical Silhouette -->
-                    <svg viewBox="0 0 200 550" class="h-full w-auto drop-shadow-[0_0_15px_rgba(255,255,255,0.05)]" id="body-silhouette">
+                     <!-- Updated High-Fidelity Silhouette (Vector) -->
+                    <svg viewBox="0 0 300 700" class="h-full w-auto drop-shadow-[0_0_25px_rgba(212,175,55,0.1)]" id="body-silhouette">
                          <defs>
                             <linearGradient id="bodyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" style="stop-color:#334155;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#1e293b;stop-opacity:1" />
+                                <stop offset="0%" style="stop-color:#1e293b;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#0f172a;stop-opacity:1" />
                             </linearGradient>
+                            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                                <feGaussianBlur stdDeviation="2" result="blur" />
+                                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                            </filter>
                         </defs>
-                        <!-- Refined Path for Better Anatomy -->
-                        <path d="M100,10 C118,10 130,25 130,45 C130,60 122,72 115,76 C135,82 155,88 165,100 C175,115 175,130 170,170 C168,190 160,210 155,220 C158,225 162,235 160,245 C158,255 152,250 148,235 C145,215 142,190 140,170 C140,210 140,230 140,240 C145,270 148,290 145,310 C142,330 135,420 132,450 C130,480 132,520 138,540 L110,540 C115,520 115,480 112,450 C110,420 105,350 100,350 C95,350 90,420 88,450 C85,480 85,520 90,540 L62,540 C68,520 70,480 68,450 C65,420 58,330 55,310 C52,290 55,270 60,240 C60,230 60,210 60,170 C58,190 55,215 52,235 C48,250 42,255 40,245 C38,235 42,225 45,220 C40,210 32,190 30,170 C25,130 25,115 35,100 C45,88 65,82 85,76 C78,72 70,60 70,45 C70,25 82,10 100,10 Z" 
-                              fill="url(#bodyGradient)" stroke="#94a3b8" stroke-width="1" stroke-opacity="0.4"/>
+                        <!-- Detailed Human Outline -->
+                        <path d="M150,20 
+                                 C170,20 185,35 185,55 
+                                 C185,75 178,85 170,90 
+                                 L175,100 
+                                 C200,105 225,110 240,125 
+                                 C255,140 255,160 250,200 
+                                 L245,250 
+                                 C245,270 245,290 250,310 
+                                 L255,330 
+                                 C260,340 255,350 245,350 
+                                 C235,350 230,340 225,320 
+                                 L215,270 
+                                 C210,240 205,220 200,210 
+                                 L200,300 
+                                 L205,400 
+                                 C210,430 215,450 210,480 
+                                 L200,550 
+                                 L200,600 
+                                 L205,650 
+                                 L185,650 
+                                 L180,600 
+                                 L175,550 
+                                 C170,520 165,480 160,450 
+                                 L155,400 
+                                 L150,400 
+                                 L145,400 
+                                 L140,450 
+                                 C135,480 130,520 125,550 
+                                 L120,600 
+                                 L115,650 
+                                 L95,650 
+                                 L100,600 
+                                 L100,550 
+                                 C90,480 95,430 100,400 
+                                 L105,300 
+                                 L105,210 
+                                 C100,220 95,240 90,270 
+                                 L80,320 
+                                 C75,340 70,350 60,350 
+                                 C50,350 45,340 50,330 
+                                 L55,310 
+                                 C60,290 60,270 60,250 
+                                 L55,200 
+                                 C50,160 50,140 65,125 
+                                 C80,110 105,105 130,100 
+                                 L135,90 
+                                 C127,85 120,75 120,55 
+                                 C120,35 135,20 150,20 Z" 
+                              fill="url(#bodyGradient)" stroke="#d4af37" stroke-width="1.5" stroke-opacity="0.5" filter="url(#glow)"/>
+                        <!-- Inner Details (Chest/Abs Hints) -->
+                        <path d="M150,130 L150,250 M130,160 Q150,170 170,160" stroke="#d4af37" stroke-width="0.5" stroke-opacity="0.1" fill="none"/>
                     </svg>
 
                     <!-- Markers Container -->
@@ -438,7 +494,7 @@
                      ontouchmove="handleTrackpadMove(event)"
                      ontouchend="handleTrackpadEnd(event)">
                     <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <span class="text-[10px] text-slate-500 uppercase tracking-widest opacity-50">Sensation Trackpad</span>
+                        <span class="text-[10px] text-slate-400 uppercase tracking-widest opacity-50">Touch & Drag</span>
                     </div>
                 </div>
             </div>
@@ -487,11 +543,11 @@
                         <option value="Sharp">Sharp Pain</option>
                     </select>
                 </div>
-                <!-- Emotion Type (Added) -->
-                <div>
+                <!-- Emotion Type (Hidden via JS based on context) -->
+                <div id="sensation-emotion-container">
                     <label class="text-xs text-slate-500 uppercase tracking-wider mb-2 block">Associated Emotion</label>
                     <select id="sensation-emotion" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:border-gold-500 outline-none">
-                        <!-- Populated via JS from HAWKINS_SCALE -->
+                        <!-- Populated via JS -->
                     </select>
                 </div>
                 <!-- Intensity -->
@@ -564,6 +620,8 @@
         var pendingSessionData = null; // Stores data before final save
         var currentBodyPoints = []; // Stores points for current session
         var pendingPoint = null; // Temp store for x,y while selecting sensation
+        var bodyMapSource = ''; // 'timer', 'process', 'insights_new', 'insights_view'
+        var chartsSource = ''; // 'journal', 'insights'
         
         // TRACKPAD VARS
         let isDraggingTrackpad = false;
@@ -894,6 +952,15 @@
                 }
                 return;
             }
+            if(id === 'sensation-modal' && el.classList.contains('hidden')) {
+                // Logic to hide emotion dropdown if coming from Timer/Process
+                const emotionContainer = document.getElementById('sensation-emotion-container');
+                if(bodyMapSource === 'timer' || bodyMapSource === 'process') {
+                    emotionContainer.classList.add('hidden');
+                } else {
+                    emotionContainer.classList.remove('hidden');
+                }
+            }
             if (id === 'emotion-picker' && !el.classList.contains('hidden')) pickerCallback = null; 
             el.classList.toggle('hidden');
             el.classList.toggle('flex');
@@ -926,10 +993,6 @@
         function initSensationEmotionPicker() {
             const s = document.getElementById('sensation-emotion');
             if(s) {
-                // Filter out Peace (600) if requested "excluding enlightenment/peace", Hawkins usually 600+
-                // User said "excluding enlightenment". Usually that means < 700. But let's just put all in except maybe the very top if they wish. 
-                // "bottom... to top (excluding enlightenment)". Hawkins Scale 20-600 (Peace). Enlightenment is 700-1000. 
-                // Since our array stops at Peace, we'll include all.
                 s.innerHTML = HAWKINS_SCALE.map(e => `<option value="${e.name}">${e.name} (${e.val})</option>`).join('');
             }
         }
@@ -954,10 +1017,21 @@
             } else { if(next) { next.classList.remove('hidden'); next.classList.add('active-view'); } }
         }
 
-        function openCharts() { switchTab('charts'); }
+        function openCharts(source) { 
+            chartsSource = source || 'insights';
+            switchTab('charts'); 
+        }
+        
+        function exitCharts() {
+            if (chartsSource === 'journal') {
+                switchTab('journal');
+            } else {
+                switchTab('insights');
+            }
+        }
         
         function openBodyMap() { 
-            // Defaults to List View
+            // Defaults to List View when accessing from Insights
             openBodyMapList();
             switchTab('bodymap');
         }
@@ -979,7 +1053,6 @@
                 container.innerHTML = `<div class="mb-4 px-1"><button onclick="startNewMapSession()" class="w-full py-3 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-900 rounded-xl text-xs uppercase tracking-widest transition">+ New Scan</button></div>` + 
                 bodyLogs.map((e, i) => {
                     const idParam = e.id ? `'${e.id}'` : i; 
-                    // We need to pass the index in globalLogData or ID to load it
                     return `<div class="relative overflow-hidden rounded-xl mb-3 animate-fade-in swipe-container" style="animation-delay: ${i*50}ms">
                         <div class="delete-action bg-red-600 text-white" onclick="deleteEntry(${idParam})"><i data-lucide="trash-2" class="w-5 h-5"></i></div>
                         <div class="glass-panel p-5 flex justify-between items-center swipe-item" ontouchstart="handleTouchStart(event, this)" ontouchmove="handleTouchMove(event, this)" ontouchend="handleTouchEnd(event, this)" onclick="loadBodySession('${e.id || i}')">
@@ -1007,35 +1080,39 @@
                 timestamp: Date.now()
             };
             currentBodyPoints = [];
+            bodyMapSource = 'insights_new';
             switchToCanvasMode();
         }
 
         function loadBodySession(id) {
-            // Find the session
             let session;
             if(typeof id === 'string' && id.length > 10) { // Firestore ID likely
                 session = globalLogData.find(l => l.id === id);
             } else {
                 session = globalLogData[id];
             }
-            
             if(!session) return;
-            
-            // Load into editor mode (editing past entries is allowed functionality logic: "view how its changed")
-            // We treat it as "viewing". Saving creates a new update or overwrites? 
-            // For simplicity, we allow viewing. If they modify, we might need an Update function.
-            // Let's treat "Save" as "Update" if ID exists.
             
             pendingSessionData = { ...session }; // Clone
             currentBodyPoints = session.bodyPoints || [];
+            bodyMapSource = 'insights_view';
             switchToCanvasMode();
         }
 
         function switchToCanvasMode() {
             document.getElementById('bodymap-list-view').classList.add('hidden');
             document.getElementById('bodymap-canvas-view').classList.remove('hidden');
-            document.getElementById('bodymap-back-btn').classList.remove('hidden'); // Back goes to list
-            document.getElementById('bodymap-exit-btn').classList.add('hidden');
+            
+            // Only show back button if coming from insights/list
+            if (bodyMapSource === 'insights_new' || bodyMapSource === 'insights_view') {
+                document.getElementById('bodymap-back-btn').classList.remove('hidden');
+                document.getElementById('bodymap-exit-btn').classList.add('hidden');
+            } else {
+                // Timer/Process flow doesn't have back to list
+                document.getElementById('bodymap-back-btn').classList.add('hidden'); 
+                document.getElementById('bodymap-exit-btn').classList.add('hidden'); 
+            }
+            
             document.getElementById('bodymap-save-btn').classList.remove('hidden');
             renderBodyMarkers();
         }
@@ -1087,22 +1164,24 @@
             const pad = document.getElementById('sensation-trackpad');
             const padRect = pad.getBoundingClientRect();
             
-            // Calculate relative position within trackpad (0 to 1)
             let x = (touch.clientX - padRect.left) / padRect.width;
             let y = (touch.clientY - padRect.top) / padRect.height;
             
-            // Clamp values
             x = Math.max(0, Math.min(1, x));
             y = Math.max(0, Math.min(1, y));
 
-            // Haptic Feedback Simulation (Grid Texture)
-            // Increased resolution for smoother feel
+            // Haptic Feedback Simulation
             const gridSize = 30; 
             const currentGridIndex = Math.floor(x * gridSize) + (Math.floor(y * gridSize) * gridSize);
             
             if (currentGridIndex !== lastVibrationGridIndex) {
-                if (navigator.vibrate) navigator.vibrate(3); // Shorter, lighter tick
+                if (navigator.vibrate) navigator.vibrate(5); // Increased duration slightly for better feel
                 lastVibrationGridIndex = currentGridIndex;
+                
+                // Visual pulse as backup for no-haptics
+                const cursor = document.getElementById('active-cursor');
+                cursor.classList.add('active');
+                setTimeout(() => cursor.classList.remove('active'), 50);
             }
 
             // Map to Body Container
@@ -1110,7 +1189,6 @@
             cursor.style.left = (x * 100) + '%';
             cursor.style.top = (y * 100) + '%';
 
-            // Identify Region
             const region = identifyBodyRegion(x, y);
             const label = document.getElementById('body-part-label');
             if (label.textContent !== region) {
@@ -1121,52 +1199,65 @@
                 }, 100);
             }
 
-            // Update Pending Point
             pendingPoint = { x, y, region };
         }
 
         function identifyBodyRegion(x, y) {
-            // Updated Anatomical Mapping
-            // y range 0.0 to 1.0
+            // Refined Anatomical Mapping for 300x700 ViewBox
+            // Y is 0.0 to 1.0
             
-            if (y < 0.08) return "Head / Crown";
-            if (y < 0.12) {
-                if (x < 0.35 || x > 0.65) return "Head / Side";
-                return "Forehead";
+            if (y < 0.05) return "Head (Crown)";
+            if (y < 0.13) {
+                if (x < 0.35 || x > 0.65) return "Side Head";
+                if (y < 0.09) return "Forehead";
+                return "Face / Eyes";
             }
-            if (y < 0.15) return "Eyes / Nose";
-            if (y < 0.18) return "Mouth / Jaw";
-            if (y < 0.22) return "Neck / Throat";
+            if (y < 0.16) return "Jaw / Chin";
+            if (y < 0.19) return "Neck / Throat";
             
-            if (y < 0.32) {
-                if (x < 0.2 || x > 0.8) return "Shoulder";
-                if (x < 0.3 || x > 0.7) return "Clavicle";
+            // Shoulders & Upper Chest
+            if (y < 0.25) {
+                if (x < 0.25 || x > 0.75) return "Deltoid (Shoulder)";
+                if (x < 0.35 || x > 0.65) return "Clavicle";
                 return "Upper Chest";
             }
             
-            if (y < 0.40) {
-                if (x < 0.25 || x > 0.75) return "Arm";
-                return "Heart Center";
+            // Chest & Arms
+            if (y < 0.35) {
+                if (x < 0.2 || x > 0.8) return "Upper Arm";
+                if (x > 0.4 && x < 0.6) return "Heart Center";
+                return "Pectoral / Chest";
             }
             
-            if (y < 0.48) {
-                if (x < 0.25 || x > 0.75) return "Arm";
+            // Mid Torso
+            if (y < 0.45) {
+                if (x < 0.22 || x > 0.78) return "Elbow / Forearm";
+                if (x < 0.3 || x > 0.7) return "Ribcage";
                 return "Solar Plexus";
             }
             
+            // Lower Torso
             if (y < 0.55) {
                 if (x < 0.2 || x > 0.8) return "Wrist / Hand";
+                if (x < 0.3 || x > 0.7) return "Side / Flank";
                 return "Stomach / Navel";
             }
             
+            // Pelvis
             if (y < 0.65) {
-                if (x < 0.2 || x > 0.8) return "Hand";
+                if (x < 0.2 || x > 0.8) return "Hand / Fingers";
                 return "Pelvis / Hips";
             }
             
-            if (y < 0.78) return "Thigh";
-            if (y < 0.85) return "Knee";
-            if (y < 0.95) return "Shin / Calf";
+            // Legs
+            if (y < 0.78) {
+                if (x > 0.45 && x < 0.55) return "Inner Thigh";
+                return "Quadricep / Thigh";
+            }
+            
+            if (y < 0.84) return "Knee";
+            
+            if (y < 0.94) return "Shin / Calf";
             
             return "Foot / Ankle";
         }
@@ -1240,6 +1331,7 @@
             };
 
             currentBodyPoints = [];
+            bodyMapSource = 'timer'; // Set context
             
             document.getElementById('complete-modal').classList.add('hidden'); 
             document.getElementById('complete-modal').classList.remove('flex');
@@ -1247,8 +1339,8 @@
             
             // Use smooth switch to BodyMap
             switchTab('bodymap');
-            // Then immediately enter canvas mode (overriding list default if necessary)
-            setTimeout(() => switchToCanvasMode(), 50); // Small delay to let view render
+            // Then immediately enter canvas mode
+            setTimeout(() => switchToCanvasMode(), 50); 
         };
 
         window.transitionToBodyMapFromProcess = () => {
@@ -1264,6 +1356,7 @@
             };
 
             currentBodyPoints = [];
+            bodyMapSource = 'process'; // Set context
             resetProcess();
 
             switchTab('bodymap');
@@ -1273,7 +1366,14 @@
         // --- FINAL SAVE ---
 
         window.finalizeSession = async () => {
-            if(!pendingSessionData) { switchTab('insights'); return; }
+            // Only proceed if we have data
+            if(!pendingSessionData) { 
+                if(bodyMapSource === 'timer') switchTab('timer');
+                else if(bodyMapSource === 'process') switchTab('process');
+                else switchTab('insights');
+                return; 
+            }
+            
             pendingSessionData.bodyPoints = currentBodyPoints;
 
             if (isLoggedIn && currentUser) { 
@@ -1286,9 +1386,8 @@
                 } catch (e) { alert("Error saving: " + e.message); } 
             } else { 
                 const rel = JSON.parse(localStorage.getItem('releases') || '[]'); 
-                // If ID exists, update, else push
                 if (pendingSessionData.id) {
-                    // Localstorage update logic would go here, but we mostly use this for new
+                    // No update logic for localstorage implemented, usually append
                 } else {
                     rel.unshift(pendingSessionData); 
                     localStorage.setItem('releases', JSON.stringify(rel));
@@ -1297,9 +1396,23 @@
 
             pendingSessionData = null;
             currentBodyPoints = [];
-            // Return to list view
-            openBodyMapList();
+
+            // Return logic based on source
+            if(bodyMapSource === 'timer') {
+                switchTab('timer');
+            } else if (bodyMapSource === 'process') {
+                switchTab('process');
+            } else {
+                // From Insights (New or View), go to List
+                openBodyMapList();
+            }
         };
+
+        window.viewChartsForLog = (emotion) => {
+            // Prepare Charts View with data for this emotion
+            selectEmotion(emotion); // Updates chart logic internally
+            openCharts('journal');
+        }
 
         window.loadChart = (em) => { const ctx = document.getElementById('progressChart'); if(!ctx) return; document.getElementById('chart-placeholder').classList.add('hidden'); let data = globalLogData.filter(r => r.emotion === em && r.intensity).reverse(); if(data.length===0) { if(progressChart) progressChart.destroy(); document.getElementById('chart-placeholder').classList.remove('hidden'); document.getElementById('chart-placeholder').textContent = `No data yet for "${em}"`; return; } const lbl = data.map(x => x.date), val = data.map(x => parseInt(x.intensity)); if(progressChart) progressChart.destroy(); progressChart = new Chart(ctx, { type: 'line', data: { labels: lbl, datasets: [{ label: 'Intensity', data: val, borderColor: '#d4af37', backgroundColor: 'rgba(212, 175, 55, 0.1)', tension: 0.4, fill: true, pointBackgroundColor: '#d4af37' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 10, grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } }, x: { grid: { display: false }, ticks: { color: '#94a3b8' } } }, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#0f172a', borderColor: '#334155', borderWidth: 1 } } } }); };
         window.closeCompleteModal = () => { document.getElementById('complete-modal').classList.add('hidden'); document.getElementById('complete-modal').classList.remove('flex'); resetTimer(); };
@@ -1386,7 +1499,22 @@
                 list.innerHTML = logs.map((e, i) => {
                     const idParam = e.id ? `'${e.id}'` : i; 
                     const bodyPointsCount = e.bodyPoints ? e.bodyPoints.length : 0;
-                    return `<div class="relative overflow-hidden rounded-xl mb-3 animate-fade-in swipe-container" style="animation-delay: ${i*50}ms"><div class="delete-action bg-red-600 text-white" onclick="deleteEntry(${idParam})"><i data-lucide="trash-2" class="w-5 h-5"></i></div><div class="glass-panel p-5 flex justify-between items-center swipe-item" ontouchstart="handleTouchStart(event, this)" ontouchmove="handleTouchMove(event, this)" ontouchend="handleTouchEnd(event, this)"><div class="flex-1 pr-4" onclick="renameEntry(${idParam}, '${e.emotion}')"><h3 class="text-white font-medium capitalize text-lg truncate">${e.emotion} <i data-lucide="edit-2" class="inline-block w-3 h-3 text-slate-600 ml-1"></i></h3><p class="text-xs text-slate-500 mt-1">${e.date} • ${e.time}</p></div><div class="text-right shrink-0"><div class="text-xs font-mono text-gold-500">${e.duration > 60 ? Math.floor(e.duration/60) + 'm' : e.duration + 's'}</div>${e.intensity ? `<div class="text-[10px] text-slate-500 mt-1">Int: ${e.intensity}</div>` : ''}${bodyPointsCount > 0 ? `<div class="text-[10px] text-slate-400 mt-0.5 flex items-center justify-end gap-1"><i data-lucide="map-pin" class="w-2 h-2"></i> ${bodyPointsCount}</div>` : ''}</div></div></div>`;
+                    // Updated onclick for chart view on container
+                    // Updated onclick for rename on title
+                    return `<div class="relative overflow-hidden rounded-xl mb-3 animate-fade-in swipe-container" style="animation-delay: ${i*50}ms">
+                        <div class="delete-action bg-red-600 text-white" onclick="deleteEntry(${idParam})"><i data-lucide="trash-2" class="w-5 h-5"></i></div>
+                        <div class="glass-panel p-5 flex justify-between items-center swipe-item" ontouchstart="handleTouchStart(event, this)" ontouchmove="handleTouchMove(event, this)" ontouchend="handleTouchEnd(event, this)" onclick="viewChartsForLog('${e.emotion}')">
+                            <div class="flex-1 pr-4">
+                                <h3 class="text-white font-medium capitalize text-lg truncate" onclick="renameEntry(${idParam}, '${e.emotion}', event)">${e.emotion} <i data-lucide="edit-2" class="inline-block w-3 h-3 text-slate-600 ml-1"></i></h3>
+                                <p class="text-xs text-slate-500 mt-1">${e.date} • ${e.time}</p>
+                            </div>
+                            <div class="text-right shrink-0">
+                                <div class="text-xs font-mono text-gold-500">${e.duration > 60 ? Math.floor(e.duration/60) + 'm' : e.duration + 's'}</div>
+                                ${e.intensity ? `<div class="text-[10px] text-slate-500 mt-1">Int: ${e.intensity}</div>` : ''}
+                                ${bodyPointsCount > 0 ? `<div class="text-[10px] text-slate-400 mt-0.5 flex items-center justify-end gap-1"><i data-lucide="map-pin" class="w-2 h-2"></i> ${bodyPointsCount}</div>` : ''}
+                            </div>
+                        </div>
+                    </div>`;
                 }).join('');
             }
             if(window.lucide) window.lucide.createIcons();
@@ -1410,7 +1538,8 @@
             else { const rel = JSON.parse(localStorage.getItem('releases') || '[]'); rel.splice(id, 1); localStorage.setItem('releases', JSON.stringify(rel)); window.renderJournal(); }
         };
 
-        window.renameEntry = async (id, currentName) => {
+        window.renameEntry = async (id, currentName, event) => {
+            if(event) event.stopPropagation(); // Prevent chart view
             const newName = prompt("Rename entry:", currentName);
             if (!newName || newName.trim() === "") return;
             if (isLoggedIn && typeof id === 'string') { await updateDoc(doc(db, 'users', currentUser.uid, 'logs', id), { emotion: newName.trim() }); }
