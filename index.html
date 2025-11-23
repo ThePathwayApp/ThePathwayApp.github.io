@@ -179,11 +179,18 @@
         select { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right 0.5rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em; }
 
         /* INTRO FIXES */
-        #intro-screen { opacity: 1; z-index: 9999; background-color: #020617; }
+        #intro-screen { opacity: 1; z-index: 9999; background-color: #020617; transition: opacity 0.7s ease-out; }
         .intro-hidden { opacity: 0 !important; pointer-events: none; }
     </style>
 </head>
 <body class="selection:bg-gold-500 selection:text-white" ontouchstart="handleGlobalTouchStart(event)" ontouchmove="handleGlobalTouchMove(event)" ontouchend="handleGlobalTouchEnd(event)">
+
+    <!-- FAST INTRO CHECK SCRIPT -->
+    <script>
+        if (sessionStorage.getItem('intro_dismissed')) {
+            document.write('<style>#intro-screen { display: none !important; }</style>');
+        }
+    </script>
 
     <div id="side-menu-backdrop" onclick="toggleMenu()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90] hidden opacity-0 transition-opacity duration-[1000ms]"></div>
 
@@ -688,14 +695,52 @@
         // --- DATA ---
         const INTRO_QUOTES = [
             { q: "To be surrendered means to have no strong emotion about a thing: 'It's okay if it happens, and it's okay if it doesn't.'", a: "David R. Hawkins" },
-            // ... (Keeping all quotes identical for brevity)
+            { q: "The more we let go, the more loving we become.", a: "David R. Hawkins" },
+            { q: "Peace is the natural state of the Self.", a: "David R. Hawkins" },
+            { q: "Everything you see happening is the consequence of that which you are.", a: "David R. Hawkins" },
+            { q: "Surrender is a constant process of not resisting or clinging to the moment.", a: "David R. Hawkins" },
+            { q: "Love is misunderstood to be an emotion; actually, it is a state of awareness.", a: "David R. Hawkins" },
+            { q: "The letting go technique is a system of eliminating the ego.", a: "David R. Hawkins" },
+            { q: "When you give up the resistance to the feeling, the energy behind it runs out.", a: "David R. Hawkins" },
+            { q: "You are the context in which the content of your life is unfolding.", a: "David R. Hawkins" },
+            { q: "All we have to do is hand it over to God.", a: "David R. Hawkins" },
+            { q: "You are not the feeling; you are the witness of the feeling.", a: "David R. Hawkins" },
+            { q: "What you resist, persists.", a: "David R. Hawkins" },
+            { q: "The energy of the suppressed feeling is the cause of the thought.", a: "David R. Hawkins" },
+            { q: "We are all doing the best we can with what we have at the moment.", a: "David R. Hawkins" },
+            { q: "There is no 'out there'. It is all 'in here'.", a: "David R. Hawkins" },
+            { q: "Love promotes healing. When we hold it for others, we are healing ourselves.", a: "David R. Hawkins" },
+            { q: "The only thing that stands between you and God is a thought.", a: "David R. Hawkins" },
+            { q: "Desire is the energy of 'I want'. Surrender is the energy of 'I have'.", a: "David R. Hawkins" },
+            { q: "Humility is the doorway to the truth.", a: "David R. Hawkins" },
             { q: "We get what we want when we stop insisting on it.", a: "David R. Hawkins" }
         ];
-        const HAWKINS_SCALE = [ 
-            { name: "Unsure ?", val: "?" }, 
-            { name: "Shame", val: 20 }, { name: "Guilt", val: 30 }, { name: "Apathy", val: 50 }, { name: "Grief", val: 75 }, { name: "Fear", val: 100 }, { name: "Desire", val: 125 }, { name: "Anger", val: 150 }, { name: "Pride", val: 175 }, { name: "Courage", val: 200 }, { name: "Neutrality", val: 250 }, { name: "Willingness", val: 310 }, { name: "Acceptance", val: 350 }, { name: "Reason", val: 400 }, { name: "Love", val: 500 }, { name: "Joy", val: 540 }, { name: "Peace", val: 600 } 
+        const HAWKINS_SCALE = [ { name: "Shame", val: 20 }, { name: "Guilt", val: 30 }, { name: "Apathy", val: 50 }, { name: "Grief", val: 75 }, { name: "Fear", val: 100 }, { name: "Desire", val: 125 }, { name: "Anger", val: 150 }, { name: "Pride", val: 175 }, { name: "Courage", val: 200 }, { name: "Neutrality", val: 250 }, { name: "Willingness", val: 310 }, { name: "Acceptance", val: 350 }, { name: "Reason", val: 400 }, { name: "Love", val: 500 }, { name: "Joy", val: 540 }, { name: "Peace", val: 600 } ];
+        const QA_DATA = [ 
+            { category: "Beginner / Skeptic", q: "Why aren't I sensing my feelings inside my body?", a: "This numbness is due to ingrained, conditioned resistance. Because the feeling was unpleasant, the mind automatically pushed it out of awareness. It has been repressed for so long that you have lost touch with the physical sensation. Be patient; simply intending to look is the first step." }, 
+            { category: "Beginner / Skeptic", q: "Is this just suppressing feelings?", a: "No. Suppression is pushing a feeling down to avoid it. Letting go is the opposite: it is allowing the feeling to come up, acknowledging it, and letting the energy escape." }, 
+            { category: "Beginner / Skeptic", q: "Why should I ignore my thoughts?", a: "Thoughts are rationalizations created by the mind to explain the presence of a feeling. They are often repetitive. Focusing on the physical sensation cuts the fuel supply to thoughts." }, 
+            { category: "Beginner / Skeptic", q: "What if the feeling is too strong?", a: "If overwhelmed, surrender to the fear of the feeling first. Acknowledge you are afraid. Let go of resistance to the fear." }, 
+            { category: "Beginner / Skeptic", q: "Is there scientific proof for this?", a: "Dr. Hawkins' work correlates vibrational states with muscle testing (kinesiology). While the subjective experience is internal, the physiological benefits of stress reduction are well-documented." }, 
+            { category: "Beginner / Skeptic", q: "How is this different from relaxation?", a: "Relaxation often targets the body directly. Letting go targets the emotional energy *causing* the tension. It is a permanent release rather than a temporary respite." }, 
+            { category: "Beginner / Skeptic", q: "Can I surrender to physical pain?", a: "Yes. Much pain is held in place by resistance. If you stop resisting the sensation and just experience it as pure energy, it often shifts or diminishes." }, 
+            { category: "Novice", q: "Nothing seems to be changing in my life?", a: "Letting Go can be subtle or dramatic, both inwardly and outwardly. Often it is others in our life who notice our change before we do. Like shoveling coal from a pile, we're unaware of the amount we've handled because our focus is on what is at hand." }, 
+            { category: "Novice", q: "I feel stuck. Nothing is happening.", a: "You may be 'wanting' it to change. Wanting is resistance. Can you let go of the desire to change it? Can you allow it to just be?" }, 
+            { category: "Novice", q: "Can I do this in public?", a: "Yes. It's internal. Notice the tension, drop resistance, and let it pass through while walking or in a meeting." }, 
+            { category: "Novice", q: "How do I know if I've let go?", a: "You feel lighter, relieved, or clear. Thoughts stop returning, or lack emotional charge." }, 
+            { category: "Novice", q: "Why do I feel worse sometimes?", a: "This is the 'healing crisis.' As you open the doors, suppressed energy rushes up to be released. It feels intense, but it is actually leaving. Stay with it." }, 
+            { category: "Novice", q: "Is crying okay?", a: "Absolutely. Crying is a natural mechanism of release, especially for Grief. Do not suppress the tears; let them flow until they stop on their own." }, 
+            { category: "Adept", q: "Spiritual Pride", a: "Watch out for the ego claiming credit for your progress. 'Look how spiritual I am' is just another feeling (Pride) to be surrendered." }, 
+            { category: "Adept", q: "Running out of things to surrender?", a: "You may reach periods of peace, but deeper layers often emerge later. Remain vigilant for subtle attachments to comfort or even to the practice itself." }, 
+            { category: "Adept", q: "Handling major crises", a: "In a crisis, the volume of emotion is high. This is actually a golden opportunity. A massive amount of karma can be discharged quickly if you can stay present with the raw energy without resisting." }, 
+            { category: "Adept", q: "Attachment to outcomes", a: "Surrender doesn't mean you don't act; it means you surrender your attachment to the result. You do your best and let go of the rest." }, 
+            { category: "Adept", q: "The dark night of the soul?", a: "This often occurs before a major transition. It feels like abandonment or total despair. It is the ego facing its own demise. Surrender to the despair itself." }, 
+            { category: "Pro", q: "The Witness Trap", a: "At high levels, one can become attached to the 'Observer' role to dissociate from subtle pain. Are you witnessing to avoid feeling? Surrender the position of the witness to become the experience itself, then surrender that." }, 
+            { category: "Pro", q: "Somatic Holding Patterns", a: "When the mind is silent but the body remains tense, you are hitting somatic repression. The energy is no longer generating thoughts but is trapped in the fascia. Drop resistance to the physical tightness itself, without labeling it as 'tension'." }, 
+            { category: "Pro", q: "Surrendering Positive States?", a: "Yes. When you reach joy or ecstasy, surrender the attachment to it. The fear that it will end is 'Fear'. The desire to keep it is 'Desire'. Letting go of the 'high' allows you to settle into the permanent bedrock of Peace." }, 
+            { category: "Pro", q: "Subtle Apathy vs Peace", a: "Apathy feels blank, heavy, and 'I don't care'. Peace feels alive, light, and 'I have everything'. If the silence feels dead, it is Apathy. Look for the subtle resistance to being alive." }, 
+            { category: "Pro", q: "The 'I' Thought", a: "Eventually, you notice that for every feeling, there is a subtle 'me' feeling it. This 'I-ness' is the root. Instead of surrendering the object (the feeling), surrender the subject (the 'I'). Ask 'Who is feeling this?' and surrender the answer." }
         ];
-        // QA Data omitted for brevity, same as before
 
         // STATE
         let activeTab = 'guide';
@@ -853,10 +898,16 @@
         }
         function toggleFAQ(i) { const a=document.getElementById(`faq-ans-${i}`), ic=document.getElementById(`faq-icon-${i}`); a.classList.toggle('active'); ic.classList.toggle('active'); }
         function initEmotionPicker() { const c=document.getElementById('emotion-list-container'); if(c) c.innerHTML = HAWKINS_SCALE.map(e => `<button onclick="selectEmotion('${e.name}')" class="w-full text-left px-6 py-4 border-b border-slate-800 text-slate-300 hover:bg-slate-800 transition flex justify-between items-center group"><span class="font-medium text-lg">${e.name}</span><span class="text-xs text-slate-600 font-mono group-hover:text-gold-500">${e.val}</span></button>`).join(''); }
+        
+        // UPDATED: Adds "Unsure (?)" only to the Body Map dropdown
         function initSensationEmotionPicker() {
             const s = document.getElementById('sensation-emotion');
             if(s) {
-                s.innerHTML = HAWKINS_SCALE.map(e => `<option value="${e.name}">${e.name} (${e.val})</option>`).join('');
+                // Add "Unsure" first
+                let html = `<option value="Unsure">Unsure (?)</option>`;
+                // Add the rest of the scale
+                html += HAWKINS_SCALE.map(e => `<option value="${e.name}">${e.name} (${e.val})</option>`).join('');
+                s.innerHTML = html;
             }
         }
        
@@ -997,6 +1048,7 @@
             switchToCanvasMode();
         }
 
+        // UPDATED: Improved Details Panel Styling
         function loadBodySession(index) {
             let session = globalLogData[index];
             if(!session) return;
@@ -1015,13 +1067,19 @@
             
             if (currentBodyPoints.length > 0) {
                 detailsContent.innerHTML = currentBodyPoints.map(p => 
-                    `<div class="border-b border-slate-800 pb-2 last:border-0">
-                        <div class="text-white font-medium">${p.region} <span class="text-xs text-slate-500">(${p.intensity}/10)</span></div>
-                        <div class="text-xs text-gold-500">${p.sensation} <span class="text-slate-600">•</span> ${p.relatedEmotion}</div>
+                    `<div class="bg-slate-800/50 rounded-lg p-3 mb-2 flex justify-between items-start border border-slate-700/50">
+                        <div>
+                            <div class="text-white font-medium text-sm">${p.region}</div>
+                            <div class="text-xs text-slate-400 mt-0.5">${p.sensation} • <span class="text-emerald-400">${p.relatedEmotion}</span></div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-gold-500 font-mono text-sm">${p.intensity}</div>
+                            <div class="text-[9px] text-slate-600 uppercase">Int</div>
+                        </div>
                     </div>`
                 ).join('');
             } else {
-                detailsContent.innerHTML = "<div class='text-slate-500'>No sensation points recorded.</div>";
+                detailsContent.innerHTML = "<div class='text-slate-500 text-center py-4 text-sm'>No sensation points recorded.</div>";
             }
 
             document.getElementById('bodymap-list-view').classList.add('hidden');
