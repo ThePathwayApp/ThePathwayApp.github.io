@@ -204,7 +204,7 @@
         </nav>
 
         <div class="px-6 pt-6 pb-4 text-center border-t border-slate-800/50 mt-auto">
-            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 9.4.0</p>
+            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Version 9.5.0</p>
         </div>
     </aside>
 
@@ -421,58 +421,11 @@
                                 <feComposite in="SourceGraphic" in2="blur" operator="over" />
                             </filter>
                         </defs>
-                        <!-- Detailed Human Outline -->
-                        <path d="M150,20 
-                                 C170,20 185,35 185,55 
-                                 C185,75 178,85 170,90 
-                                 L175,100 
-                                 C200,105 225,110 240,125 
-                                 C255,140 255,160 250,200 
-                                 L245,250 
-                                 C245,270 245,290 250,310 
-                                 L255,330 
-                                 C260,340 255,350 245,350 
-                                 C235,350 230,340 225,320 
-                                 L215,270 
-                                 C210,240 205,220 200,210 
-                                 L200,300 
-                                 L205,400 
-                                 C210,430 215,450 210,480 
-                                 L200,550 
-                                 L200,600 
-                                 L205,650 
-                                 L185,650 
-                                 L180,600 
-                                 L175,550 
-                                 C170,520 165,480 160,450 
-                                 L155,400 
-                                 L150,400 
-                                 L145,400 
-                                 L140,450 
-                                 C135,480 130,520 125,550 
-                                 L120,600 
-                                 L115,650 
-                                 L95,650 
-                                 L100,600 
-                                 L100,550 
-                                 C90,480 95,430 100,400 
-                                 L105,300 
-                                 L105,210 
-                                 C100,220 95,240 90,270 
-                                 L80,320 
-                                 C75,340 70,350 60,350 
-                                 C50,350 45,340 50,330 
-                                 L55,310 
-                                 C60,290 60,270 60,250 
-                                 L55,200 
-                                 C50,160 50,140 65,125 
-                                 C80,110 105,105 130,100 
-                                 L135,90 
-                                 C127,85 120,75 120,55 
-                                 C120,35 135,20 150,20 Z" 
+                        <!-- Proportional Human Outline -->
+                        <path d="M150,20 C168,20 180,35 180,55 C180,75 172,85 165,90 L170,100 C190,105 210,115 220,130 C235,150 235,180 230,220 L225,260 C222,280 225,290 230,300 L235,310 C240,320 235,330 225,330 C220,330 215,325 210,310 L200,280 C195,250 190,220 190,220 L190,320 L195,420 C198,450 200,470 195,500 L185,580 L185,620 L195,670 L175,670 L165,620 L160,580 C155,550 152,500 150,480 L150,420 L148,480 C145,500 142,550 138,580 L132,620 L122,670 L102,670 L112,620 L112,580 C108,550 105,520 102,500 L98,420 L102,320 L102,220 C102,220 98,250 92,280 L82,310 C78,325 72,330 68,330 C58,330 55,320 60,310 L65,300 C70,290 72,280 70,260 L65,220 C60,180 60,150 75,130 C85,115 105,105 125,100 L130,90 C122,85 115,75 115,55 C115,35 128,20 150,20 Z" 
                               fill="url(#bodyGradient)" stroke="#d4af37" stroke-width="1.5" stroke-opacity="0.5" filter="url(#glow)"/>
-                        <!-- Inner Details (Chest/Abs Hints) -->
-                        <path d="M150,130 L150,250 M130,160 Q150,170 170,160" stroke="#d4af37" stroke-width="0.5" stroke-opacity="0.1" fill="none"/>
+                        <!-- Subtle Muscle Contours -->
+                        <path d="M150,130 L150,250 M125,160 Q150,170 175,160" stroke="#d4af37" stroke-width="0.5" stroke-opacity="0.1" fill="none"/>
                     </svg>
 
                     <!-- Markers Container -->
@@ -626,6 +579,7 @@
         // TRACKPAD VARS
         let isDraggingTrackpad = false;
         let lastVibrationGridIndex = -1;
+        let isSwiping = false; // NEW: Track if touch interaction is a swipe or tap
 
         // --- DATA ---
         const INTRO_QUOTES = [
@@ -705,12 +659,17 @@
             touchStartX = e.touches[0].clientX;
             currentSwipeItem = el;
             el.style.transition = 'none'; 
+            isSwiping = false; // Reset swipe flag
         };
 
         window.handleTouchMove = (e, el) => {
             if (!currentSwipeItem) return;
             const touchX = e.touches[0].clientX;
             const diff = touchX - touchStartX;
+            
+            // Only consider it a swipe if moved more than 5px
+            if (Math.abs(diff) > 5) isSwiping = true;
+
             const isOpen = el.dataset.isOpen === 'true';
             let newTranslate = 0;
             if (!isOpen) { if (diff < 0) newTranslate = Math.max(diff, -80); } 
@@ -720,12 +679,23 @@
 
         window.handleTouchEnd = (e, el) => {
             if (!currentSwipeItem) return;
+            
+            // Check if this was just a tap (no swipe)
+            // If so, we might need to manually trigger click logic if onclick failed
+            // But 'onclick' usually fires after touchend if not prevented.
+            // The issue might be preventing default in move?
+            
             el.style.transition = 'transform 0.2s ease-out';
             const styleTransform = el.style.transform;
             const match = /translateX\(([^p]+)px\)/.exec(styleTransform);
             const currentTranslate = match ? parseFloat(match[1]) : 0;
             if (currentTranslate < -40) { el.style.transform = 'translateX(-80px)'; el.dataset.isOpen = 'true'; } 
             else { el.style.transform = 'translateX(0)'; el.dataset.isOpen = 'false'; }
+            
+            // If not a swipe (very small movement), ensure click logic can run
+            // We rely on standard onclick, but if needed we could force it here.
+            // The key fix is likely separating selectEmotion logic.
+            
             currentSwipeItem = null;
         };
 
@@ -996,7 +966,29 @@
                 s.innerHTML = HAWKINS_SCALE.map(e => `<option value="${e.name}">${e.name} (${e.val})</option>`).join('');
             }
         }
-        function selectEmotion(n) { currentSelectedEmotion=n; toggleModal('emotion-picker'); if(pickerCallback) { pickerCallback(n); pickerCallback=null; } else { const d1=document.getElementById('process-emotion-display'), d2=document.getElementById('timer-emotion-display'), d3=document.getElementById('chart-emotion-display'); if(d1) { d1.textContent=n; d1.classList.add('text-white'); } if(d2) { d2.textContent=n; d2.classList.add('text-gold-500'); } if(d3) { d3.textContent=n; loadChart(n); } } }
+        
+        // SEPARATED LOGIC
+        function selectEmotion(n) { 
+            setCurrentEmotion(n); // Update state/UI
+            toggleModal('emotion-picker'); // Toggle modal UI
+        }
+        
+        function setCurrentEmotion(n) {
+            currentSelectedEmotion=n;
+            if(pickerCallback) { 
+                pickerCallback(n); 
+                pickerCallback=null; 
+            } else { 
+                const d1=document.getElementById('process-emotion-display');
+                const d2=document.getElementById('timer-emotion-display');
+                const d3=document.getElementById('chart-emotion-display');
+                if(d1) { d1.textContent=n; d1.classList.add('text-white'); } 
+                if(d2) { d2.textContent=n; d2.classList.add('text-gold-500'); } 
+                if(d3) { d3.textContent=n; } 
+                loadChart(n); 
+            }
+        }
+
         function openPickerFor(ctx) { toggleModal('emotion-picker'); if(ctx==='process') pickerCallback=n=>{ const el=document.getElementById('process-emotion-display'); el.textContent=n; el.classList.remove('text-slate-400'); el.classList.add('text-white'); }; else if(ctx==='timer') pickerCallback=n=>{ const el=document.getElementById('timer-emotion-display'); el.textContent=n; el.classList.add('text-gold-500'); }; else if(ctx==='chart') pickerCallback=n=>{ document.getElementById('chart-emotion-display').textContent=n; loadChart(n); }; }
         
         // SMOOTH SWITCH
@@ -1055,7 +1047,7 @@
                     const idParam = e.id ? `'${e.id}'` : i; 
                     return `<div class="relative overflow-hidden rounded-xl mb-3 animate-fade-in swipe-container" style="animation-delay: ${i*50}ms">
                         <div class="delete-action bg-red-600 text-white" onclick="deleteEntry(${idParam})"><i data-lucide="trash-2" class="w-5 h-5"></i></div>
-                        <div class="glass-panel p-5 flex justify-between items-center swipe-item" ontouchstart="handleTouchStart(event, this)" ontouchmove="handleTouchMove(event, this)" ontouchend="handleTouchEnd(event, this)" onclick="loadBodySession('${e.id || i}')">
+                        <div class="glass-panel p-5 flex justify-between items-center swipe-item" ontouchstart="handleTouchStart(event, this)" ontouchmove="handleTouchMove(event, this)" ontouchend="handleTouchEnd(event, this)" onclick="if(!isSwiping) loadBodySession('${e.id || i}')">
                             <div class="flex-1 pr-4">
                                 <h3 class="text-white font-medium capitalize text-lg truncate">${e.emotion}</h3>
                                 <p class="text-xs text-slate-500 mt-1">${e.date} • ${e.time}</p>
@@ -1410,7 +1402,7 @@
 
         window.viewChartsForLog = (emotion) => {
             // Prepare Charts View with data for this emotion
-            selectEmotion(emotion); // Updates chart logic internally
+            setCurrentEmotion(emotion); // Updates chart logic internally without toggling modal
             openCharts('journal');
         }
 
@@ -1499,11 +1491,11 @@
                 list.innerHTML = logs.map((e, i) => {
                     const idParam = e.id ? `'${e.id}'` : i; 
                     const bodyPointsCount = e.bodyPoints ? e.bodyPoints.length : 0;
-                    // Updated onclick for chart view on container
+                    // Updated onclick for chart view on container with swipe check
                     // Updated onclick for rename on title
                     return `<div class="relative overflow-hidden rounded-xl mb-3 animate-fade-in swipe-container" style="animation-delay: ${i*50}ms">
                         <div class="delete-action bg-red-600 text-white" onclick="deleteEntry(${idParam})"><i data-lucide="trash-2" class="w-5 h-5"></i></div>
-                        <div class="glass-panel p-5 flex justify-between items-center swipe-item" ontouchstart="handleTouchStart(event, this)" ontouchmove="handleTouchMove(event, this)" ontouchend="handleTouchEnd(event, this)" onclick="viewChartsForLog('${e.emotion}')">
+                        <div class="glass-panel p-5 flex justify-between items-center swipe-item" ontouchstart="handleTouchStart(event, this)" ontouchmove="handleTouchMove(event, this)" ontouchend="handleTouchEnd(event, this)" onclick="if(!isSwiping) viewChartsForLog('${e.emotion}')">
                             <div class="flex-1 pr-4">
                                 <h3 class="text-white font-medium capitalize text-lg truncate" onclick="renameEntry(${idParam}, '${e.emotion}', event)">${e.emotion} <i data-lucide="edit-2" class="inline-block w-3 h-3 text-slate-600 ml-1"></i></h3>
                                 <p class="text-xs text-slate-500 mt-1">${e.date} • ${e.time}</p>
