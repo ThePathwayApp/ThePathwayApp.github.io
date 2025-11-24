@@ -962,10 +962,17 @@
                 document.getElementById('sensation-intensity').value = 5;
                 document.getElementById('sens-int-val').textContent = "5";
                 
-                // Pre-fill emotion if known
+                // Pre-fill emotion logic
                 const emSelect = document.getElementById('sensation-emotion');
-                if (pendingSessionData && pendingSessionData.emotion) {
-                    emSelect.value = pendingSessionData.emotion;
+                if (pendingSessionData) {
+                    // 1. If we have a specific suggested emotion from Work process, use it
+                    if (pendingSessionData.suggestedEmotion) {
+                        emSelect.value = pendingSessionData.suggestedEmotion;
+                    } 
+                    // 2. Otherwise fall back to existing emotion (unless it is "Check-in")
+                    else if (pendingSessionData.emotion && pendingSessionData.emotion !== "Check-in") {
+                        emSelect.value = pendingSessionData.emotion;
+                    }
                 }
             }
 
@@ -1441,6 +1448,7 @@
             // 2. PREPARE THE BODYMAP SESSION (Generic Check-in)
             pendingSessionData = {
                 emotion: "Check-in", // Always save as Check-in for BodyMap continuity
+                suggestedEmotion: window.currentProcessEmotion, // Pass context for dropdown auto-select
                 date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}),
                 time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
                 duration: 0,
@@ -1450,8 +1458,12 @@
             
             currentBodyPoints = [];
             bodyMapSource = 'process';
+            
+            // SMOOTH TRANSITION CHANGE: Switch to canvas mode BEFORE fading in the tab
+            switchToCanvasMode();
             switchTab('bodymap');
-            setTimeout(() => { resetProcess(); switchToCanvasMode(); }, 300);
+            
+            setTimeout(() => { resetProcess(); }, 300);
         };
 
         window.saveAndCloseTimer = () => {
@@ -1509,6 +1521,8 @@
                 return; 
             }
             pendingSessionData.bodyPoints = currentBodyPoints;
+            // Clean up temporary property before saving
+            delete pendingSessionData.suggestedEmotion;
             saveSessionDirectly(pendingSessionData);
             pendingSessionData = null;
             currentBodyPoints = [];
