@@ -1425,14 +1425,29 @@
 
         window.transitionToBodyMapFromProcess = () => {
             const intensity = document.getElementById('process-intensity-slider').value;
-            pendingSessionData = {
+            
+            // 1. LOG THE WORK SESSION (Emotion specific)
+            const workData = {
                 emotion: window.currentProcessEmotion,
                 date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}),
                 time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
                 duration: window.processSeconds,
                 intensity: intensity,
-                timestamp: Date.now()
+                timestamp: Date.now(),
+                bodyPoints: []
             };
+            saveSessionDirectly(workData);
+
+            // 2. PREPARE THE BODYMAP SESSION (Generic Check-in)
+            pendingSessionData = {
+                emotion: "Check-in", // Always save as Check-in for BodyMap continuity
+                date: new Date().toLocaleDateString(undefined, {month:'short', day:'numeric'}),
+                time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+                duration: 0,
+                intensity: intensity,
+                timestamp: Date.now() + 50 // Slight offset to keep order
+            };
+            
             currentBodyPoints = [];
             bodyMapSource = 'process';
             switchTab('bodymap');
@@ -1505,4 +1520,3 @@
     </script>
 </body>
 </html>
-
